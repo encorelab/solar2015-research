@@ -1,0 +1,370 @@
+/********** B R A I N S T O R M  **********/
+
+#write-screen,
+#read-screen {
+    position: relative;
+    height: 100%;
+    padding-top: 50px;
+}
+
+#nav-read-btn,
+#nav-write-btn {
+    margin-left: -25px;
+}
+
+.inner-wrapper,
+.side-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+}
+
+.side-nav {
+    padding: 0;
+}
+
+/*circular buttons*/
+.btn-circular {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: none;
+    color: #fff;
+    background: #c31fa4;
+    padding: 0;
+}
+.btn-circular:hover {
+    background: #db7bc8;
+}
+
+textarea {
+    border: 2px solid #c31fa4;
+}
+
+.sentence-starter {
+    background: #e6a5da;
+    width: 100%;
+    text-align: left;
+    border-radius: 0;
+}
+.sentence-starter:hover{
+    background: #db7bc8;
+}
+
+#tile-details .modal-content,
+#sentence-starter-modal .modal-content {
+    border-radius: 0;
+    border: 2px solid #c31fa4;
+}
+
+#tile-details .tile-author {
+    padding-top: 10px;
+    color: #c31fa4;
+}
+
+
+/********** WRITE SCREEN **********/
+
+#brainstorm-body-container {
+    height: 250px;           /* random choice, change however you'd like */
+}
+
+#brainstorm-body-input {
+    height: 250px;
+    padding-right: 60px;
+
+}
+
+.fa-lightbulb-o {
+    color: #c31fa4;
+    position: absolute;
+    top: 25%;
+    right: 2%;
+    padding: 10px 20px;
+}
+.fa-lightbulb-o:hover {
+    color: #DB77C8;
+}
+
+
+/********** READ SCREEN **********/
+
+#read-screen .inner-wrapper {
+    height: 100%;
+    margin-top: 75px;
+}
+
+#my-tiles-list > li {
+    outline: 2px solid #c31fa4;
+}
+
+#others-tiles-list > li {
+    outline: 2px dashed #db7bc8;
+}
+/*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
+.tile-container {
+    outline-offset: -10px;
+    -moz-outline-radius: 10px;
+    -webkit-outline-radius: 10px;
+    float: left;
+    position: relative;
+    padding-bottom: 33.33%; /* = width for a 1:1 aspect ratio */
+    overflow: hidden;
+    min-height: 192px;
+}
+#others-tiles-list .tile-container:last-child {
+    margin-bottom: 25px;
+}
+.tile {
+    position: absolute;
+    height: 90%; /* = 100% - 2*5% padding */
+    width: 90%; /* = 100% - 2*5% padding */
+    padding: 5%;
+}
+.tile-title {
+    height: 25%;
+    margin-top: 10px;
+    overflow: hidden;
+    font-weight: 600;
+}
+.tile-body {
+    overflow: hidden;
+    line-height: 1.5;
+    font-weight: 300;
+}
+#my-tiles-list .tile-body {
+    height: 70%;
+}
+#others-tiles-list .tile-body {
+    height: 55%;
+}
+#my-tiles-list .tile-author {
+    display: none;
+}
+#others-tiles-list .tile-author {
+    height: 15%;
+    padding-top: 10px;
+    color: #c31fa4;
+}
+
+@media handheld and (orientation: landscape) {
+    .tile-body {
+        height: 58%;
+    }
+    .tile-author {
+        padding-top: 10px;
+    }
+}
+
+
+#lock-screen {
+    height: 100%;
+    width: 100%;
+    background: black;
+}
+
+#lock-img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+/********** T Y P O G R A P H Y **********/
+
+body {
+    font-family: 'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 54px;
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 35px;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 25px;
+}
+
+h3,
+label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+label {
+    vertical-align: middle;
+}
+
+
+/********** G L O B A L **********/
+
+body, html {
+    /*height: calc(100% - 50px);*/
+    height: 100%;
+}
+
+a,
+a:hover,
+button,
+button:hover,
+i,
+i:hover {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.margin-bottom-25 {
+    margin-bottom: 25px;
+}
+
+/* what's the correct way to do this? */
+.disabled {
+    pointer-events: none;
+    cursor: default;
+    /*background-color: #BDBDC1;*/      /* we probably want something a little more stark than this */
+    opacity: 0.7;
+}
+
+.hidden {
+    display: none;
+}
+
+textarea {
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+    color: #333;
+    width: 100%;
+    padding: 25px 2% 1%;
+}
+
+.btn {
+    margin-bottom: 20px;
+    height: 45px;
+    min-width: 160px;
+}
+
+/*so the scroll bar appears at all times*/
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+/********** M O D A L S **********/
+/*for vertical centering; had to add .table & .table-cell divs to html*/
+.table {
+    display: table;
+    height:100%;
+}
+.table-cell {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+/***** login modal *****/
+#login-picker button {
+    color: #333;
+    border-radius: 7px;
+    border: solid #ddd 1px;
+    background: #fff;
+    background-image: none;
+    text-shadow: none;
+}
+#login-picker button:hover {
+    background: #aaa;
+    color: #fff;
+}
+
+/********** N A V B A R **********/
+
+.navbar-inverse .navbar-nav>.active>a {
+    background-image: -webkit-linear-gradient(to bottom,#3c3c3c 0,#222 100%);
+    background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
+}
+
+/* This hides any element with class alert directly after an input field with a pattern (regex) */
+input[pattern] + .alert {
+    display: none;
+}
+
+/* If pattern (regex) is violated alert is shown */
+input[pattern]:invalid + .alert {
+    display: inline-block;
+}
+
+/* If pattern (regex) is violated submit button is hidden */
+input[pattern]:invalid ~ button {
+    display: none;
+}
+
+input:disabled {
+    display: none;
+}
+
+#login-button:disabled {
+    display: none;
+}
+
+.login-button {
+    margin: 1%;
+    min-width: 6em;
+}
+
+.input-alert {
+    margin-top: 2%;
+}
+
+
+/********** M E D I A  Q U E R I E S **********/
+
+/* Extra small devices (phones, less than 768px) */
+@media all and (max-width: 768px) {
+
+    #nav-read-btn,
+    #nav-write-btn {
+        margin-left: 25px;
+    }
+
+}
+
+/* Large devices (LARGE DESKTOPS, 1200px and up) */
+@media all and (min-width: 1200px) {
+
+    .tile-container {
+        padding-bottom: 25%; /* = width for a 1:1 aspect ratio */
+    }
+
+    .tile h3 {
+        font-size: 20px;
+    }
+    .tile .title-body,
+    .tile .title-author {
+        font-size: 16px;
+        line-height: 1.2;
+    }
+
+}

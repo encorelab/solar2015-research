@@ -1,0 +1,20 @@
+{
+    "drowsy": {
+        "url": "https://drowsy.coati.encorelab.org",
+        "url_dev": "http://localhost:9292",
+        "db": "solar2015",
+        "username":"foo",
+        "password":"bar"
+    },
+    "wakeful": {
+        "url": "https://coati.encorelab.org/faye",
+        "url_old": "http://wakeful.badger.encorelab.org:7777/faye",
+        "url_dev": "http://localhost:7777/faye"
+    },
+    "pikachu": {
+        "url": "http://pikachu.coati.encorelab.org/"
+    },
+    "login_picker": true,
+    "runs":["ben", "michael"],
+    "project_name": "Solar 2015"
+}
