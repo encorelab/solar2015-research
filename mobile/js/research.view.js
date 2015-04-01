@@ -10,6 +10,29 @@
   Skeletor.Model = Model;
   app.View = {};
 
+
+  /**
+    ProposalView
+  **/
+  app.View.ProposalView = Backbone.View.extend({
+
+    initialize: function () {
+      var view = this;
+      console.log('Initializing ProposalView...', view.el);
+    },
+
+    events: {
+
+    },
+
+    render: function () {
+      var view = this;
+      console.log("Rendering ReadView...");
+    }
+
+  });
+
+
   /**
     WriteView
   **/

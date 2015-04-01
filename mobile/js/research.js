@@ -32,6 +32,7 @@
   app.users = null;
   app.username = null;
 
+  app.proposalView = null;
   app.readView = null;
   app.writeView = null;
 
@@ -188,6 +189,13 @@
      * so these can only be called when everything is set up
      * ======================================================
      */
+
+     if (app.proposalView === null) {
+       app.proposalView = new app.View.ProposalView({
+         el: '#proposal-screen',
+         collection: Skeletor.Model.awake.brainstorms
+       });
+     }
 
      if (app.writeView === null) {
        app.writeView = new app.View.WriteView({
@@ -385,7 +393,7 @@
       console.log('Unlocking screen...');
       jQuery('#lock-screen').addClass('hidden');
       // we need to always to push users to a screen (can't just unhide all screens), so chose this one... think more about this for next iteration - could move back to old lock screen covering everything instead of hide/show
-      jQuery('#read-screen').removeClass('hidden');
+      jQuery('#proposal-screen').removeClass('hidden');
     }
   };
 
