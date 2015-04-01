@@ -167,10 +167,14 @@
 
   var showProjectPicker = function() {
     // get collection of projects?
+    jQuery('.projects-holder').html('');
 
-
-    // populate project picker modal
-    //jQuery('#project-picker .project-buttons')
+    Skeletor.Model.awake.projects.each(function(project) {
+      var button = jQuery('<button class="btn project-button">');
+      button.val(project.get('id'));
+      button.text(project.get('name'));
+      jQuery('.projects-holder').append(button);
+    });
 
     jQuery('#project-picker').modal({keyboard: false, backdrop: 'static'});
 
@@ -186,25 +190,25 @@
     });
   };
 
-  var setupProject = function(project) {
+  var setupProject = function(projectId) {
     var p = null;
 
-    if (project === "new") {
+    if (projectId === "new") {
       p = new Model.Project();
       p.set('name',"untitled");
       p.wake(app.config.wakeful.url);
       p.save();
       Skeletor.Model.awake.projects.add(p);
     } else {
-      // do some kind of resuming of projects
-      p = Skeletor.Mobile.projects(project);   // this probably doesn't work, but it's a start
+      // resume the previous project
+      p = Skeletor.Model.awake.projects.get(projectId)
     }
 
     // all of the views will take this model
     app.newProjectView.model = p;
     app.proposalView.model = p;
 
-    app.reflectRunState(project);
+    app.reflectRunState(projectId);
   }
 
   var setUpUI = function() {
