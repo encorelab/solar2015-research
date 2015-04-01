@@ -169,7 +169,7 @@
       position : 'middle-center'
     });
 
-    jQuery('.brand').text("Brainstorm");
+    jQuery('.brand').text("Research");
   };
 
   var setUpClickListeners = function () {
