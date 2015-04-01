@@ -178,6 +178,24 @@
     jQuery('#logout-user').click(function() {
       logoutUser();
     });
+
+    jQuery('.top-nav-btn').click(function() {
+      if (app.username) {
+        jQuery('.top-nav-btn li').removeClass('active');     // unmark all nav items
+        jQuery(this).addClass('active');
+        app.hideAllContainers();
+        if (jQuery(this).attr('id') === 'proposal-nav-btn') {
+          jQuery('#proposal-screen').removeClass('hidden');
+        } else if (jQuery(this).attr('id') === 'read-nav-btn') {
+          jQuery('#read-screen').removeClass('hidden');
+          //app.readView.render();
+        } else if (jQuery(this).attr('id') === 'write-nav-btn') {
+          //app.writeView.render();
+        } else {
+          console.log('ERROR: unknown nav button');
+        }
+      }
+    });
   };
 
 
