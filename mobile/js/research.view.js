@@ -12,6 +12,101 @@
 
 
   /**
+    NewProjectView
+  **/
+  app.View.NewProjectView = Backbone.View.extend({
+
+    initialize: function () {
+      var view = this;
+      console.log('Initializing NewProjectView...', view.el);
+    },
+
+    events: {
+      'click #submit-partners-btn' : 'addPartnersToProject',
+      'click .project-theme-button': 'addThemeToProject'
+    },
+
+    addPartnersToProject: function() {
+      var view = this;
+
+      // put all selecteds into the project
+      var partners = [];
+      _.each(jQuery('.selected'), function(b) {
+        partners.push(jQuery(b).val());
+      })
+      view.model.set('associated_users',partners);
+      view.model.save();
+
+      // move to the next screen
+      jQuery('#new-project-student-picker').addClass('hidden');
+      jQuery('#new-project-theme-picker').removeClass('hidden');
+    },
+
+    addThemeToProject: function(ev) {
+      var view = this;
+
+      view.model.set('theme',jQuery(ev.target).val());
+      view.model.save();
+
+      jQuery().toastmessage('showSuccessToast', "You have created a new project!");
+
+      // complete the newProject section and move to proposal section
+      jQuery('#new-project-theme-picker').addClass('hidden');
+      jQuery('#proposal-screen').removeClass('hidden');
+      jQuery('#proposal-nav-btn').addClass('active');
+    },
+
+    render: function () {
+      var view = this;
+      console.log("Rendering NewProjectView...");
+
+      // ADD THE USERS
+      jQuery('.project-partner-holder').html('');
+      if (app.users.length > 0) {
+        // sort the collection by username
+        app.users.comparator = function(model) {
+          return model.get('display_name');
+        };
+        app.users.sort();
+
+        app.users.each(function(user) {
+          var button = jQuery('<button class="btn project-partner-button">');
+          button.val(user.get('username'));
+          button.text(user.get('display_name'));
+          jQuery('.project-partner-holder').append(button);
+
+          // add the logged in user to the project
+          if (user.get('username') === app.username) {
+            button.addClass('selected');
+          }
+        });
+
+        //register click listeners
+        jQuery('.project-partner-button').click(function() {
+          jQuery(this).toggleClass('selected');
+        });
+      } else {
+        console.warn('Users collection is empty! Check database: '+DATABASE);
+      }
+
+      // ADD THE THEMES AKA TAGS
+      jQuery('.project-theme-holder').html('');
+      if (Skeletor.Model.awake.tags.length > 0) {
+        Skeletor.Model.awake.tags.each(function(tag) {
+          var button = jQuery('<button class="btn project-theme-button">');
+          button.val(tag.get('name'));
+          button.text(tag.get('name'));
+          jQuery('.project-theme-holder').append(button);
+        });
+      } else {
+        console.warn('Tags collection is empty! Check database: '+DATABASE);
+      }
+    }
+
+  });
+
+
+  /**
     ProposalView
   **/
   app.View.ProposalView = Backbone.View.extend({
@@ -27,7 +122,7 @@
 
     render: function () {
       var view = this;
-      console.log("Rendering ReadView...");
+      console.log("Rendering ProposalView...");
     }
 
   });

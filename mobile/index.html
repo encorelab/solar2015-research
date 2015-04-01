@@ -84,10 +84,31 @@
         <img src="img/lock-icon-white.png" id="lock-img"/>
     </div>
 
+    <!-- New Project Screen -->
+    <div id="new-project-screen" class="container-fluid user-screen">
+
+        <div id="new-project-student-picker" class="row">
+            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                Select the names of all students who will work on this project
+                <div class="project-partner-holder">
+                    <!-- populated by the view -->
+                </div>
+                <button id="submit-partners-btn">Choose these partners</button>
+            </div>
+        </div>
+        <div id="new-project-theme-picker" class="row hidden">
+            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                Select the one theme that best fits your topic
+                <div class="project-theme-holder">
+                    <!-- populated by the view -->
+                </div>
+                <!-- <button id="submit-theme-btn">Choose your theme</button> -->
+            </div>
+        </div>
+    </div>
 
     <!-- Proposal Screen -->
     <div id="proposal-screen" class="container-fluid user-screen">
-        <!-- this may want to be a separate view, when we eventually expand brainstorm to the full solar app -->
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <h3>Write your project proposal</h3>
@@ -100,7 +121,6 @@
 
     <!-- Write Screen -->
     <div id="write-screen" class="container-fluid user-screen">
-        <!-- this may want to be a separate view, when we eventually expand brainstorm to the full solar app -->
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
                 <button id="nav-read-btn" class="fa fa-eye fa-3x btn-circular"></button>
@@ -144,7 +164,6 @@
 
     <!-- Read Screen -->
     <div id="read-screen" class="container-fluid user-screen">
-        <!-- this may want to be a separate view, when we eventually expand brainstorm to the full solar app -->
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
                 <button id="nav-write-btn" class="fa fa-pencil fa-3x btn-circular"></button>
@@ -173,7 +192,25 @@
                         <h3>Please log in</h3>
                         </div>
                         <div class="modal-body login-buttons">
-                        <!-- filled by java script with buttons for user login -->
+                        <!-- filled by javascript with buttons for user login -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="project-picker" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="login-picker" aria-hidden="true">
+        <div class="table">
+            <div class="table-cell">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3>What do you want to do today?</h3>
+                        </div>
+                        <button class="btn" value="new">Start new project</button>
+                        <div class="modal-body project-buttons">
+                        <!-- filled by javascript with buttons for user login -->
                         </div>
                     </div>
                 </div>

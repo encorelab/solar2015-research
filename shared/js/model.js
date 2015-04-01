@@ -25,7 +25,7 @@
   Skeletor.Model = (function() {
     function Model() {}
 
-    Model.requiredCollections = ['brainstorms', 'tags', 'states'];
+    Model.requiredCollections = ['brainstorms', 'tags', 'states', 'projects'];
 
     Model.init = function(url, db) {
       var dfrInit,
@@ -209,6 +209,18 @@
         model: Skeletor.Model.Tag
       });
 
+
+      // these are increasingly useless, since they can't be parameterized (and we can't use Skeletor.Mobile type vars, since the board will choke on them)
+      this.Project = this.db.Document('projects').extend({
+        defaults: {
+          'created_at': new Date(),
+          'modified_at': new Date()
+        }
+      })
+
+      this.Projects = this.db.Collection('projects').extend({
+        model: Skeletor.Model.Project
+      });
 
     };
 

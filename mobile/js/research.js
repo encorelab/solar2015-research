@@ -31,7 +31,9 @@
   app.runState = null;
   app.users = null;
   app.username = null;
+  app.themes = null;
 
+  app.newProjectView = null;
   app.proposalView = null;
   app.readView = null;
   app.writeView = null;
@@ -153,18 +155,59 @@
   };
 
   var ready = function() {
-    setupUI();
+    setUpUI();
     setUpClickListeners();
     wireUpViews();
 
     // decide on which screens to show/hide
     app.hideAllContainers();
-    //jQuery('#read-screen').removeClass('hidden');
-    // check if the state is paused and update screens accordingly - unhiding the start screen is now handled in reflectRunState
-    app.reflectRunState();
+
+    showProjectPicker();
   };
 
-  var setupUI = function() {
+  var showProjectPicker = function() {
+    // get collection of projects?
+
+
+    // populate project picker modal
+    //jQuery('#project-picker .project-buttons')
+
+    jQuery('#project-picker').modal({keyboard: false, backdrop: 'static'});
+
+    jQuery('#project-picker button').click(function() {
+      jQuery('#project-picker').modal('hide');
+      if (jQuery(this).val() === "new") {
+        setupProject("new");
+      } else {
+        // check if the state is paused and update screens accordingly - unhiding the start screen is now handled in reflectRunState
+        setupProject(jQuery(this).val());
+      }
+      return false;
+    });
+  };
+
+  var setupProject = function(project) {
+    var p = null;
+
+    if (project === "new") {
+      p = new Model.Project();
+      p.set('name',"untitled");
+      p.wake(app.config.wakeful.url);
+      p.save();
+      Skeletor.Model.awake.projects.add(p);
+    } else {
+      // do some kind of resuming of projects
+      p = Skeletor.Mobile.projects(project);   // this probably doesn't work, but it's a start
+    }
+
+    // all of the views will take this model
+    app.newProjectView.model = p;
+    app.proposalView.model = p;
+
+    app.reflectRunState(project);
+  }
+
+  var setUpUI = function() {
     /* MISC */
     jQuery().toastmessage({
       position : 'middle-center'
@@ -181,7 +224,7 @@
 
     jQuery('.top-nav-btn').click(function() {
       if (app.username) {
-        jQuery('.top-nav-btn li').removeClass('active');     // unmark all nav items
+        jQuery('.top-nav-btn').removeClass('active');     // unmark all nav items
         jQuery(this).addClass('active');
         app.hideAllContainers();
         if (jQuery(this).attr('id') === 'proposal-nav-btn') {
@@ -198,7 +241,6 @@
     });
   };
 
-
   var wireUpViews = function() {
     /* ======================================================
      * Setting up the Backbone Views to render data
@@ -208,10 +250,17 @@
      * ======================================================
      */
 
+     if (app.newProjectView === null) {
+       app.newProjectView = new app.View.NewProjectView({
+         el: '#new-project-screen',
+         collection: Skeletor.Model.awake.projects
+       });
+     }
+
      if (app.proposalView === null) {
        app.proposalView = new app.View.ProposalView({
          el: '#proposal-screen',
-         collection: Skeletor.Model.awake.brainstorms
+         collection: Skeletor.Model.awake.projects
        });
      }
 
@@ -251,10 +300,6 @@
     // return date;
   };
 
-  app.roundToTwo = function(num) {
-    return Math.round(num * 100) / 100;
-  };
-
   //*************** LOGIN FUNCTIONS ***************//
 
   app.loginUser = function (username) {
@@ -268,9 +313,6 @@
 
         jQuery.cookie('brainstorm_mobile_username', app.username, { expires: 1, path: '/' });
         jQuery('.username-display a').text(app.runId+"'s class - "+user.get('display_name'));
-
-        // show leaf_drop_observations-screen
-        jQuery('#leaf_drop_observations-screen').removeClass('hidden');
 
         hideLogin();
         hideUserLoginPicker();
@@ -399,9 +441,9 @@
     }
   };
 
-  app.reflectRunState = function() {
-    // currently only used for pause, but could be expanded for different states (eg brainstorm vs proposal)
-
+  // WARNING: 'runstate' is a bit misleading, since this does more than run state now - this might want to be multiple functions
+  // takes an optional parameter ("new" or an object id), if not being used with
+  app.reflectRunState = function(project) {
     // checking paused status
     if (app.runState.get('paused') === true) {
       console.log('Locking screen...');
@@ -410,8 +452,13 @@
     } else if (app.runState.get('paused') === false) {
       console.log('Unlocking screen...');
       jQuery('#lock-screen').addClass('hidden');
-      // we need to always to push users to a screen (can't just unhide all screens), so chose this one... think more about this for next iteration - could move back to old lock screen covering everything instead of hide/show
-      jQuery('#proposal-screen').removeClass('hidden');
+      if (project === "new") {
+        jQuery('#new-project-screen').removeClass('hidden');
+        app.newProjectView.render();
+      } else {
+        // we need to always to push users to a screen (can't just unhide all screens), so chose this one... think more about this for next iteration - could move back to old lock screen covering everything instead of hide/show
+        jQuery('#proposal-screen').removeClass('hidden');
+      }
     }
   };
 

@@ -38,6 +38,11 @@
     background: #db7bc8;
 }
 
+/* this should be changed, depending on the final colour of the button (used in the new-project sections) */
+.selected {
+    background: pink;
+}
+
 textarea {
     border: 2px solid #c31fa4;
 }
