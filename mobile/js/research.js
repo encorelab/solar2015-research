@@ -171,7 +171,7 @@
 
     Skeletor.Model.awake.projects.each(function(project) {
       var button = jQuery('<button class="btn project-button">');
-      button.val(project.get('id'));
+      button.val(project.get('_id'));
       button.text(project.get('name'));
       jQuery('.projects-holder').append(button);
     });

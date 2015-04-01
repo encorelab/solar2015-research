@@ -78,6 +78,7 @@
           // add the logged in user to the project
           if (user.get('username') === app.username) {
             button.addClass('selected');
+            button.addClass('disabled');
           }
         });
 
