@@ -124,7 +124,6 @@
 
     publishProposal: function() {
       var view = this;
-
       var name = jQuery('#proposal-screen [name=name]').val();
 
       if (name.length > 0) {
@@ -140,28 +139,6 @@
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
       } else {
         jQuery().toastmessage('showErrorToast', "Please enter a title!");
-      }
-    },
-
-
-    publishBrainstorm: function() {
-      var view = this;
-      var title = jQuery('#brainstorm-title-input').val();
-      var body = app.turnUrlsToLinks(jQuery('#brainstorm-body-input').val());
-
-      if (title.length > 0 && body.length > 0) {
-        app.clearAutoSaveTimer();
-        view.model.set('title',title);
-        view.model.set('body',body);
-        view.model.set('published', true);
-        view.model.set('modified_at', new Date());
-        view.model.save();
-        jQuery().toastmessage('showSuccessToast', "Published to brainstorm wall");
-
-        view.model = null;
-        jQuery('.input-field').val('');
-      } else {
-        jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your brainstorm...");
       }
     },
 
@@ -192,6 +169,10 @@
     render: function () {
       var view = this;
       console.log("Rendering ProposalView...");
+
+      jQuery('#proposal-screen [name=name]').text(view.model.get('name'));
+      jQuery('#proposal-screen [name=research_question]').text(view.model.get('proposal').research_question);
+      jQuery('#proposal-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
     }
 
   });
