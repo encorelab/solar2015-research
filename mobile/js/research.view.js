@@ -118,7 +118,75 @@
     },
 
     events: {
+      'click #publish-proposal-btn' : 'publishProposal',
+      'keyup :input'                : 'checkForAutoSave'
+    },
 
+    publishProposal: function() {
+      var view = this;
+
+      var name = jQuery('#proposal-screen [name=name]').val();
+
+      if (name.length > 0) {
+        app.clearAutoSaveTimer();
+        view.model.set('name',name);
+        var proposal = view.model.get('proposal');
+        proposal.research_question = jQuery('#proposal-screen [name=research_question]').val();
+        proposal.need_to_knows = jQuery('#proposal-screen [name=need_to_knows]').val();
+        view.model.set('proposal',proposal);
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please enter a title!");
+      }
+    },
+
+
+    publishBrainstorm: function() {
+      var view = this;
+      var title = jQuery('#brainstorm-title-input').val();
+      var body = app.turnUrlsToLinks(jQuery('#brainstorm-body-input').val());
+
+      if (title.length > 0 && body.length > 0) {
+        app.clearAutoSaveTimer();
+        view.model.set('title',title);
+        view.model.set('body',body);
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Published to brainstorm wall");
+
+        view.model = null;
+        jQuery('.input-field').val('');
+      } else {
+        jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your brainstorm...");
+      }
+    },
+
+    // ADD ME LATER
+    // view.collection.on('sync', view.onModelSaved, view);
+    // onModelSaved: function(model, response, options) {
+    //   model.set('modified_at', new Date());
+    // },
+
+    // this version of autosave works with nested content. The nested structure must be spelled out *in the html*
+    // eg <textarea data-nested="proposal" name="research_question" placeholder="1."></textarea>
+    checkForAutoSave: function(ev) {
+      var view = this,
+          field = ev.target.name,
+          input = ev.target.value;
+      // clear timer on keyup so that a save doesn't happen while typing
+      app.clearAutoSaveTimer();
+
+      // save after 10 keystrokes
+      app.autoSave(view.model, field, input, false, jQuery(ev.target).data("nested"));
+
+      // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      app.autoSaveTimer = setTimeout(function(){
+        app.autoSave(view.model, field, input, true, jQuery(ev.target).data("nested"));
+      }, 5000);
     },
 
     render: function () {

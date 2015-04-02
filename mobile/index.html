@@ -86,7 +86,6 @@
 
     <!-- New Project Screen -->
     <div id="new-project-screen" class="container-fluid user-screen">
-
         <div id="new-project-student-picker" class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 Select the names of all students who will work on this project
@@ -102,7 +101,6 @@
                 <div class="project-theme-holder">
                     <!-- populated by the view -->
                 </div>
-                <!-- <button id="submit-theme-btn">Choose your theme</button> -->
             </div>
         </div>
     </div>
@@ -112,9 +110,12 @@
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <h3>Write your project proposal</h3>
-                <textarea placeholder="Project title"></textarea>
+                <textarea name="name" placeholder="Project title"></textarea>
                 What is (are) your main research questions?
-                <textarea placeholder="1."></textarea>
+                <textarea data-nested="proposal" name="research_question" placeholder="1."></textarea>
+                What would you need to know in order to answer your research question(s)?
+                <textarea data-nested="proposal" name="need_to_knows" placeholder="1."></textarea>
+                <button id="publish-proposal-btn" class="btn-circular fa fa-check fa-3x pull-right"></button>
             </div>
         </div>
     </div>

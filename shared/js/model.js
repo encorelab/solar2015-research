@@ -214,7 +214,11 @@
       this.Project = this.db.Document('projects').extend({
         defaults: {
           'created_at': new Date(),
-          'modified_at': new Date()
+          'modified_at': new Date(),
+          'proposal': {
+            'published': false
+          },
+          'tiles': []
         }
       })
 
