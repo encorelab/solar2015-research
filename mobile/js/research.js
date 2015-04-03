@@ -31,7 +31,7 @@
   app.runState = null;
   app.users = null;
   app.username = null;
-  app.themes = null;
+  app.groupname = null;
 
   // TODO: think about creating top level view that contains the model, all other views inherit from that?
   app.newProjectView = null;
@@ -101,7 +101,8 @@
           var currentUser = app.users.findWhere({username: app.username});
 
           if (currentUser) {
-            jQuery('.username-display a').text(app.runId+' - '+currentUser.get('display_name'));
+            //jQuery('.username-display a').text(app.runId+' - '+currentUser.get('display_name'));
+            jQuery('.username-display a').text(app.runId+"'s class");
 
             hideLogin();
             showUsername();
@@ -210,19 +211,23 @@
 
     if (projectId === "new") {
       p = new Model.Project();
-      p.set('name',"untitled");
+      p.set('name',"untitled project");
       p.wake(app.config.wakeful.url);
       p.save();
       Skeletor.Model.awake.projects.add(p);
     } else {
       // resume the previous project
-      p = Skeletor.Model.awake.projects.get(projectId)
+      p = Skeletor.Model.awake.projects.get(projectId);
     }
 
     // all of the views will take this model
     app.newProjectView.model = p;
     app.proposalView.model = p;
     app.reviewOverviewView.model = p;
+
+    // note that this is done again in newProjectView (think about making this awake?)
+    app.groupname = p.get('name');
+    jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
 
     app.reflectRunState(projectId);
   }

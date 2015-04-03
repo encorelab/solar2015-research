@@ -137,6 +137,10 @@
         proposal.published = true;
         view.model.set('proposal',proposal);
         view.model.save();
+
+        app.groupname = name;
+        jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
+
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
       } else {
         jQuery().toastmessage('showErrorToast', "Please enter a title!");
@@ -495,6 +499,7 @@
         var proposal = view.model.get('proposal');
         proposal.review_research_question = jQuery('#review-details-screen [name=review_research_question]').val();
         proposal.review_need_to_knows = jQuery('#review-details-screen [name=review_need_to_knows]').val();
+        proposal.reviewer = app.groupname;
         proposal.review_published = true;
         view.model.set('proposal',proposal);
         view.model.save();
@@ -516,14 +521,14 @@
         proposal.review_need_to_knows = "";
         view.model.set('proposal',proposal);
         view.model.save();
-
         jQuery('.input-field').val('');
-
         view.switchToProjectOverviewView();
       }
     },
 
     switchToProjectOverviewView: function(ev) {
+      var view = this;
+      view.model = null;
       jQuery('#review-details-screen').addClass('hidden');
       jQuery('#review-overview-screen').removeClass('hidden');
     },
@@ -548,8 +553,14 @@
       var view = this;
       console.log("Rendering ReviewDetailsView...");
 
+      jQuery('#review-details-screen .input-field').val("");
+      jQuery('#review-details-screen [name=research_question]').text(view.model.get('proposal').research_question);
+      jQuery('#review-details-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
+      jQuery('#review-details-screen [name=review_research_question]').val(view.model.get('proposal').review_research_question);
+      jQuery('#review-details-screen [name=review_need_to_knows]').val(view.model.get('proposal').review_need_to_knows);
+
       if (view.model.get('proposal').review_published === true) {
-        jQuery('#review-details-title').text('"' + view.model.get('name') + '" has already been reviewed. You may view it, but not make any changes');
+        jQuery('#review-details-title').text('"' + view.model.get('name') + '" has already been reviewed by ' + view.model.get('proposal').reviewer + '. You may view it, but not make any changes');
         jQuery('#review-details-screen .input-field').addClass('disabled');
         jQuery('.modify-proposal-btn').addClass('disabled');
       } else {
@@ -557,12 +568,6 @@
         jQuery('#review-details-screen .input-field').removeClass('disabled');
         jQuery('.modify-proposal-btn').removeClass('disabled');
       }
-
-      jQuery('#review-details-screen .input-field').text("");
-      jQuery('#review-details-screen [name=research_question]').text(view.model.get('proposal').research_question);
-      jQuery('#review-details-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
-      jQuery('#review-details-screen [name=review_research_question]').text(view.model.get('proposal').review_research_question);
-      jQuery('#review-details-screen [name=review_need_to_knows]').text(view.model.get('proposal').review_need_to_knows);
     }
 
   });
