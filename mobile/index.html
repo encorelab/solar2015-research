@@ -205,14 +205,13 @@
         </div>
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3>You are reviewing the proposal called <span name="name"></span></h3>
-                <div>Read each section of your peer’s proposal, and add comments.</div>
+                <h3 id="review-details-title"></h3>
                 <div name="research_question"></div>
                 <textarea class="input-field" data-nested="proposal" name="review_research_question" placeholder="Does this research question make sense? Do you have any suggestions of how it could be improved?"></textarea>
                 <div name="need_to_knows"></div>
                 <textarea class="input-field" data-nested="proposal" name="review_need_to_knows" placeholder="Is there anything else that you think your peers should consider?"></textarea>
-                <button id="publish-review-btn" class="btn-circular fa fa-check fa-3x pull-right"></button>
-                <button id="cancel-review-btn" class="btn-circular fa fa-times fa-3x pull-right"></button>
+                <button id="publish-review-btn" class="modify-proposal-btn btn-circular fa fa-check fa-3x pull-right"></button>
+                <button id="cancel-review-btn" class="modify-proposal-btn btn-circular fa fa-times fa-3x pull-right"></button>
             </div>
         </div>
     </div>
@@ -248,7 +247,7 @@
                         <h3>What do you want to do today?</h3>
                         </div>
                         <button class="btn" value="new">Start new project</button>
-                        Or continue working on a project...
+                        <br/>
                         <div class="modal-body projects-holder">
                             <!-- filled by javascript with buttons for user login -->
                         </div>

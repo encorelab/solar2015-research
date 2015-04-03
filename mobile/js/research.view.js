@@ -548,11 +548,17 @@
       var view = this;
       console.log("Rendering ReviewDetailsView...");
 
-      // TODO: add big if around this all, based on if review published is true allow editing
+      if (view.model.get('proposal').review_published === true) {
+        jQuery('#review-details-title').text('"' + view.model.get('name') + '" has already been reviewed. You may view it, but not make any changes');
+        jQuery('#review-details-screen .input-field').addClass('disabled');
+        jQuery('.modify-proposal-btn').addClass('disabled');
+      } else {
+        jQuery('#review-details-title').text('You are currently reviewing "' + view.model.get('name') + '". Read each section of your peer’s proposal, and add comments.');
+        jQuery('#review-details-screen .input-field').removeClass('disabled');
+        jQuery('.modify-proposal-btn').removeClass('disabled');
+      }
 
       jQuery('#review-details-screen .input-field').text("");
-
-      jQuery('#review-details-screen [name=name]').text(view.model.get('name'));
       jQuery('#review-details-screen [name=research_question]').text(view.model.get('proposal').research_question);
       jQuery('#review-details-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
       jQuery('#review-details-screen [name=review_research_question]').text(view.model.get('proposal').review_research_question);
