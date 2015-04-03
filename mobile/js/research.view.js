@@ -424,9 +424,11 @@
     },
 
     switchToProjectDetailsView: function(ev) {
+      // would it be better to instantiate a new model/view here each time?
       app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
       jQuery('#review-overview-screen').addClass('hidden');
       jQuery('#review-details-screen').removeClass('hidden');
+      app.reviewDetailsView.render();
     },
 
     render: function () {
@@ -445,6 +447,8 @@
       var projectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
         return (view.model && proj.get('proposal').published === true && proj.get('name') !== view.model.get('name'));
       });
+
+      // TODO: this will need a lot more work. To be sorted 3 times, see reb emails
 
       _.each(projectsWithPublishedProposals, function(proj){
         var listItem = jQuery("<button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button>" );
@@ -474,7 +478,49 @@
     },
 
     events: {
-      'click #return-to-overview-btn'         : 'switchToProjectOverviewView',
+      'click #return-to-overview-btn' : 'switchToProjectOverviewView',
+      'click #publish-review-btn'     : 'publishReview',
+      'click #cancel-review-btn'      : 'cancelReview',
+      'keyup :input'                  : 'checkForAutoSave'
+    },
+
+    publishReview: function() {
+      var view = this;
+
+      var reviewResearchQuestion = jQuery('#review-details-screen [name=review_research_question]').val();
+      var reviewNeedToKnows = jQuery('#review-details-screen [name=review_need_to_knows]').val();
+
+      if (reviewResearchQuestion.length > 0 && reviewNeedToKnows.length > 0) {
+        app.clearAutoSaveTimer();
+        var proposal = view.model.get('proposal');
+        proposal.review_research_question = jQuery('#review-details-screen [name=review_research_question]').val();
+        proposal.review_need_to_knows = jQuery('#review-details-screen [name=review_need_to_knows]').val();
+        proposal.review_published = true;
+        view.model.set('proposal',proposal);
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Your review has been sent!");
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please complete your review before submitting...");
+      }
+
+      view.switchToProjectOverviewView();
+    },
+
+    cancelReview: function() {
+      var view = this;
+
+      if (confirm("Are you sure you want to delete this review?")) {
+        app.clearAutoSaveTimer();
+        var proposal = view.model.get('proposal');
+        proposal.review_research_question = "";
+        proposal.review_need_to_knows = "";
+        view.model.set('proposal',proposal);
+        view.model.save();
+
+        jQuery('.input-field').val('');
+
+        view.switchToProjectOverviewView();
+      }
     },
 
     switchToProjectOverviewView: function(ev) {
@@ -482,16 +528,38 @@
       jQuery('#review-overview-screen').removeClass('hidden');
     },
 
+    checkForAutoSave: function(ev) {
+      var view = this,
+          field = ev.target.name,
+          input = ev.target.value;
+      // clear timer on keyup so that a save doesn't happen while typing
+      app.clearAutoSaveTimer();
+
+      // save after 10 keystrokes
+      app.autoSave(view.model, field, input, false, jQuery(ev.target).data("nested"));
+
+      // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      app.autoSaveTimer = setTimeout(function(){
+        app.autoSave(view.model, field, input, true, jQuery(ev.target).data("nested"));
+      }, 5000);
+    },
+
     render: function () {
       var view = this;
       console.log("Rendering ReviewDetailsView...");
+
+      // TODO: add big if around this all, based on if review published is true allow editing
+
+      jQuery('#review-details-screen .input-field').text("");
+
+      jQuery('#review-details-screen [name=name]').text(view.model.get('name'));
+      jQuery('#review-details-screen [name=research_question]').text(view.model.get('proposal').research_question);
+      jQuery('#review-details-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
+      jQuery('#review-details-screen [name=review_research_question]').text(view.model.get('proposal').review_research_question);
+      jQuery('#review-details-screen [name=review_need_to_knows]').text(view.model.get('proposal').review_need_to_knows);
     }
 
   });
 
   this.Skeletor = Skeletor;
 }).call(this);
-
-
-
-

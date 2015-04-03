@@ -33,6 +33,7 @@
   app.username = null;
   app.themes = null;
 
+  // TODO: think about creating top level view that contains the model, all other views inherit from that?
   app.newProjectView = null;
   app.proposalView = null;
   app.writeView = null;

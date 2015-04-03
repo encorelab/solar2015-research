@@ -216,7 +216,8 @@
           'created_at': new Date(),
           'modified_at': new Date(),
           'proposal': {
-            'published': false
+            'published': false,
+            'review_published': false
           },
           'tiles': []
         }
