@@ -115,6 +115,8 @@
     initialize: function () {
       var view = this;
       console.log('Initializing ProposalView...', view.el);
+
+      view.collection.on('sync', view.onModelSaved, view);
     },
 
     events: {
@@ -142,11 +144,9 @@
       }
     },
 
-    // ADD ME LATER
-    // view.collection.on('sync', view.onModelSaved, view);
-    // onModelSaved: function(model, response, options) {
-    //   model.set('modified_at', new Date());
-    // },
+    onModelSaved: function(model, response, options) {
+      model.set('modified_at', new Date());
+    },
 
     // this version of autosave works with nested content. The nested structure must be spelled out *in the html*
     // eg <textarea data-nested="proposal" name="research_question" placeholder="1."></textarea>
