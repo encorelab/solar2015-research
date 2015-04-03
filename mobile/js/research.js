@@ -37,7 +37,8 @@
   app.proposalView = null;
   app.writeView = null;
   app.readView = null;
-  app.reviewOverviewView = null;
+  app.reviewOverviewView = null;        // lolololol
+  app.reviewDetailsView = null;
 
   app.keyCount = 0;
   app.autoSaveTimer = window.setTimeout(function() { } ,10);
@@ -303,6 +304,13 @@
       app.reviewOverviewView = new app.View.ReviewOverviewView({
         el: '#review-overview-screen',
         collection: Skeletor.Model.awake.projects
+      });
+    }
+
+    // should this just be instantiated in the reviewOverviewView?
+    if (app.reviewDetailsView === null) {
+      app.reviewDetailsView = new app.View.ReviewDetailsView({
+        el: '#review-details-screen'
       });
     }
   };

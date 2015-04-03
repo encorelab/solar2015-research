@@ -185,15 +185,29 @@
     <!-- ReviewOverview Screen -->
     <div id="review-overview-screen" class="container-fluid user-screen">
         <div class="row">
-            <div class="inner-wrapper">
-                Select proposals to review by theme
-            </div>
             <!-- <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <ul id="review-themes-container" class="row"></ul>
             </div> -->
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                <h3>Select a proposal to review</h3>
                 <ul id="review-overview-projects-container" class="row"></ul>
                 <!-- gets filled by the reviewScreenView -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ReviewDetails Screen -->
+    <div id="review-details-screen" class="container-fluid user-screen">
+        <div class="row">
+            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
+                <button id="return-to-overview-btn" class="fa fa-arrow-left fa-3x btn-circular"></button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                <h3>Project name</h3>
+                <div name="research_question"></div>
+                <textarea class="input-field" name="research_question_review"></textarea>
             </div>
         </div>
     </div>

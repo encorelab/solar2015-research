@@ -408,7 +408,6 @@
       var view = this;
       console.log('Initializing ReviewOverviewView...', view.el);
 
-      // NOTE/QUESTION: this section basically won't be awake/live updated?
       view.collection.on('change', function(n) {
         view.render();
       });
@@ -421,7 +420,13 @@
     },
 
     events: {
-      //'click #nav-write-btn'         : 'switchToWriteView',
+      'click .project-to-review-btn'         : 'switchToProjectDetailsView',
+    },
+
+    switchToProjectDetailsView: function(ev) {
+      app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
+      jQuery('#review-overview-screen').addClass('hidden');
+      jQuery('#review-details-screen').removeClass('hidden');
     },
 
     render: function () {
@@ -442,7 +447,7 @@
       });
 
       _.each(projectsWithPublishedProposals, function(proj){
-        var listItem = jQuery("<button class='btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button>" );
+        var listItem = jQuery("<button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button>" );
 
         var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
         if (existingProj.length === 0) {
@@ -451,6 +456,35 @@
           existingProj.replaceWith(listItem);
         }
       });
+    }
+
+  });
+
+
+  /**
+    ReviewDetailsView
+  **/
+  app.View.ReviewDetailsView = Backbone.View.extend({
+
+    initialize: function () {
+      var view = this;
+      console.log('Initializing ReviewDetailsView...', view.el);
+
+      return view;
+    },
+
+    events: {
+      'click #return-to-overview-btn'         : 'switchToProjectOverviewView',
+    },
+
+    switchToProjectOverviewView: function(ev) {
+      jQuery('#review-details-screen').addClass('hidden');
+      jQuery('#review-overview-screen').removeClass('hidden');
+    },
+
+    render: function () {
+      var view = this;
+      console.log("Rendering ReviewDetailsView...");
     }
 
   });
