@@ -436,12 +436,14 @@
       };
 
       // projects with proposals that are published and that is not this group's project name
-      var projectsWithPublishedProposals = view.collection.sort().filter(function(proj) { return (proj.get('proposal').published === true && proj.get('name') !== view.model.get('name')); });
+      // this render will sometimes fire before we have a model attached, hence the view.model in the return
+      var projectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
+        return (view.model && proj.get('proposal').published === true && proj.get('name') !== view.model.get('name'));
+      });
 
       _.each(projectsWithPublishedProposals, function(proj){
         var listItem = jQuery("<button class='btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button>" );
 
-        //list.prepend(listItem);
         var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
         if (existingProj.length === 0) {
           list.prepend(listItem);
@@ -452,13 +454,6 @@
     }
 
   });
-
-/* START HERE
- NOT WORKING:
-- you can log in to any project (doesn't check by name?)
-- live updates of new projects added. Maybe cause proposal set to published doesn't trigger things?
-
-*/
 
   this.Skeletor = Skeletor;
 }).call(this);
