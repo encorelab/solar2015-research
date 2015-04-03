@@ -170,15 +170,25 @@
     // get collection of projects?
     jQuery('.projects-holder').html('');
 
-    Skeletor.Model.awake.projects.each(function(project) {
+    // get a list of projects that user is involved with
+    var myProjectsList = Skeletor.Model.awake.projects.filter(function(proj) {
+      return ( _.contains(proj.get('associated_users'), app.username) )
+    });
+
+    // sort list by oldest to newest (note append below)
+    myProjectsList.comparator = function(model) {
+      return model.get('created_at');
+    };
+
+    // create the html for each of these projects
+    _.each(myProjectsList, function(project) {
       var button = jQuery('<button class="btn project-button">');
       button.val(project.get('_id'));
       button.text(project.get('name'));
       jQuery('.projects-holder').append(button);
     });
 
-    jQuery('#project-picker').modal({keyboard: false, backdrop: 'static'});
-
+    // set up the click listeners for the projects
     jQuery('#project-picker button').click(function() {
       jQuery('#project-picker').modal('hide');
       if (jQuery(this).val() === "new") {
@@ -189,6 +199,8 @@
       }
       return false;
     });
+
+    jQuery('#project-picker').modal({keyboard: false, backdrop: 'static'});
   };
 
   var setupProject = function(projectId) {

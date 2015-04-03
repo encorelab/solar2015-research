@@ -453,5 +453,16 @@
 
   });
 
+/* START HERE
+ NOT WORKING:
+- you can log in to any project (doesn't check by name?)
+- live updates of new projects added. Maybe cause proposal set to published doesn't trigger things?
+
+*/
+
   this.Skeletor = Skeletor;
 }).call(this);
+
+
+
+
