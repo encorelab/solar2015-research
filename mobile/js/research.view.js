@@ -513,11 +513,10 @@
         view.model.set('proposal',proposal);
         view.model.save();
         jQuery().toastmessage('showSuccessToast', "Your review has been sent!");
+        view.switchToProjectOverviewView();
       } else {
         jQuery().toastmessage('showErrorToast', "Please complete your review before submitting...");
       }
-
-      view.switchToProjectOverviewView();
     },
 
     cancelReview: function() {

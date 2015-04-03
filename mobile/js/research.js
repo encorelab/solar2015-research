@@ -187,7 +187,7 @@
     _.each(myProjectsList, function(project) {
       var button = jQuery('<button class="btn project-button">');
       button.val(project.get('_id'));
-      button.text(project.get('name'));
+      button.text("Work on " + project.get('name'));
       jQuery('.projects-holder').append(button);
     });
 
@@ -247,19 +247,24 @@
       logoutUser();
     });
 
-    jQuery('.top-nav-btn').click(function() {
+    jQuery('.top-nav-btn, .todo-btn').click(function() {
       if (app.username) {
         jQuery('.top-nav-btn').removeClass('active');     // unmark all nav items
-        jQuery(this).addClass('active');
         app.hideAllContainers();
-        if (jQuery(this).attr('id') === 'proposal-nav-btn') {
+        if (jQuery(this).hasClass('goto-proposal-btn')) {
+          jQuery('#proposal-nav-btn').addClass('active');
           jQuery('#proposal-screen').removeClass('hidden');
-        } else if (jQuery(this).attr('id') === 'write-nav-btn') {
+          app.proposalView.render();
+        } else if (jQuery(this).hasClass('goto-write-btn')) {
+          jQuery('#write-nav-btn').addClass('active');
+          jQuery('#write-screen').removeClass('hidden');
           //app.writeView.render();
-        } else if (jQuery(this).attr('id') === 'read-nav-btn') {
+        } else if (jQuery(this).hasClass('goto-read-btn')) {
+          jQuery('#read-nav-btn').addClass('active');
           jQuery('#read-screen').removeClass('hidden');
           //app.readView.render();
-        } else if (jQuery(this).attr('id') === 'review-nav-btn') {
+        } else if (jQuery(this).hasClass('goto-review-btn')) {
+          jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');
           app.reviewOverviewView.render();
         } else {
@@ -499,9 +504,11 @@
         app.newProjectView.render();
       } else {
         // we need to always to push users to a screen (can't just unhide all screens), so chose this one... think more about this for next iteration - could move back to old lock screen covering everything instead of hide/show or could move to idea of splash screen
-        jQuery('#proposal-screen').removeClass('hidden');
-        jQuery('#proposal-nav-btn').addClass('active');
-        app.proposalView.render();
+        //jQuery('#proposal-screen').removeClass('hidden');
+        // jQuery('#proposal-nav-btn').addClass('active');
+        // app.proposalView.render();
+
+        jQuery('#todo-screen').removeClass('hidden');
       }
     }
   };
