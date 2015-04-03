@@ -435,27 +435,14 @@
       app.reviewDetailsView.render();
     },
 
-    render: function () {
+    populateList: function(projects, listId) {
       var view = this;
-      console.log("Rendering ReviewOverviewView...");
 
-      var list = jQuery('#review-overview-projects-container');
+      // we have two lists now, so decide which one we're dealing with here
+      var list = jQuery('#'+listId);
 
-      // sort by theme
-      view.collection.comparator = function(model) {
-        return model.get('theme');
-      };
-
-      // projects with proposals that are published and that is not this group's project name
-      // this render will sometimes fire before we have a model attached, hence the view.model in the return
-      var projectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (view.model && proj.get('proposal').published === true && proj.get('name') !== view.model.get('name'));
-      });
-
-      // TODO: this will need a lot more work. To be sorted 3 times, see reb emails
-
-      _.each(projectsWithPublishedProposals, function(proj){
-        var listItem = jQuery("<button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button>" );
+      _.each(projects, function(proj){
+        var listItem = jQuery("<li><button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button></li>" );
 
         var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
         if (existingProj.length === 0) {
@@ -464,6 +451,28 @@
           existingProj.replaceWith(listItem);
         }
       });
+    },
+
+    render: function () {
+      var view = this;
+      console.log("Rendering ReviewOverviewView...");
+
+      // sort by theme
+      view.collection.comparator = function(model) {
+        return model.get('theme');
+      };
+
+      // projects with proposals that are published and that is not this group's project name
+      // this render will sometimes fire before we have a model attached, hence the view.model in the return
+      var unreviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
+        return (view.model && proj.get('name') !== view.model.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === false);
+      });
+      view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
+
+      var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
+        return (view.model && proj.get('name') !== view.model.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === true);
+      });
+      view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
 
   });

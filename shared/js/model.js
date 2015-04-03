@@ -209,8 +209,6 @@
         model: Skeletor.Model.Tag
       });
 
-
-      // these are increasingly useless, since they can't be parameterized (and we can't use Skeletor.Mobile type vars, since the board will choke on them)
       this.Project = this.db.Document('projects').extend({
         defaults: {
           'created_at': new Date(),
