@@ -462,6 +462,7 @@
       } else {
         // we need to always to push users to a screen (can't just unhide all screens), so chose this one... think more about this for next iteration - could move back to old lock screen covering everything instead of hide/show or could move to idea of splash screen
         jQuery('#proposal-screen').removeClass('hidden');
+        jQuery('#proposal-nav-btn').addClass('active');
         app.proposalView.render();
       }
     }
