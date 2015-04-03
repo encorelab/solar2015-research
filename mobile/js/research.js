@@ -35,8 +35,9 @@
 
   app.newProjectView = null;
   app.proposalView = null;
-  app.readView = null;
   app.writeView = null;
+  app.readView = null;
+  app.reviewOverviewView = null;
 
   app.keyCount = 0;
   app.autoSaveTimer = window.setTimeout(function() { } ,10);
@@ -207,6 +208,7 @@
     // all of the views will take this model
     app.newProjectView.model = p;
     app.proposalView.model = p;
+    app.reviewOverviewView.model = p;
 
     app.reflectRunState(projectId);
   }
@@ -233,11 +235,14 @@
         app.hideAllContainers();
         if (jQuery(this).attr('id') === 'proposal-nav-btn') {
           jQuery('#proposal-screen').removeClass('hidden');
+        } else if (jQuery(this).attr('id') === 'write-nav-btn') {
+          //app.writeView.render();
         } else if (jQuery(this).attr('id') === 'read-nav-btn') {
           jQuery('#read-screen').removeClass('hidden');
           //app.readView.render();
-        } else if (jQuery(this).attr('id') === 'write-nav-btn') {
-          //app.writeView.render();
+        } else if (jQuery(this).attr('id') === 'review-nav-btn') {
+          jQuery('#review-overview-screen').removeClass('hidden');
+          app.reviewOverviewView.render();
         } else {
           console.log('ERROR: unknown nav button');
         }
@@ -279,6 +284,13 @@
       app.readView = new app.View.ReadView({
         el: '#read-screen',
         collection: Skeletor.Model.awake.brainstorms
+      });
+    }
+
+    if (app.reviewOverviewView === null) {
+      app.reviewOverviewView = new app.View.ReviewOverviewView({
+        el: '#review-overview-screen',
+        collection: Skeletor.Model.awake.projects
       });
     }
   };

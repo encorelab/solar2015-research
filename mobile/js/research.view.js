@@ -134,9 +134,8 @@
         var proposal = view.model.get('proposal');
         proposal.research_question = jQuery('#proposal-screen [name=research_question]').val();
         proposal.need_to_knows = jQuery('#proposal-screen [name=need_to_knows]').val();
+        proposal.published = true;
         view.model.set('proposal',proposal);
-        view.model.set('published', true);
-        view.model.set('modified_at', new Date());
         view.model.save();
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
       } else {
@@ -395,6 +394,61 @@
 
       var othersPublishedBrainstorms = view.collection.sort().filter(function(b) { return (b.get('published') === true && b.get('author') !== app.username); });
       view.populateList(othersPublishedBrainstorms, "others-tiles-list");
+    }
+
+  });
+
+
+  /**
+    ReviewOverviewView
+  **/
+  app.View.ReviewOverviewView = Backbone.View.extend({
+
+    initialize: function () {
+      var view = this;
+      console.log('Initializing ReviewOverviewView...', view.el);
+
+      // NOTE/QUESTION: this section basically won't be awake/live updated?
+      view.collection.on('change', function(n) {
+        view.render();
+      });
+
+      view.collection.on('add', function(n) {
+        view.render();
+      });
+
+      return view;
+    },
+
+    events: {
+      //'click #nav-write-btn'         : 'switchToWriteView',
+    },
+
+    render: function () {
+      var view = this;
+      console.log("Rendering ReviewOverviewView...");
+
+      var list = jQuery('#review-overview-projects-container');
+
+      // sort by theme
+      view.collection.comparator = function(model) {
+        return model.get('theme');
+      };
+
+      // projects with proposals that are published and that is not this group's project name
+      var projectsWithPublishedProposals = view.collection.sort().filter(function(proj) { return (proj.get('proposal').published === true && proj.get('name') !== view.model.get('name')); });
+
+      _.each(projectsWithPublishedProposals, function(proj){
+        var listItem = jQuery("<button class='btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button>" );
+
+        //list.prepend(listItem);
+        var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
+        if (existingProj.length === 0) {
+          list.prepend(listItem);
+        } else {
+          existingProj.replaceWith(listItem);
+        }
+      });
     }
 
   });
