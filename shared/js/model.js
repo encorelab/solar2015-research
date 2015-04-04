@@ -219,7 +219,7 @@
           },
           'tiles': []
         }
-      })
+      });
 
       this.Projects = this.db.Collection('projects').extend({
         model: Skeletor.Model.Project

@@ -175,7 +175,7 @@
 
     // get a list of projects that user is involved with
     var myProjectsList = Skeletor.Model.awake.projects.filter(function(proj) {
-      return ( _.contains(proj.get('associated_users'), app.username) )
+      return ( _.contains(proj.get('associated_users'), app.username) );
     });
 
     // sort list by oldest to newest (note append below)
@@ -211,7 +211,10 @@
 
     if (projectId === "new") {
       p = new Model.Project();
-      p.set('name',"untitled project");
+      // we're going to make an (admittedly feeble) attempt at avoiding collisions here. Project names get overwritten pretty quickly, in principle, but...
+      var d = new Date();
+      var projName = "untitled project #" + d.getSeconds() + d.getMilliseconds();
+      p.set('name',projName);
       p.wake(app.config.wakeful.url);
       p.save();
       Skeletor.Model.awake.projects.add(p);
@@ -230,7 +233,7 @@
     jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
 
     app.reflectRunState(projectId);
-  }
+  };
 
   var setUpUI = function() {
     /* MISC */
@@ -486,6 +489,7 @@
 
   // WARNING: 'runstate' is a bit misleading, since this does more than run state now - this might want to be multiple functions
   // takes an optional parameter ("new" or an object id), if not being used with
+  // this desperately needs to be broken up into several functions
   app.reflectRunState = function(project) {
     // checking paused status
     if (app.runState.get('paused') === true) {
@@ -493,23 +497,23 @@
       jQuery('#lock-screen').removeClass('hidden');
       jQuery('.user-screen').addClass('hidden');
     } else if (app.runState.get('paused') === false) {
-      console.log('Unlocking screen...');
       jQuery('#lock-screen').addClass('hidden');
       if (project === "new") {
         jQuery('#new-project-screen').removeClass('hidden');
         app.newProjectView.render();
       } else {
-        // we need to always to push users to a screen (can't just unhide all screens), so chose this one... think more about this for next iteration - could move back to old lock screen covering everything instead of hide/show or could move to idea of splash screen
-        //jQuery('#proposal-screen').removeClass('hidden');
-        // jQuery('#proposal-nav-btn').addClass('active');
-        // app.proposalView.render();
-
         jQuery('#todo-screen').removeClass('hidden');
       }
     }
   };
 
-  app.hideAllContainers = function () {
+  app.resetToSplashScreen = function() {
+    app.hideAllContainers();
+    jQuery('#proposal-nav-btn').addClass('active');
+    jQuery('#todo-screen').removeClass('hidden');
+  };
+
+  app.hideAllContainers = function() {
     jQuery('.container-fluid').each(function (){
       jQuery(this).addClass('hidden');
     });

@@ -33,7 +33,7 @@
       var partners = [];
       _.each(jQuery('.selected'), function(b) {
         partners.push(jQuery(b).val());
-      })
+      });
       view.model.set('associated_users',partners);
       view.model.save();
 
@@ -87,7 +87,7 @@
           jQuery(this).toggleClass('selected');
         });
       } else {
-        console.warn('Users collection is empty! Check database: '+DATABASE);
+        console.warn('Users collection is empty!');
       }
 
       // ADD THE THEMES AKA TAGS
@@ -100,7 +100,7 @@
           jQuery('.project-theme-holder').append(button);
         });
       } else {
-        console.warn('Tags collection is empty! Check database: '+DATABASE);
+        console.warn('Tags collection is empty!');
       }
     }
 
@@ -137,11 +137,13 @@
         proposal.published = true;
         view.model.set('proposal',proposal);
         view.model.save();
-
+        // show who is 'logged in' as the group, since that's our 'user' in this case
         app.groupname = name;
         jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
 
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
+
+        app.resetToSplashScreen();
       } else {
         jQuery().toastmessage('showErrorToast', "Please enter a title!");
       }
@@ -177,7 +179,12 @@
       jQuery('#proposal-screen [name=research_question]').text(view.model.get('proposal').research_question);
       jQuery('#proposal-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
 
-      // they can't be allowed to change the project name!
+      // they can't be allowed to change the name of their project once they've first created it, since it's now the unique identifier (le sigh)
+      if (view.model && view.model.get('proposal').published === true) {
+        jQuery('#proposal-screen [name=name]').addClass('disabled');
+      } else {
+        jQuery('#proposal-screen [name=name]').removeClass('disabled');
+      }
     }
 
   });
