@@ -176,18 +176,107 @@
       jQuery('#proposal-screen [name=name]').text(view.model.get('name'));
       jQuery('#proposal-screen [name=research_question]').text(view.model.get('proposal').research_question);
       jQuery('#proposal-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
+
+      // they can't be allowed to change the project name!
     }
 
   });
 
 
   /**
-    WriteView
+    ProjectReadView
   **/
-  app.View.WriteView = Backbone.View.extend({
+  app.View.ProjectReadView = Backbone.View.extend({
+    template: "#tile-template",
+
+    initialize: function () {
+      var view = this;
+      console.log('Initializing ProjectReadView...', view.el);
+
+      // we don't need this, since there's no editing of content in this version
+      view.collection.on('change', function(n) {
+        view.render();
+      });
+
+      view.collection.on('add', function(n) {
+        view.render();
+      });
+
+      view.render();
+
+      return view;
+    },
+
+    events: {
+      'click #nav-write-btn'         : 'switchToWriteView',
+      'click .tile-container'        : 'showTileDetails'
+    },
+
+    switchToWriteView: function() {
+      app.hideAllContainers();
+      jQuery('#project-write-screen').removeClass('hidden');
+    },
+
+    // TODO: create more views, definitely one for the tiles
+    showTileDetails: function(ev) {
+      // retrieve the brainstorm with the id in data-id
+      var brainstorm = app.readView.collection.get(jQuery(ev.target).data('id'));
+      jQuery('#tile-details .tile-title').text(brainstorm.get('title'));
+      jQuery('#tile-details .tile-body').text(brainstorm.get('body'));
+      jQuery('#tile-details .tile-author').text("- " + brainstorm.get('author'));
+
+
+      jQuery('#tile-details').modal({keyboard: true, backdrop: true});
+    },
+
+    populateList: function(brainstorms, listId) {
+      var view = this;
+
+      // we have two lists now, so decide which one we're dealing with here
+      var list = jQuery('#'+listId);
+
+      _.each(brainstorms, function(brainstorm){
+        var listItemTemplate = _.template(jQuery(view.template).text());
+        var listItem = listItemTemplate({ 'id': brainstorm.get('_id'), 'title': brainstorm.get('title'), 'body': brainstorm.get('body'), 'author': '- '+brainstorm.get('author') });
+
+        var existingNote = list.find("[data-id='" + brainstorm.get('_id') + "']");
+        if (existingNote.length === 0) {
+          list.prepend(listItem);
+        } else {
+          existingNote.replaceWith(listItem);
+        }
+      });
+    },
+
+    render: function () {
+      var view = this;
+      console.log("Rendering ProjectReadView...");
+
+      // sort newest to oldest
+      view.collection.comparator = function(model) {
+        return model.get('created_at');
+      };
+
+      // add the brainstorms to the list under the following ordered conditions:
+      // - my brainstorms, by date (since we're using prepend)
+      // - everyone else's brainstorms, by date (since we're using prepend)
+      var myPublishedBrainstorms = view.collection.sort().where({published: true, author: app.username});
+      view.populateList(myPublishedBrainstorms, "my-tiles-list");
+
+      var othersPublishedBrainstorms = view.collection.sort().filter(function(b) { return (b.get('published') === true && b.get('author') !== app.username); });
+      view.populateList(othersPublishedBrainstorms, "others-tiles-list");
+    }
+
+  });
+
+
+  /**
+    ProjectWriteView
+  **/
+  app.View.ProjectWriteView = Backbone.View.extend({
     initialize: function() {
       var view = this;
-      console.log('Initializing WriteView...', view.el);
+      console.log('Initializing ProjectWriteView...', view.el);
 
       // check if we need to resume any brainstorm note
       var brainstormToResume = view.collection.findWhere({author: app.username, published: false});
@@ -307,99 +396,12 @@
 
     switchToReadView: function() {
       app.hideAllContainers();
-      jQuery('#read-screen').removeClass('hidden');
+      jQuery('#project-read-screen').removeClass('hidden');
     },
 
     render: function () {
-      console.log("Rendering WriteView...");
+      console.log("Rendering ProjectWriteView...");
     }
-  });
-
-
-  /**
-    ReadView
-  **/
-  app.View.ReadView = Backbone.View.extend({
-    template: "#tile-template",
-
-    initialize: function () {
-      var view = this;
-      console.log('Initializing ReadView...', view.el);
-
-      // we don't need this, since there's no editing of content in this version
-      view.collection.on('change', function(n) {
-        view.render();
-      });
-
-      view.collection.on('add', function(n) {
-        view.render();
-      });
-
-      view.render();
-
-      return view;
-    },
-
-    events: {
-      'click #nav-write-btn'         : 'switchToWriteView',
-      'click .tile-container'        : 'showTileDetails'
-    },
-
-    switchToWriteView: function() {
-      app.hideAllContainers();
-      jQuery('#write-screen').removeClass('hidden');
-    },
-
-    // TODO: create more views, definitely one for the tiles
-    showTileDetails: function(ev) {
-      // retrieve the brainstorm with the id in data-id
-      var brainstorm = app.readView.collection.get(jQuery(ev.target).data('id'));
-      jQuery('#tile-details .tile-title').text(brainstorm.get('title'));
-      jQuery('#tile-details .tile-body').text(brainstorm.get('body'));
-      jQuery('#tile-details .tile-author').text("- " + brainstorm.get('author'));
-
-
-      jQuery('#tile-details').modal({keyboard: true, backdrop: true});
-    },
-
-    populateList: function(brainstorms, listId) {
-      var view = this;
-
-      // we have two lists now, so decide which one we're dealing with here
-      var list = jQuery('#'+listId);
-
-      _.each(brainstorms, function(brainstorm){
-        var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': brainstorm.get('_id'), 'title': brainstorm.get('title'), 'body': brainstorm.get('body'), 'author': '- '+brainstorm.get('author') });
-
-        var existingNote = list.find("[data-id='" + brainstorm.get('_id') + "']");
-        if (existingNote.length === 0) {
-          list.prepend(listItem);
-        } else {
-          existingNote.replaceWith(listItem);
-        }
-      });
-    },
-
-    render: function () {
-      var view = this;
-      console.log("Rendering ReadView...");
-
-      // sort newest to oldest
-      view.collection.comparator = function(model) {
-        return model.get('created_at');
-      };
-
-      // add the brainstorms to the list under the following ordered conditions:
-      // - my brainstorms, by date (since we're using prepend)
-      // - everyone else's brainstorms, by date (since we're using prepend)
-      var myPublishedBrainstorms = view.collection.sort().where({published: true, author: app.username});
-      view.populateList(myPublishedBrainstorms, "my-tiles-list");
-
-      var othersPublishedBrainstorms = view.collection.sort().filter(function(b) { return (b.get('published') === true && b.get('author') !== app.username); });
-      view.populateList(othersPublishedBrainstorms, "others-tiles-list");
-    }
-
   });
 
 

@@ -36,8 +36,8 @@
   // TODO: think about creating top level view that contains the model, all other views inherit from that?
   app.newProjectView = null;
   app.proposalView = null;
-  app.writeView = null;
-  app.readView = null;
+  app.projectWriteView = null;
+  app.projectReadView = null;
   app.reviewOverviewView = null;        // lolololol
   app.reviewDetailsView = null;
 
@@ -255,14 +255,10 @@
           jQuery('#proposal-nav-btn').addClass('active');
           jQuery('#proposal-screen').removeClass('hidden');
           app.proposalView.render();
-        } else if (jQuery(this).hasClass('goto-write-btn')) {
-          jQuery('#write-nav-btn').addClass('active');
-          jQuery('#write-screen').removeClass('hidden');
-          //app.writeView.render();
-        } else if (jQuery(this).hasClass('goto-read-btn')) {
-          jQuery('#read-nav-btn').addClass('active');
-          jQuery('#read-screen').removeClass('hidden');
-          //app.readView.render();
+        } else if (jQuery(this).hasClass('goto-project-btn')) {
+          jQuery('#project-nav-btn').addClass('active');
+          jQuery('#project-read-screen').removeClass('hidden');
+          //app.projectWriteView.render();
         } else if (jQuery(this).hasClass('goto-review-btn')) {
           jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');
@@ -297,19 +293,19 @@
        });
      }
 
-     if (app.writeView === null) {
-       app.writeView = new app.View.WriteView({
-         el: '#write-screen',
-         collection: Skeletor.Model.awake.brainstorms
+     if (app.projectReadView === null) {
+       app.projectReadView = new app.View.ProjectReadView({
+         el: '#project-read-screen',
+         collection: Skeletor.Model.awake.projects
        });
      }
 
-    if (app.readView === null) {
-      app.readView = new app.View.ReadView({
-        el: '#read-screen',
-        collection: Skeletor.Model.awake.brainstorms
-      });
-    }
+     if (app.projectWriteView === null) {
+       app.projectWriteView = new app.View.ProjectWriteView({
+         el: '#project-write-screen',
+         collection: Skeletor.Model.awake.projects
+       });
+     }
 
     if (app.reviewOverviewView === null) {
       app.reviewOverviewView = new app.View.ReviewOverviewView({

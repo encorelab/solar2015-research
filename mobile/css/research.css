@@ -1,7 +1,7 @@
 /********** RESEARCH **********/
 
-#write-screen,
-#read-screen {
+#project-write-screen,
+#project-read-screen {
     position: relative;
     height: 100%;
     padding-top: 50px;
@@ -69,33 +69,9 @@ textarea {
 }
 
 
-/********** WRITE SCREEN **********/
+/********** PROJECT READ SCREEN **********/
 
-#brainstorm-body-container {
-    height: 250px;           /* random choice, change however you'd like */
-}
-
-#brainstorm-body-input {
-    height: 250px;
-    padding-right: 60px;
-
-}
-
-.fa-lightbulb-o {
-    color: #c31fa4;
-    position: absolute;
-    top: 25%;
-    right: 2%;
-    padding: 10px 20px;
-}
-.fa-lightbulb-o:hover {
-    color: #DB77C8;
-}
-
-
-/********** READ SCREEN **********/
-
-#read-screen .inner-wrapper {
+#project-read-screen .inner-wrapper {
     height: 100%;
     margin-top: 75px;
 }
@@ -163,17 +139,27 @@ textarea {
 }
 
 
-#lock-screen {
-    height: 100%;
-    width: 100%;
-    background: black;
+/********** PROJECT WRITE SCREEN **********/
+
+#brainstorm-body-container {
+    height: 250px;           /* random choice, change however you'd like */
 }
 
-#lock-img {
+#brainstorm-body-input {
+    height: 250px;
+    padding-right: 60px;
+
+}
+
+.fa-lightbulb-o {
+    color: #c31fa4;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    top: 25%;
+    right: 2%;
+    padding: 10px 20px;
+}
+.fa-lightbulb-o:hover {
+    color: #DB77C8;
 }
 
 
@@ -277,6 +263,19 @@ textarea {
     border-radius: 4px;
     background-color: rgba(0,0,0,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+#lock-screen {
+    height: 100%;
+    width: 100%;
+    background: black;
+}
+
+#lock-img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /********** M O D A L S **********/
