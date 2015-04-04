@@ -316,6 +316,7 @@
       'click #brainstorm-title-input'     : 'checkToAddNewBrainstorm',
       'click #brainstorm-body-input'      : 'checkToAddNewBrainstorm',
       'click #lightbulb-icon'             : 'showSentenceStarters',
+      'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .sentence-starter'           : 'appendSentenceStarter',
       'keyup :input'                      : 'checkForAutoSave'
     },
@@ -346,6 +347,18 @@
       // jQuery('#brainstorm-body-input').val(bodyText);
 
       // jQuery('#sentence-starter-modal').modal('hide');
+    },
+
+    toggleFavouriteStatus: function(ev) {
+      jQuery('.favourite-icon').addClass('hidden');
+
+      if (jQuery(ev.target).hasClass('favourite-icon-unselected')) {
+        jQuery('.favourite-icon-selected').removeClass('hidden');
+        // SET IT IN THE MODEL AS WELL
+      } else {
+        jQuery('.favourite-icon-unselected').removeClass('hidden');
+        // SET IT IN THE MODEL AS WELL
+      }
     },
 
     // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
@@ -424,7 +437,16 @@
     },
 
     render: function () {
+      var view = this;
       console.log("Rendering ProjectWriteView...");
+
+      // UI to mirror favourite statusness
+      //jQuery('.favourite-icon').addClass('hidden');
+      // if (MODEL.favourite === true) {
+
+      // } else {
+      //   favourite-icon-unselected
+      // }
     }
   });
 
