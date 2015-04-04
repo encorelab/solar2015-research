@@ -38,6 +38,7 @@
   app.proposalView = null;
   app.projectReadView = null;
   app.projectWriteView = null;
+  app.projectMediaView = null;
   app.reviewOverviewView = null;        // lolololol
   app.reviewDetailsView = null;
 
@@ -309,6 +310,13 @@
      if (app.projectWriteView === null) {
        app.projectWriteView = new app.View.ProjectWriteView({
          el: '#project-write-screen',
+         collection: Skeletor.Model.awake.projects
+       });
+     }
+
+     if (app.projectMediaView === null) {
+       app.projectMediaView = new app.View.ProjectMediaView({
+         el: '#project-media-screen',
          collection: Skeletor.Model.awake.projects
        });
      }

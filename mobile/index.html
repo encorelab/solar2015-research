@@ -151,23 +151,23 @@
         </div>
     </div>
 
+
     <!-- Project Write Screen -->
     <div id="project-write-screen" class="container-fluid user-screen">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
-                <button id="nav-read-btn" class="fa fa-eye fa-3x btn-circular"></button>
+                <button class="nav-read-btn fa fa-eye fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <textarea id="brainstorm-title-input" class="input-field margin-bottom-25" name="title" placeholder="Untitled Note"></textarea>
-                <!-- TODO: this class name shall not stand -->
-                <div id="brainstorm-body-container" class="margin-bottom-25">
+                <textarea id="tile-title-input" class="input-field" name="title" placeholder="Untitled Note"></textarea>
+                <div id="tile-body-container">
                     <i class="fa fa-lightbulb-o fa-4x" id="lightbulb-icon"></i>
-                    <textarea id="brainstorm-body-input" class="input-field" name="body"></textarea>
+                    <textarea id="tile-body-input" class="input-field" name="body"></textarea>
                     <i class="fa fa-star-o fa-4x favourite-icon favourite-icon-unselected"></i>
                     <i class="fa fa-star fa-4x favourite-icon favourite-icon-selected"></i>
                 </div>
-                <button id="publish-brainstorm-btn" class="btn-circular fa fa-check fa-3x pull-right"></button>
-                <button id="cancel-brainstorm-btn" class="btn-circular fa fa-times fa-3x pull-right"></button>
+                <button class="publish-tile-btn btn-circular fa fa-check fa-3x pull-right"></button>
+                <button class="cancel-tile-btn btn-circular fa fa-times fa-3x pull-right"></button>
             </div>
         </div>
 
@@ -191,6 +191,24 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Project Media Screen -->
+    <div id="project-media-screen" class="container-fluid user-screen">
+        <div class="row">
+            <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
+                <button class="nav-read-btn fa fa-eye fa-3x btn-circular"></button>
+            </div>
+            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                <div id="tile-media-upload-container">
+                    <i class="fa fa-star-o fa-4x favourite-icon favourite-icon-unselected"></i>
+                    <i class="fa fa-star fa-4x favourite-icon favourite-icon-selected"></i>
+                </div>
+                <button class="publish-tile-btn btn-circular fa fa-check fa-3x pull-right"></button>
+                <button class="cancel-tile-btn btn-circular fa fa-times fa-3x pull-right"></button>
             </div>
         </div>
     </div>

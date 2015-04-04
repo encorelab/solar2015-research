@@ -227,11 +227,12 @@
     },
 
     switchToMediaView: function() {
-      //app.hideAllContainers();
-      //jQuery('#project-write-screen').removeClass('hidden');
+      app.hideAllContainers();
+      jQuery('#project-media-screen').removeClass('hidden');
     },
 
     switchToPosterView: function() {
+      jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
       //app.hideAllContainers();
       //jQuery('#project-write-screen').removeClass('hidden');
     },
@@ -300,7 +301,7 @@
       // check if we need to resume
       // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
       // if (tileToResume) {
-      //   view.setupResumedBrainstorm(brainstormToResume);
+      //   view.setupResumedTile(tileToResume);
       // } else if (it was a clicked on tile) {
       // } else { }
 
@@ -310,64 +311,64 @@
     },
 
     events: {
-      'click #nav-read-btn'               : 'switchToReadView',
-      'click #cancel-brainstorm-btn'      : 'cancelBrainstorm',
-      'click #publish-brainstorm-btn'     : 'publishBrainstorm',
-      'click #brainstorm-title-input'     : 'checkToAddNewBrainstorm',
-      'click #brainstorm-body-input'      : 'checkToAddNewBrainstorm',
+      'click .nav-read-btn'               : 'switchToReadView',
+      'click .cancel-tile-btn'            : 'cancelTile',
+      'click .publish-tile-btn'           : 'publishTile',
+      'click #tile-title-input'           : 'checkToAddNewTile',
+      'click #tile-body-input'            : 'checkToAddNewTile',
       'click #lightbulb-icon'             : 'showSentenceStarters',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .sentence-starter'           : 'appendSentenceStarter',
       'keyup :input'                      : 'checkForAutoSave'
     },
 
-    setupResumedBrainstorm: function(brainstorm) {
+    setupResumedTile: function(tile) {
       // var view = this;
 
-      // view.model = brainstorm;
+      // view.model = tile;
       // view.model.wake(app.config.wakeful.url);
-      // jQuery('#brainstorm-title-input').val(brainstorm.get('title'));
-      // jQuery('#brainstorm-body-input').val(brainstorm.get('body'));
+      // jQuery('#tile-title-input').val(tile.get('title'));
+      // jQuery('#tile-body-input').val(tile.get('body'));
     },
 
     showSentenceStarters: function() {
       var view = this;
 
-      // setting up to add sentence starter content to a brainstorm, so need to make sure we have a model to add it to
+      // setting up to add sentence starter content to a tile, so need to make sure we have a model to add it to
       // if (!view.model) {
-      //   view.checkToAddNewBrainstorm();
+      //   view.checkToAddNewTile();
       // }
       // jQuery('#sentence-starter-modal').modal({keyboard: true, backdrop: true});
     },
 
     appendSentenceStarter: function(ev) {
       // add the sentence starter text to the current body (note that this won't start the autoSave trigger)
-      // var bodyText = jQuery('#brainstorm-body-input').val();
+      // var bodyText = jQuery('#tile-body-input').val();
       // bodyText += jQuery(ev.target).text();
-      // jQuery('#brainstorm-body-input').val(bodyText);
+      // jQuery('#tile-body-input').val(bodyText);
 
       // jQuery('#sentence-starter-modal').modal('hide');
     },
 
     toggleFavouriteStatus: function(ev) {
-      jQuery('.favourite-icon').addClass('hidden');
+      jQuery('#project-write-screen .favourite-icon').addClass('hidden');
 
       if (jQuery(ev.target).hasClass('favourite-icon-unselected')) {
-        jQuery('.favourite-icon-selected').removeClass('hidden');
+        jQuery('#project-write-screen .favourite-icon-selected').removeClass('hidden');
         // SET IT IN THE MODEL AS WELL
       } else {
-        jQuery('.favourite-icon-unselected').removeClass('hidden');
+        jQuery('#project-write-screen .favourite-icon-unselected').removeClass('hidden');
         // SET IT IN THE MODEL AS WELL
       }
     },
 
     // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
-    checkToAddNewBrainstorm: function() {
+    checkToAddNewTile: function() {
       var view = this;
 
       // if there is no model yet
       // if (!view.model) {
-      //   // create a brainstorm object
+      //   // create a tile object
       //   view.model = new Model.Brainstorm();
       //   view.model.set('author',app.username);
       //   view.model.set('published',false);
@@ -394,13 +395,13 @@
     },
 
     // destroy a model, if there's something to destroy
-    cancelBrainstorm: function() {
+    cancelTile: function() {
       // var view = this;
 
-      // // if there is a brainstorm
+      // // if there is a tile
       // if (view.model) {
       //   // confirm delete
-      //   if (confirm("Are you sure you want to delete this brainstorm?")) {
+      //   if (confirm("Are you sure you want to delete this tile?")) {
       //     app.clearAutoSaveTimer();
       //     view.model.destroy();
       //     // and we need to set it to null to 'remove' it from the local collection
@@ -410,10 +411,10 @@
       // }
     },
 
-    publishBrainstorm: function() {
+    publishTile: function() {
       // var view = this;
-      // var title = jQuery('#brainstorm-title-input').val();
-      // var body = app.turnUrlsToLinks(jQuery('#brainstorm-body-input').val());
+      // var title = jQuery('#tile-title-input').val();
+      // var body = app.turnUrlsToLinks(jQuery('#tile-body-input').val());
 
       // if (title.length > 0 && body.length > 0) {
       //   app.clearAutoSaveTimer();
@@ -422,12 +423,12 @@
       //   view.model.set('published', true);
       //   view.model.set('modified_at', new Date());
       //   view.model.save();
-      //   jQuery().toastmessage('showSuccessToast', "Published to brainstorm wall");
+      //   jQuery().toastmessage('showSuccessToast', "Published to tile wall");
 
       //   view.model = null;
       //   jQuery('.input-field').val('');
       // } else {
-      //   jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your brainstorm...");
+      //   jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
       // }
     },
 
@@ -447,6 +448,136 @@
       // } else {
       //   favourite-icon-unselected
       // }
+    }
+  });
+
+
+  /**
+    ProjectMediaView
+  **/
+  app.View.ProjectMediaView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectMediaView...', view.el);
+
+      // check if we need to resume
+      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
+      // if (tileToResume) {
+      //   view.setupResumedTile(tileToResume);
+      // } else if (it was a clicked on tile) {
+      // } else { }
+
+      // new tile!
+      // SHIZE - do we want a model here? I want a model here, but it doesn't need a collection, eg
+
+    },
+
+    events: {
+      'click .nav-read-btn'               : 'switchToReadView',
+      'click .cancel-tile-btn'            : 'cancelTile',
+      'click .publish-tile-btn'           : 'publishTile',
+      'click .favourite-icon'             : 'toggleFavouriteStatus',
+      'keyup :input'                      : 'checkForAutoSave'
+    },
+
+    setupResumedTile: function(tile) {
+      // var view = this;
+
+      // view.model = tile;
+      // view.model.wake(app.config.wakeful.url);
+      // jQuery('#tile-title-input').val(tile.get('title'));
+      // jQuery('#tile-body-input').val(tile.get('body'));
+    },
+
+    toggleFavouriteStatus: function(ev) {
+      jQuery('#project-media-screen .favourite-icon').addClass('hidden');
+
+      if (jQuery(ev.target).hasClass('favourite-icon-unselected')) {
+        jQuery('#project-media-screen .favourite-icon-selected').removeClass('hidden');
+        // SET IT IN THE MODEL AS WELL
+      } else {
+        jQuery('#project-media-screen .favourite-icon-unselected').removeClass('hidden');
+        // SET IT IN THE MODEL AS WELL
+      }
+    },
+
+    // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
+    checkToAddNewTile: function() {
+      var view = this;
+
+      // if there is no model yet
+      // if (!view.model) {
+      //   // create a tile object
+      //   view.model = new Model.Brainstorm();
+      //   view.model.set('author',app.username);
+      //   view.model.set('published',false);
+      //   view.model.wake(app.config.wakeful.url);
+      //   view.model.save();
+      //   view.collection.add(view.model);
+      // }
+    },
+
+    checkForAutoSave: function(ev) {
+      // var view = this,
+      //     field = ev.target.name,
+      //     input = ev.target.value;
+      // // clear timer on keyup so that a save doesn't happen while typing
+      // app.clearAutoSaveTimer();
+
+      // // save after 10 keystrokes
+      // app.autoSave(view.model, field, input, false);
+
+      // // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      // app.autoSaveTimer = setTimeout(function(){
+      //   app.autoSave(view.model, field, input, true);
+      // }, 5000);
+    },
+
+    // destroy a model, if there's something to destroy
+    cancelTile: function() {
+      // var view = this;
+
+      // // if there is a tile
+      // if (view.model) {
+      //   // confirm delete
+      //   if (confirm("Are you sure you want to delete this tile?")) {
+      //     app.clearAutoSaveTimer();
+      //     view.model.destroy();
+      //     // and we need to set it to null to 'remove' it from the local collection
+      //     view.model = null;
+      //     jQuery('.input-field').val('');
+      //   }
+      // }
+    },
+
+    publishTile: function() {
+      // var view = this;
+      // var title = jQuery('#tile-title-input').val();
+      // var body = app.turnUrlsToLinks(jQuery('#tile-body-input').val());
+
+      // if (title.length > 0 && body.length > 0) {
+      //   app.clearAutoSaveTimer();
+      //   view.model.set('title',title);
+      //   view.model.set('body',body);
+      //   view.model.set('published', true);
+      //   view.model.set('modified_at', new Date());
+      //   view.model.save();
+      //   jQuery().toastmessage('showSuccessToast', "Published to tile wall");
+
+      //   view.model = null;
+      //   jQuery('.input-field').val('');
+      // } else {
+      //   jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
+      // }
+    },
+
+    switchToReadView: function() {
+      app.hideAllContainers();
+      jQuery('#project-read-screen').removeClass('hidden');
+    },
+
+    render: function () {
+      console.log("Rendering ProjectMediaView...");
     }
   });
 

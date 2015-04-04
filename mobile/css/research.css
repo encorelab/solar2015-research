@@ -7,8 +7,8 @@
     padding-top: 50px;
 }
 
-#nav-read-btn,
-#nav-write-btn {
+.nav-read-btn,
+.nav-write-btn {
     margin-left: -25px;
 }
 
@@ -141,11 +141,16 @@ textarea {
 
 /********** PROJECT WRITE SCREEN **********/
 
-#brainstorm-body-container {
-    height: 250px;           /* random choice, change however you'd like */
+#tile-title-input {
+    margin-bottom: 25px;
 }
 
-#brainstorm-body-input {
+#tile-body-container {
+    height: 250px;           /* random choice, change however you'd like */
+    margin-bottom: 25px;
+}
+
+#tile-body-input {
     height: 250px;
     padding-right: 60px;
 
@@ -172,6 +177,14 @@ textarea {
 .fa-star-o:hover, .fa-star:hover {
     color: #DB77C8;
 }
+
+/********** PROJECT MEDIA SCREEN **********/
+
+#tile-media-upload-container {
+    height: 250px;
+    margin-bottom: 25px;
+}
+
 
 
 /********** T Y P O G R A P H Y **********/
@@ -359,8 +372,8 @@ input:disabled {
 /* Extra small devices (phones, less than 768px) */
 @media all and (max-width: 768px) {
 
-    #nav-read-btn,
-    #nav-write-btn {
+    .nav-read-btn,
+    .nav-write-btn {
         margin-left: 25px;
     }
 
