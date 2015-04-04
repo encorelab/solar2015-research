@@ -477,6 +477,7 @@
       'click .cancel-tile-btn'            : 'cancelTile',
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
+      'click .originator-btn'             : 'toggleOriginator',
       'keyup :input'                      : 'checkForAutoSave'
     },
 
@@ -499,6 +500,16 @@
         jQuery('#project-media-screen .favourite-icon-unselected').removeClass('hidden');
         // SET IT IN THE MODEL AS WELL
       }
+    },
+
+    toggleOriginator: function(ev) {
+      jQuery('.originator-btn').removeClass('disabled');
+      jQuery('.originator-btn').removeClass('selected');
+      jQuery(ev.target).addClass('disabled');
+      jQuery(ev.target).addClass('selected');
+
+      // TODO: add it to the model
+      // and remember to add this to the render as well
     },
 
     // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
