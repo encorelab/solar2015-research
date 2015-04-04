@@ -162,6 +162,17 @@ textarea {
     color: #DB77C8;
 }
 
+.fa-star-o, .fa-star {
+    color: #c31fa4;
+    position: absolute;
+    bottom: 25%;
+    right: 2%;
+    padding: 10px 20px;
+}
+.fa-star-o:hover, .fa-star:hover {
+    color: #DB77C8;
+}
+
 
 /********** T Y P O G R A P H Y **********/
 

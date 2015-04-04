@@ -36,8 +36,8 @@
   // TODO: think about creating top level view that contains the model, all other views inherit from that?
   app.newProjectView = null;
   app.proposalView = null;
-  app.projectWriteView = null;
   app.projectReadView = null;
+  app.projectWriteView = null;
   app.reviewOverviewView = null;        // lolololol
   app.reviewDetailsView = null;
 
@@ -226,6 +226,9 @@
     // all of the views will take this model
     app.newProjectView.model = p;
     app.proposalView.model = p;
+    app.projectWriteView.model = p;
+    app.projectReadView.model = p;
+    //app.projectMediaView.model = p;
     app.reviewOverviewView.model = p;
 
     // note that this is done again in newProjectView (think about making this awake?)
