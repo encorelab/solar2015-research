@@ -469,7 +469,6 @@
 
       // new tile!
       // SHIZE - do we want a model here? I want a model here, but it doesn't need a collection, eg
-
     },
 
     events: {
@@ -478,6 +477,9 @@
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
+      'change #photo-file'                : "enableUpload",
+      'click #upload-btn'                 : "uploadPhoto",
+      'click .finish-btn'                 : "publishObservation",
       'keyup :input'                      : 'checkForAutoSave'
     },
 
@@ -510,6 +512,52 @@
 
       // TODO: add it to the model
       // and remember to add this to the render as well
+    },
+
+    // doing this a little differently now - we really need the user to know what to click on
+    enableUpload: function() {
+      if (jQuery('#photo-file').val()) {
+        jQuery('#upload-btn').removeClass('hidden');
+        jQuery('#upload-btn').addClass('highlighted');
+        setTimeout(function() {
+          jQuery('#upload-btn').removeClass('highlighted');
+        }, 1500);
+      }
+    },
+
+    uploadPhoto: function() {
+      var view = this;
+
+      var file = jQuery('#photo-file')[0].files.item(0);
+      var formData = new FormData();
+      formData.append('file', file);
+
+      // disable the upload btn again (until a file is chosen again)
+      jQuery('#upload-btn').addClass('hidden');
+
+      jQuery.ajax({
+        url: app.config.pikachu.url,
+        type: 'POST',
+        success: success,
+        error: failure,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+      });
+
+      function failure(err) {
+        jQuery().toastmessage('showErrorToast', "Photo could not be uploaded. Please try again");
+      }
+
+      function success(data, status, xhr) {
+        console.log("UPLOAD SUCCEEDED!");
+        console.log(xhr.getAllResponseHeaders());
+        app.observation.get('data').photo_url = data.url;
+        app.observation.save();
+        jQuery('#upload-btn').text("Replace Photo");
+        jQuery('.camera-icon').attr('src',app.config.pikachu.url + photoId);
+      }
     },
 
     // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
