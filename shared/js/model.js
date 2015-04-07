@@ -216,8 +216,7 @@
           'proposal': {
             'published': false,
             'review_published': false
-          },
-          'tiles': []
+          }
         }
       });
 
