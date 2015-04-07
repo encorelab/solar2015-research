@@ -460,6 +460,9 @@
       var view = this;
       console.log('Initializing ProjectMediaView...', view.el);
 
+      // UI stuff
+      jQuery('#upload-btn').addClass('hidden');
+
       // check if we need to resume
       // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
       // if (tileToResume) {
@@ -477,8 +480,8 @@
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
-      'change #photo-file'                : "enableUpload",
-      'click #upload-btn'                 : "uploadPhoto",
+      'change #photo-file'                : "uploadPhoto",
+      // 'click #upload-btn'                 : "uploadPhoto",
       'click .finish-btn'                 : "publishObservation",
       'keyup :input'                      : 'checkForAutoSave'
     },
@@ -497,7 +500,7 @@
 
       if (jQuery(ev.target).hasClass('favourite-icon-unselected')) {
         jQuery('#project-media-screen .favourite-icon-selected').removeClass('hidden');
-        // SET IT IN THE MODEL AS WELL
+        // SET IT IN THE MODEL AS WELL - or are we using a model?
       } else {
         jQuery('#project-media-screen .favourite-icon-unselected').removeClass('hidden');
         // SET IT IN THE MODEL AS WELL
@@ -514,17 +517,17 @@
       // and remember to add this to the render as well
     },
 
-    // doing this a little differently now - we really need the user to know what to click on
-    enableUpload: function() {
-      if (jQuery('#photo-file').val()) {
-        jQuery('#upload-btn').removeClass('hidden');
-        jQuery('#upload-btn').addClass('highlighted');
-        setTimeout(function() {
-          jQuery('#upload-btn').removeClass('highlighted');
-        }, 1500);
-      }
-    },
+    // enableUpload: function() {
+    //   if (jQuery('#photo-file').val()) {
+    //     jQuery('#upload-btn').removeClass('hidden');
+    //     jQuery('#upload-btn').addClass('highlighted');
+    //     setTimeout(function() {
+    //       jQuery('#upload-btn').removeClass('highlighted');
+    //     }, 1500);
+    //   }
+    // },
 
+    // another nother attempt at this - now trigger on change so that the user only has to ever do one thing (remove enable upload)
     uploadPhoto: function() {
       var view = this;
 
@@ -533,7 +536,9 @@
       formData.append('file', file);
 
       // disable the upload btn again (until a file is chosen again)
-      jQuery('#upload-btn').addClass('hidden');
+      // jQuery('#upload-btn').addClass('hidden');
+
+      jQuery('#photo-upload-spinner').removeClass('hidden');
 
       jQuery.ajax({
         url: app.config.pikachu.url,
@@ -547,16 +552,18 @@
       });
 
       function failure(err) {
+        jQuery('#photo-upload-spinner').addClass('hidden');
         jQuery().toastmessage('showErrorToast', "Photo could not be uploaded. Please try again");
       }
 
       function success(data, status, xhr) {
+        jQuery('#photo-upload-spinner').addClass('hidden');
         console.log("UPLOAD SUCCEEDED!");
         console.log(xhr.getAllResponseHeaders());
-        app.observation.get('data').photo_url = data.url;
-        app.observation.save();
+        // app.observation.get('data').photo_url = data.url;            TODO: add me when we have a model or whatevs
+        // app.observation.save();
         jQuery('#upload-btn').text("Replace Photo");
-        jQuery('.camera-icon').attr('src',app.config.pikachu.url + photoId);
+        jQuery('.camera-icon').attr('src',app.config.pikachu.url + data.url);
       }
     },
 
