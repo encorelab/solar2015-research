@@ -1,4 +1,42 @@
-/********** RESEARCH **********/
+/********** T Y P O G R A P H Y **********/
+
+body {
+    font-family: 'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 54px;
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 35px;
+}
+
+h2 {
+    color: #555;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h3,
+label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+label {
+    vertical-align: middle;
+}
+
+
+/********** R E S E A R C H **********/
 
 #project-write-screen,
 #project-read-screen {
@@ -24,6 +62,19 @@
     padding: 0;
 }
 
+.btn {
+    margin-bottom: 20px;
+    height: 45px;
+    min-width: 160px;
+}
+
+.btn-base {
+    border-radius: 7px;
+    border: solid #ddd 1px;
+    background-image: none;
+    text-shadow: none;
+}
+
 /*circular buttons*/
 .btn-circular {
     width: 75px;
@@ -31,20 +82,20 @@
     border-radius: 50%;
     border: none;
     color: #fff;
-    background: #c31fa4;
     padding: 0;
 }
-.btn-circular:hover {
-    background: #db7bc8;
+
+.project-partner-holder button {
+    margin-right: 15px;
+    min-width: 150px;
+}
+.project-partner-holder button:nth-child(5n) {
+    margin-right: 0;
 }
 
 /* this should be changed, depending on the final colour of the button (used in the new-project sections) */
 .selected {
-    background: pink;
-}
-
-textarea {
-    border: 2px solid #c31fa4;
+    background: pink !important;
 }
 
 .sentence-starter {
@@ -68,8 +119,100 @@ textarea {
     color: #c31fa4;
 }
 
+/********** P R O P O S A L **********/
 
-/********** PROJECT READ SCREEN **********/
+#proposal-screen h2 {
+    color: #9282f3;
+}
+#proposal-screen h3 {
+    padding-left: 25px;
+}
+#proposal-screen textarea {
+    border: 2px solid #9282f3;
+}
+#proposal-screen .btn-circular,
+#todo-screen .goto-proposal-btn {
+    background: #9282f3;
+}
+#proposal-screen .btn-circular:hover,
+#todo-screen .goto-proposal-btn:hover {
+    background: #beb6f7;
+}
+#proposal-screen .btn-circular {
+    margin-top: 25px;
+}
+
+/********** P R O J E C T **********/
+
+#project-read-screen textarea,
+#project-write-screen textarea,
+#project-media-screen textarea {
+    border: 2px solid #41b050;
+}
+#project-read-screen .btn-circular,
+#project-write-screen .btn-circular,
+#project-media-screen .btn-circular,
+#todo-screen .goto-project-btn {
+    background: #41b050;
+}
+#project-read-screen .btn-circular:hover,
+#project-write-screen .btn-circular:hover,
+#project-media-screen .btn-circular:hover,
+#todo-screen .goto-project-btn:hover {
+    background: #8dd098;
+}
+
+/********** R E V I E W **********/
+
+#review-overview-screen h2,
+#review-details-screen h2 {
+    color: #faa82d;
+}
+#review-overview-screen button,
+#review-details-screen button {
+    border: 2px solid #faa82d;
+    background: #fecc81;
+}
+#review-overview-screen button:hover,
+#review-details-screen button:hover {
+    background: #fff;
+}
+
+#review-overview-screen textarea,
+#review-details-screen textarea {
+    border: 2px solid #faa82d;
+}
+#review-overview-screen .btn-circular,
+#review-details-screen .btn-circular,
+#todo-screen .goto-review-btn {
+    background: #faa82d;
+}
+#review-overview-screen .btn-circular:hover,
+#review-details-screen .btn-circular:hover,
+#todo-screen .goto-review-btn:hover {
+    background: #fecc81;
+}
+
+/********** T O D O  S C R E E N **********/
+/*#todo-screen h2 {
+    text-align: center;
+}*/
+.todo-btn {
+    color: #fff;
+    min-width: 350px;
+    display: block;
+    margin: 0 auto;
+    font-size: 24px;
+    height: 75px;
+    margin-bottom: 25px;
+    letter-spacing: 6px;
+}
+.todo-btn:hover {
+    color: #fff;
+}
+
+
+/********** P R O J E C T  R E A D  S C R E E N **********/
 
 #project-read-screen .inner-wrapper {
     height: 100%;
@@ -139,7 +282,7 @@ textarea {
 }
 
 
-/********** PROJECT WRITE SCREEN **********/
+/********** P R O J E C T  W R I T E  S C R E E N **********/
 
 #tile-title-input {
     margin-bottom: 25px;
@@ -178,47 +321,11 @@ textarea {
     color: #DB77C8;
 }
 
-/********** PROJECT MEDIA SCREEN **********/
+/********** P R O J E C T  M E D I A  S C R E E N **********/
 
 #tile-media-upload-container {
     height: 250px;
     margin-bottom: 25px;
-}
-
-
-
-/********** T Y P O G R A P H Y **********/
-
-body {
-    font-family: 'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, sans-serif;
-}
-
-h1 {
-    font-size: 54px;
-    color: #444;
-    font-weight: 500;
-    margin-bottom: 35px;
-}
-
-h2 {
-    color: #333;
-    margin-bottom: 25px;
-}
-
-h3,
-label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #555;
-}
-
-h4 {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-label {
-    vertical-align: middle;
 }
 
 
@@ -272,12 +379,6 @@ textarea {
     padding: 25px 2% 1%;
 }
 
-.btn {
-    margin-bottom: 20px;
-    height: 45px;
-    min-width: 160px;
-}
-
 /*so the scroll bar appears at all times*/
 ::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -313,8 +414,10 @@ textarea {
     vertical-align: middle;
 }
 
-/***** login modal *****/
-#login-picker button {
+/***** login & project picker + partner modals *****/
+#login-picker button,
+#project-picker button,
+.project-partner-holder button {
     color: #333;
     border-radius: 7px;
     border: solid #ddd 1px;
@@ -322,9 +425,25 @@ textarea {
     background-image: none;
     text-shadow: none;
 }
-#login-picker button:hover {
+#login-picker button:hover,
+#project-picker button:hover,
+.project-partner-holder button:hover {
     background: #aaa;
     color: #fff;
+}
+/*#project-picker h2 {
+    text-align: center;
+}*/
+#project-picker .modal-header {
+    border-bottom: none;
+}
+#project-picker button {
+    min-width: 350px;
+    display: block;
+    margin: 0 auto;
+    height: 75px;
+    font-size: 16px;
+    margin-bottom: 25px;
 }
 
 /********** N A V B A R **********/
