@@ -58,10 +58,6 @@
     background: pink !important;
 }
 
-textarea {
-    border: 2px solid #c31fa4;
-}
-
 .sentence-starter {
     background: #e6a5da;
     width: 100%;
@@ -83,8 +79,29 @@ textarea {
     color: #c31fa4;
 }
 
+/********** P R O P O S A L **********/
 
-/********** PROJECT READ SCREEN **********/
+#proposal-screen textarea {
+    border: 2px solid #9282f3;
+}
+
+/********** P R O J E C T **********/
+
+#project-read-screen textarea,
+#project-write-screen textarea,
+#project-media-screen textarea {
+    border: 2px solid green;
+}
+
+/********** R E V I E W **********/
+
+#review-overview-screen textarea,
+#review-details-screen {
+    border: 2px solid orange;
+}
+
+
+/********** P R O J E C T  R E A D  S C R E E N **********/
 
 #project-read-screen .inner-wrapper {
     height: 100%;
@@ -154,7 +171,7 @@ textarea {
 }
 
 
-/********** PROJECT WRITE SCREEN **********/
+/********** P R O J E C T  W R I T E  S C R E E N **********/
 
 #tile-title-input {
     margin-bottom: 25px;
