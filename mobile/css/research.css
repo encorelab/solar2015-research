@@ -1,10 +1,17 @@
-/********** RESEARCH **********/
+/********** R E S E A R C H **********/
 
 #project-write-screen,
 #project-read-screen {
     position: relative;
     height: 100%;
     padding-top: 50px;
+}
+
+.btn-base {
+    border-radius: 7px;
+    border: solid #ddd 1px;
+    background-image: none;
+    text-shadow: none;
 }
 
 .nav-read-btn,
@@ -38,9 +45,17 @@
     background: #db7bc8;
 }
 
+.project-partner-holder button {
+    margin-right: 15px;
+    min-width: 150px !important;
+}
+.project-partner-holder button:nth-child(5n) {
+    margin-right: 0;
+}
+
 /* this should be changed, depending on the final colour of the button (used in the new-project sections) */
 .selected {
-    background: pink;
+    background: pink !important;
 }
 
 textarea {
@@ -313,8 +328,10 @@ textarea {
     vertical-align: middle;
 }
 
-/***** login modal *****/
-#login-picker button {
+/***** login & project picker + partner modals *****/
+#login-picker button,
+#project-picker button,
+.project-partner-holder button {
     color: #333;
     border-radius: 7px;
     border: solid #ddd 1px;
@@ -322,7 +339,9 @@ textarea {
     background-image: none;
     text-shadow: none;
 }
-#login-picker button:hover {
+#login-picker button:hover,
+#project-picker button:hover,
+.project-partner-holder button:hover {
     background: #aaa;
     color: #fff;
 }
