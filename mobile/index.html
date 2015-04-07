@@ -88,10 +88,10 @@
     <div id="todo-screen" class="container-fluid user-screen">
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3>What would you like to do today?</h3>
-                <button class="goto-proposal-btn todo-btn">PROPOSAL</button>
-                <button class="goto-project-btn todo-btn">PROJECT</button>
-                <button class="goto-review-btn todo-btn">REVIEW</button>
+                <h2>What would you like to do today?</h2>
+                <button class="goto-proposal-btn todo-btn btn btn-base">PROPOSAL</button>
+                <button class="goto-project-btn todo-btn btn btn-base">PROJECT</button>
+                <button class="goto-review-btn todo-btn btn btn-base">REVIEW</button>
             </div>
         </div>
     </div>
@@ -121,11 +121,11 @@
     <div id="proposal-screen" class="container-fluid user-screen">
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3>Write your project proposal</h3>
+                <h2>Write your project proposal</h2>
                 <textarea name="name" placeholder="Project title"></textarea>
-                What is (are) your main research questions?
+                <h3>What is (are) your main research questions?</h3>
                 <textarea data-nested="proposal" name="research_question" placeholder="1."></textarea>
-                What would you need to know in order to answer your research question(s)?
+                <h3>What would you need to know in order to answer your research question(s)?</h3>
                 <textarea data-nested="proposal" name="need_to_knows" placeholder="1."></textarea>
                 <button id="publish-proposal-btn" class="btn-circular fa fa-check fa-3x pull-right"></button>
             </div>

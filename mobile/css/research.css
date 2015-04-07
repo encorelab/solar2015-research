@@ -1,3 +1,40 @@
+/********** T Y P O G R A P H Y **********/
+
+body {
+    font-family: 'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 54px;
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 35px;
+}
+
+h2 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 25px;
+}
+
+h3,
+label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+h4 {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+label {
+    vertical-align: middle;
+}
+
+
 /********** R E S E A R C H **********/
 
 #project-write-screen,
@@ -5,13 +42,6 @@
     position: relative;
     height: 100%;
     padding-top: 50px;
-}
-
-.btn-base {
-    border-radius: 7px;
-    border: solid #ddd 1px;
-    background-image: none;
-    text-shadow: none;
 }
 
 .nav-read-btn,
@@ -31,6 +61,19 @@
     padding: 0;
 }
 
+.btn {
+    margin-bottom: 20px;
+    height: 45px;
+    min-width: 160px;
+}
+
+.btn-base {
+    border-radius: 7px;
+    border: solid #ddd 1px;
+    background-image: none;
+    text-shadow: none;
+}
+
 /*circular buttons*/
 .btn-circular {
     width: 75px;
@@ -38,16 +81,12 @@
     border-radius: 50%;
     border: none;
     color: #fff;
-    background: #c31fa4;
     padding: 0;
-}
-.btn-circular:hover {
-    background: #db7bc8;
 }
 
 .project-partner-holder button {
     margin-right: 15px;
-    min-width: 150px !important;
+    min-width: 150px;
 }
 .project-partner-holder button:nth-child(5n) {
     margin-right: 0;
@@ -81,8 +120,23 @@
 
 /********** P R O P O S A L **********/
 
+#proposal-screen h2 {
+    color: #9282f3;
+    text-align: center;
+}
+#proposal-screen h3 {
+    padding-left: 25px;
+}
 #proposal-screen textarea {
     border: 2px solid #9282f3;
+}
+#proposal-screen .btn-circular,
+#todo-screen .goto-proposal-btn {
+    background: #9282f3;
+}
+#proposal-screen .btn-circular:hover,
+#todo-screen .goto-proposal-btn:hover {
+    background: #beb6f7;
 }
 
 /********** P R O J E C T **********/
@@ -90,14 +144,54 @@
 #project-read-screen textarea,
 #project-write-screen textarea,
 #project-media-screen textarea {
-    border: 2px solid green;
+    border: 2px solid #41b050;
+}
+#project-read-screen .btn-circular,
+#project-write-screen .btn-circular,
+#project-media-screen .btn-circular,
+#todo-screen .goto-project-btn {
+    background: #41b050;
+}
+#project-read-screen .btn-circular:hover,
+#project-write-screen .btn-circular:hover,
+#project-media-screen .btn-circular:hover,
+#todo-screen .goto-project-btn:hover {
+    background: #8dd098;
 }
 
 /********** R E V I E W **********/
 
 #review-overview-screen textarea,
-#review-details-screen {
-    border: 2px solid orange;
+#review-details-screen textarea {
+    border: 2px solid #faa82d;
+}
+#review-overview-screen .btn-circular,
+#review-details-screen .btn-circular,
+#todo-screen .goto-review-btn {
+    background: #faa82d;
+}
+#review-overview-screen .btn-circular:hover,
+#review-details-screen .btn-circular:hover,
+#todo-screen .goto-review-btn:hover {
+    background: #fecc81;
+}
+
+/********** T O D O  S C R E E N **********/
+#todo-screen h2 {
+    text-align: center;
+}
+.todo-btn {
+    color: #fff;
+    min-width: 350px;
+    display: block;
+    margin: 0 auto;
+    font-size: 24px;
+    height: 75px;
+    margin-bottom: 25px;
+    letter-spacing: 6px;
+}
+.todo-btn:hover {
+    color: #fff;
 }
 
 
@@ -210,47 +304,11 @@
     color: #DB77C8;
 }
 
-/********** PROJECT MEDIA SCREEN **********/
+/********** P R O J E C T  M E D I A  S C R E E N **********/
 
 #tile-media-upload-container {
     height: 250px;
     margin-bottom: 25px;
-}
-
-
-
-/********** T Y P O G R A P H Y **********/
-
-body {
-    font-family: 'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, sans-serif;
-}
-
-h1 {
-    font-size: 54px;
-    color: #444;
-    font-weight: 500;
-    margin-bottom: 35px;
-}
-
-h2 {
-    color: #333;
-    margin-bottom: 25px;
-}
-
-h3,
-label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #555;
-}
-
-h4 {
-    font-size: 14px;
-    font-weight: 500;
-}
-
-label {
-    vertical-align: middle;
 }
 
 
@@ -302,12 +360,6 @@ textarea {
     color: #333;
     width: 100%;
     padding: 25px 2% 1%;
-}
-
-.btn {
-    margin-bottom: 20px;
-    height: 45px;
-    min-width: 160px;
 }
 
 /*so the scroll bar appears at all times*/
