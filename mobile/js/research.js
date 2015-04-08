@@ -38,7 +38,7 @@
   app.newProjectView = null;
   app.proposalsView = null;
   app.projectReadView = null;
-  app.projectWriteView = null;
+  //app.projectWriteView = null;
   app.projectMediaView = null;
   app.reviewOverviewView = null;        // lolololol
   app.reviewDetailsView = null;
@@ -260,7 +260,6 @@
         } else if (jQuery(this).hasClass('goto-project-btn')) {
           jQuery('#project-nav-btn').addClass('active');
           jQuery('#project-read-screen').removeClass('hidden');
-          //app.projectWriteView.render();
         } else if (jQuery(this).hasClass('goto-review-btn')) {
           jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');
@@ -302,12 +301,12 @@
        });
      }
 
-     if (app.projectWriteView === null) {
-       app.projectWriteView = new app.View.ProjectWriteView({
-         el: '#project-write-screen',
-         collection: Skeletor.Model.awake.tiles
-       });
-     }
+     // if (app.projectWriteView === null) {
+     //   app.projectWriteView = new app.View.ProjectWriteView({
+     //     el: '#project-write-screen',
+     //     collection: Skeletor.Model.awake.tiles
+     //   });
+     // }
 
      if (app.projectMediaView === null) {
        app.projectMediaView = new app.View.ProjectMediaView({
