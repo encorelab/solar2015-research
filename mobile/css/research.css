@@ -35,6 +35,19 @@ label {
     vertical-align: middle;
 }
 
+textarea {
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+    color: #333;
+    width: 100%;
+    padding: 25px 2% 1%;
+}
+#review-details-screen textarea {
+    padding: 1% 2%;
+    height: 75px;
+}
+
 
 /********** R E S E A R C H **********/
 
@@ -84,6 +97,10 @@ label {
     color: #fff;
     padding: 0;
 }
+#proposal-screen .inner-wrapper .btn-circular,
+#review-details-screen .inner-wrapper .btn-circular {
+    margin-top: 25px;
+}
 
 .project-partner-holder button {
     margin-right: 15px;
@@ -92,10 +109,13 @@ label {
 .project-partner-holder button:nth-child(5n) {
     margin-right: 0;
 }
+#submit-partners-btn {
+    height: 55px;
+}
 
 /* this should be changed, depending on the final colour of the button (used in the new-project sections) */
 .selected {
-    background: pink !important;
+    background: #fecc81 !important;
 }
 
 .sentence-starter {
@@ -140,9 +160,6 @@ label {
 #todo-screen .goto-proposal-btn:hover {
     background: #beb6f7;
 }
-#proposal-screen .btn-circular {
-    margin-top: 25px;
-}
 .project-theme-holder {
     width: 400px;
     margin: 0 auto;
@@ -161,8 +178,10 @@ label {
 
 /********** P R O J E C T **********/
 
-#submit-partners-btn {
-    height: 55px;
+#project-read-screen h2,
+#project-write-screen h2,
+#project-media-screen h2 {
+    color: #41b050;
 }
 #project-read-screen textarea,
 #project-write-screen textarea,
@@ -193,12 +212,14 @@ label {
     color: #faa82d;
 }
 #review-overview-screen button,
-#review-details-screen button {
+#review-details-screen button,
+#submit-partners-btn {
     border: 2px solid #faa82d;
     background: #fecc81;
 }
 #review-overview-screen button:hover,
-#review-details-screen button:hover {
+#review-details-screen button:hover,
+#submit-partners-btn:hover {
     background: #fff;
 }
 
@@ -241,9 +262,7 @@ label {
     color: #555;
     overflow: initial;
 }
-#review-details-screen .inner-wrapper .btn-circular {
-    margin-top: 25px;
-}
+
 
 /********** T O D O  S C R E E N **********/
 /*#todo-screen h2 {
@@ -272,11 +291,11 @@ label {
 }
 
 #my-tiles-list > li {
-    outline: 2px solid #c31fa4;
+    outline: 2px solid #41b050;
 }
 
 #others-tiles-list > li {
-    outline: 2px dashed #db7bc8;
+    outline: 2px dashed #8dd098;
 }
 /*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
 .tile-container {
@@ -321,7 +340,7 @@ label {
 #others-tiles-list .tile-author {
     height: 15%;
     padding-top: 10px;
-    color: #c31fa4;
+    color: #41b050;
 }
 
 @media handheld and (orientation: landscape) {
@@ -352,25 +371,27 @@ label {
 }
 
 .fa-lightbulb-o {
-    color: #c31fa4;
+    color: #41b050;
     position: absolute;
     top: 25%;
     right: 2%;
     padding: 10px 20px;
 }
 .fa-lightbulb-o:hover {
-    color: #DB77C8;
+    color: #8dd098;
 }
 
-.fa-star-o, .fa-star {
-    color: #c31fa4;
+.fa-star-o,
+.fa-star {
+    color: #41b050;
     position: absolute;
     bottom: 25%;
     right: 2%;
     padding: 10px 20px;
 }
-.fa-star-o:hover, .fa-star:hover {
-    color: #DB77C8;
+.fa-star-o:hover,
+.fa-star:hover {
+    color: #8dd098;
 }
 
 /********** P R O J E C T  M E D I A  S C R E E N **********/
@@ -420,15 +441,6 @@ ul {
 
 .hidden {
     display: none;
-}
-
-textarea {
-    -moz-user-select: text;
-    -webkit-user-select: text;
-    user-select: text;
-    color: #333;
-    width: 100%;
-    padding: 25px 2% 1%;
 }
 
 /*so the scroll bar appears at all times*/
@@ -548,6 +560,32 @@ input:disabled {
         margin-left: 25px;
     }
 
+}
+
+/*Small devices PORTRAIT (tablets, more than 768px tall)*/
+@media all and (min-height: 768px) and (orientation: portrait) {
+
+    .project-partner-holder button {
+        margin-right: 15px;
+        min-width: 150px;
+    }
+    .project-partner-holder button:nth-child(5n) {
+        margin-right: 15px;
+    }
+    .project-partner-holder button:nth-child(3n) {
+        margin-right: 0;
+    }
+
+    #proposal-screen textarea[name="research_question"],
+    #proposal-screen textarea[name="need_to_knows"],
+    #review-details-screen textarea {
+        height: 100px;
+    }
+
+    #review-details-screen h3[name="research_question"],
+    #review-details-screen h3[name="need_to_knows"] {
+        max-height: 150px;
+    }
 }
 
 /* Large devices (LARGE DESKTOPS, 1200px and up) */
