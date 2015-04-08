@@ -422,8 +422,40 @@ textarea {
 /********** P R O J E C T  M E D I A  S C R E E N **********/
 
 #tile-media-upload-container {
-    height: 250px;
+    /*height: 250px;*/
     margin-bottom: 25px;
+    height: 100%;
+}
+.photo-wrapper,
+.self-photo-query {
+    display: inline-block;
+}
+#tile-media-upload-container input[type=file] {
+    margin: 0 auto;
+}
+.self-photo-query {
+    width: 50%;
+    height: 100%;
+    vertical-align: top;
+    margin-top: 10%;
+}
+#tile-media-upload-container .fa-star-o,
+#tile-media-upload-container .fa-star {
+    top: 0;
+}
+#tile-media-upload-container h3 {
+    text-align: center;
+}
+#self-originator-btn,
+#others-originator-btn {
+    display: block;
+    margin: 0 auto;
+    margin-top: 25px;
+    background: #8dd098;
+}
+#self-originator-btn:hover,
+#others-originator-btn:hover {
+    background: #fff;
 }
 
 
