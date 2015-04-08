@@ -261,27 +261,6 @@
       //jQuery('#project-write-screen').removeClass('hidden');
     },
 
-    populateList: function(tiles, listId) {
-      var view = this;
-
-      // we have two lists now, so decide which one we're dealing with here
-      var list = jQuery('#'+listId);
-
-      _.each(tiles, function(tile){
-        var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body')});
-
-        // TODO: add favouriteness here
-
-        var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
-        if (existingNote.length === 0) {
-          list.prepend(listItem);
-        } else {
-          existingNote.replaceWith(listItem);
-        }
-      });
-    },
-
     render: function () {
       var view = this;
       console.log("Rendering ProjectReadView...");
@@ -295,8 +274,14 @@
       var list = jQuery('#tiles-list');
 
       _.each(myPublishedTiles, function(tile){
+        var starStatus;
+        if (tile.get('favourite') === true) {
+          starStatus = "fa-star";
+        } else {
+          starStatus = "fa-star-o";
+        }
         var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get.id, 'title': tile.get('title'), 'body': tile.get('body') });
+        var listItem = listItemTemplate({ 'id': tile.get.id, 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
 
         var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
         if (existingNote.length === 0) {
