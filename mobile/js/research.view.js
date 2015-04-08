@@ -222,6 +222,22 @@
     },
 
     switchToWriteView: function() {
+      //check for resume here!
+
+      // else create a tile object
+      var projectWV = new app.View.ProjectWriteView({
+        el: '#project-write-screen',
+        collection: Skeletor.Model.awake.tiles
+      });
+
+      projectWV.model = new Model.Tile();
+      projectWV.model.set('project_id',app.project.id);
+      projectWV.model.set('type', "text");
+      projectWV.model.set('from_proposal', false);
+      projectWV.model.wake(app.config.wakeful.url);
+      projectWV.model.save();
+      projectWV.collection.add(projectWV.model);
+
       app.hideAllContainers();
       jQuery('#project-write-screen').removeClass('hidden');
     },
@@ -298,16 +314,14 @@
       var view = this;
       console.log('Initializing ProjectWriteView...', view.el);
 
+      view.collection.on('sync', view.onModelSaved, view);
+
       // check if we need to resume
       // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
       // if (tileToResume) {
       //   view.setupResumedTile(tileToResume);
       // } else if (it was a clicked on tile) {
       // } else { }
-
-      // new tile!
-      // SHIZE - do we want a model here? I want a model here, but it doesn't need a collection, eg
-
     },
 
     events: {
@@ -343,11 +357,11 @@
 
     appendSentenceStarter: function(ev) {
       // add the sentence starter text to the current body (note that this won't start the autoSave trigger)
-      // var bodyText = jQuery('#tile-body-input').val();
-      // bodyText += jQuery(ev.target).text();
-      // jQuery('#tile-body-input').val(bodyText);
+      var bodyText = jQuery('#tile-body-input').val();
+      bodyText += jQuery(ev.target).text();
+      jQuery('#tile-body-input').val(bodyText);
 
-      // jQuery('#sentence-starter-modal').modal('hide');
+      jQuery('#sentence-starter-modal').modal('hide');
     },
 
     toggleFavouriteStatus: function(ev) {
@@ -366,37 +380,20 @@
       }
     },
 
-    // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
-    checkToAddNewTile: function() {
-      var view = this;
-
-      //if there is no model yet
-      if (!view.model) {
-        // create a tile object
-        view.model = new Model.Tile();
-        view.model.set('project_id',app.project.id);
-        view.model.set('type', "text");
-        view.model.set('from_proposal', false);
-        view.model.wake(app.config.wakeful.url);
-        view.model.save();
-        view.collection.add(view.model);
-      }
-    },
-
     checkForAutoSave: function(ev) {
-      // var view = this,
-      //     field = ev.target.name,
-      //     input = ev.target.value;
-      // // clear timer on keyup so that a save doesn't happen while typing
-      // app.clearAutoSaveTimer();
+      var view = this,
+          field = ev.target.name,
+          input = ev.target.value;
+      // clear timer on keyup so that a save doesn't happen while typing
+      app.clearAutoSaveTimer();
 
-      // // save after 10 keystrokes
-      // app.autoSave(view.model, field, input, false);
+      // save after 10 keystrokes
+      app.autoSave(view.model, field, input, false);
 
-      // // setting up a timer so that if we stop typing we save stuff after 5 seconds
-      // app.autoSaveTimer = setTimeout(function(){
-      //   app.autoSave(view.model, field, input, true);
-      // }, 5000);
+      // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      app.autoSaveTimer = setTimeout(function(){
+        app.autoSave(view.model, field, input, true);
+      }, 5000);
     },
 
     // destroy a model, if there's something to destroy
@@ -417,42 +414,53 @@
     },
 
     publishTile: function() {
-      // var view = this;
-      // var title = jQuery('#tile-title-input').val();
-      // var body = app.turnUrlsToLinks(jQuery('#tile-body-input').val());
+      var view = this;
+      var title = jQuery('#tile-title-input').val();
+      var body = jQuery('#tile-body-input').val();
 
-      // if (title.length > 0 && body.length > 0) {
-      //   app.clearAutoSaveTimer();
-      //   view.model.set('title',title);
-      //   view.model.set('body',body);
-      //   view.model.set('published', true);
-      //   view.model.set('modified_at', new Date());
-      //   view.model.save();
-      //   jQuery().toastmessage('showSuccessToast', "Published to tile wall");
+      if (title.length > 0 && body.length > 0) {
+        app.clearAutoSaveTimer();
+        view.model.set('title',title);
+        view.model.set('body',body);
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
 
-      //   view.model = null;
-      //   jQuery('.input-field').val('');
-      // } else {
-      //   jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
-      // }
+        view.model = null;
+        jQuery('.input-field').val('');
+        view.switchToReadView();
+        // do we need more clean up here too?
+      } else {
+        jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
+      }
     },
 
     switchToReadView: function() {
       app.hideAllContainers();
       jQuery('#project-read-screen').removeClass('hidden');
+
+      // NOTE: might have to do some cleanup here?
+      //could all clean up for publish and cancel be done here too?
+    },
+
+    onModelSaved: function(model, response, options) {
+      model.set('modified_at', new Date());
     },
 
     render: function () {
       var view = this;
       console.log("Rendering ProjectWriteView...");
 
-      // UI to mirror favourite statusness
-      //jQuery('.favourite-icon').addClass('hidden');
-      // if (MODEL.favourite === true) {
+      jQuery('.favourite-icon').addClass('hidden');
+      if (view.model.get('favourite') === true) {
+        jQuery('.favourite-icon-selected').removeClass('hidden');
+      } else {
+        jQuery('.favourite-icon-unselected').removeClass('hidden');
+      }
 
-      // } else {
-      //   favourite-icon-unselected
-      // }
+      jQuery('#tile-title-input').val(view.model.get('title'));
+      jQuery('#tile-body-input').val(view.model.get('body'));
     }
   });
 
