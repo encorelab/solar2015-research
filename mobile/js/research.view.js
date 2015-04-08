@@ -223,16 +223,21 @@
       var view = this;
       var m;
 
-      // EDIT TILE
-      //if (ev.target has soemthing)
-
       // check if we need to resume
       var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, published: false});
-      if (tileToResume) {
+
+      // if the clicked element has a data-id (ie is a tile)
+      if (jQuery(ev.target).data('id')) {
+        // EDIT TILE
+        console.log('Editing...');
+        m = view.collection.get(jQuery(ev.target).data('id'));
+      } else if (tileToResume) {
         // RESUME TILE
+        console.log('Resuming...');
         m = tileToResume;
       } else {
         // NEW TILE
+        console.log('Starting a new tile..');
         m = new Model.Tile();
         m.set('project_id',app.project.id);
         m.set('author', app.username);
@@ -281,7 +286,7 @@
           starStatus = "fa-star-o";
         }
         var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get.id, 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
 
         var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
         if (existingNote.length === 0) {
