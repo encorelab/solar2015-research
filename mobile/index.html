@@ -46,7 +46,6 @@
             <div class="tile">
                 <h3 class="tile-title" data-id=<%= id %>><%= title %></h3>
                 <div class="tile-body" data-id=<%= id %>><%= body %></div>
-                <div class="tile-author" data-id=<%= id %>><%= author %></div>
             </div>
         </li>
     </script>
@@ -144,8 +143,7 @@
         </div>
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <ul id="my-tiles-list" class="row"></ul>
-                <ul id="others-tiles-list" class="row"></ul>
+                <ul id="tiles-list" class="row"></ul>
                 <!-- gets filled by the readScreenView -->
             </div>
         </div>

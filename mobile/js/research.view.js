@@ -200,7 +200,7 @@
       var view = this;
       console.log('Initializing ProjectReadView...', view.el);
 
-      // we don't need this, since there's no editing of content in this version
+      // we don't need this, since there's no editing of content in this version?
       view.collection.on('change', function(n) {
         view.render();
       });
@@ -258,7 +258,6 @@
       //jQuery('#project-write-screen').removeClass('hidden');
     },
 
-    // // TODO: create more views, definitely one for the tiles
     // showTileDetails: function(ev) {
     //   // retrieve the brainstorm with the id in data-id
     //   var brainstorm = app.readView.collection.get(jQuery(ev.target).data('id'));
@@ -270,42 +269,52 @@
     //   jQuery('#tile-details').modal({keyboard: true, backdrop: true});
     // },
 
-    // populateList: function(brainstorms, listId) {
-    //   var view = this;
+    populateList: function(tiles, listId) {
+      var view = this;
 
-    //   // we have two lists now, so decide which one we're dealing with here
-    //   var list = jQuery('#'+listId);
+      // we have two lists now, so decide which one we're dealing with here
+      var list = jQuery('#'+listId);
 
-    //   _.each(brainstorms, function(brainstorm){
-    //     var listItemTemplate = _.template(jQuery(view.template).text());
-    //     var listItem = listItemTemplate({ 'id': brainstorm.get('_id'), 'title': brainstorm.get('title'), 'body': brainstorm.get('body'), 'author': '- '+brainstorm.get('author') });
+      _.each(tiles, function(tile){
+        var listItemTemplate = _.template(jQuery(view.template).text());
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'author': '- '+tile.get('author') });
 
-    //     var existingNote = list.find("[data-id='" + brainstorm.get('_id') + "']");
-    //     if (existingNote.length === 0) {
-    //       list.prepend(listItem);
-    //     } else {
-    //       existingNote.replaceWith(listItem);
-    //     }
-    //   });
-    // },
+        var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
+        if (existingNote.length === 0) {
+          list.prepend(listItem);
+        } else {
+          existingNote.replaceWith(listItem);
+        }
+      });
+    },
 
     render: function () {
       var view = this;
       console.log("Rendering ProjectReadView...");
 
-      // // sort newest to oldest
-      // view.collection.comparator = function(model) {
-      //   return model.get('created_at');
-      // };
+      // sort newest to oldest
+      view.collection.comparator = function(model) {
+        return model.get('created_at');
+      };
 
-      // // add the brainstorms to the list under the following ordered conditions:
-      // // - my brainstorms, by date (since we're using prepend)
-      // // - everyone else's brainstorms, by date (since we're using prepend)
-      // var myPublishedBrainstorms = view.collection.sort().where({published: true, author: app.username});
-      // view.populateList(myPublishedBrainstorms, "my-tiles-list");
+      // add the tiles to the list under the following ordered conditions:
+      // - my tiles, by date (since we're using prepend)
+      // - everyone else's tiles, by date (since we're using prepend)
+      var myPublishedTiles = view.collection.sort().where({published: true});// NARROW THIS DOWN TO ONLY MY PROJ
+      var list = jQuery('#tiles-list');
 
-      // var othersPublishedBrainstorms = view.collection.sort().filter(function(b) { return (b.get('published') === true && b.get('author') !== app.username); });
-      // view.populateList(othersPublishedBrainstorms, "others-tiles-list");
+      _.each(myPublishedTiles, function(tile){
+        var listItemTemplate = _.template(jQuery(view.template).text());
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body') });
+        // tile.get.id
+
+        var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
+        if (existingNote.length === 0) {
+          list.prepend(listItem);
+        } else {
+          existingNote.replaceWith(listItem);
+        }
+      });
     }
 
   });
