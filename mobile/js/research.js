@@ -186,7 +186,7 @@
 
     // create the html for each of these projects
     _.each(myProjectsList, function(project) {
-      var button = jQuery('<button class="btn project-button">');
+      var button = jQuery('<button class="btn project-button btn-default btn-base">');
       button.val(project.get('_id'));
       button.text("Work on " + project.get('name'));
       jQuery('.projects-holder').append(button);
@@ -434,7 +434,7 @@
     jQuery('#login-picker .modal-header h3').text("Select your teacher's name");
 
     _.each(app.config.runs, function(run) {
-      var button = jQuery('<button class="btn btn-large btn-primary login-button">');
+      var button = jQuery('<button class="btn btn-default btn-base login-button">');
       button.val(run);
       button.text(run);
       jQuery('.login-buttons').append(button);
@@ -473,7 +473,7 @@
         app.users.sort();
 
         app.users.each(function(user) {
-          var button = jQuery('<button class="btn btn-large btn-primary login-button">');
+          var button = jQuery('<button class="btn btn-default btn-base login-button">');
           button.val(user.get('username'));
           button.text(user.get('display_name'));
           jQuery('.login-buttons').append(button);

@@ -88,7 +88,7 @@
     <div id="todo-screen" class="container-fluid user-screen">
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h2>What would you like to do today?</h2>
+                <h2>What would you like to work on today?</h2>
                 <button class="goto-proposal-btn todo-btn btn btn-base">PROPOSAL</button>
                 <button class="goto-project-btn todo-btn btn btn-base">PROJECT</button>
                 <button class="goto-review-btn todo-btn btn btn-base">REVIEW</button>
@@ -100,16 +100,16 @@
     <div id="new-project-screen" class="container-fluid user-screen">
         <div id="new-project-student-picker" class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3>Select the names of all students who will work on this project<h3>
+                <h2>Select the names of all students who will work on this project<h2>
                 <div class="project-partner-holder">
                     <!-- populated by the view -->
                 </div>
-                <button id="submit-partners-btn" class="btn btn-base">Choose these partners</button>
+                <button id="submit-partners-btn" class="btn btn-base btn-default">Choose these partners</button>
             </div>
         </div>
         <div id="new-project-theme-picker" class="row hidden">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                Select the one theme that best fits your topic
+                <h2>Select the one theme that best fits your topic</h2>
                 <div class="project-theme-holder">
                     <!-- populated by the view -->
                 </div>
@@ -247,9 +247,9 @@
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <h3 id="review-details-title"></h3>
-                <div name="research_question"></div>
+                <h3 name="research_question"></h3>
                 <textarea class="input-field" data-nested="proposal" name="review_research_question" placeholder="Does this research question make sense? Do you have any suggestions of how it could be improved?"></textarea>
-                <div name="need_to_knows"></div>
+                <h3 name="need_to_knows"></h3>
                 <textarea class="input-field" data-nested="proposal" name="review_need_to_knows" placeholder="Is there anything else that you think your peers should consider?"></textarea>
                 <button id="publish-review-btn" class="modify-proposal-btn btn-circular fa fa-check fa-3x pull-right"></button>
                 <button id="cancel-review-btn" class="modify-proposal-btn btn-circular fa fa-times fa-3x pull-right"></button>
@@ -287,7 +287,7 @@
                         <div class="modal-header">
                         <h2>What would you like to do today?</h2>
                         </div>
-                        <button class="btn btn-base" value="new">Start new project</button>
+                        <button class="btn btn-default btn-base" value="new">Start new project</button>
                         <br/>
                         <div class="modal-body projects-holder">
                             <!-- filled by javascript with buttons for user login -->

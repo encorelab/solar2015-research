@@ -65,12 +65,12 @@ label {
 .btn {
     margin-bottom: 20px;
     height: 45px;
-    min-width: 160px;
+    min-width: 175px;
 }
 
 .btn-base {
     border-radius: 7px;
-    border: solid #ddd 1px;
+    /*border: solid #ddd 1px;*/
     background-image: none;
     text-shadow: none;
 }
@@ -127,12 +127,14 @@ label {
 #proposal-screen h3 {
     padding-left: 25px;
 }
-#proposal-screen textarea {
+#proposal-screen textarea,
+#proposal-screen button {
     border: 2px solid #9282f3;
 }
 #proposal-screen .btn-circular,
 #todo-screen .goto-proposal-btn {
     background: #9282f3;
+    border: 2px solid #9282f3;
 }
 #proposal-screen .btn-circular:hover,
 #todo-screen .goto-proposal-btn:hover {
@@ -141,12 +143,33 @@ label {
 #proposal-screen .btn-circular {
     margin-top: 25px;
 }
+.project-theme-holder {
+    width: 400px;
+    margin: 0 auto;
+}
+.project-theme-button {
+    height: 55px;
+    margin-bottom: 35px;
+}
+.project-theme-button:nth-child(odd) {
+    float: left;
+    margin-right: 25px;
+}
+.project-theme-button:nth-child(even) {
+    float: right;
+}
 
 /********** P R O J E C T **********/
 
+#submit-partners-btn {
+    height: 55px;
+}
 #project-read-screen textarea,
 #project-write-screen textarea,
-#project-media-screen textarea {
+#project-media-screen textarea,
+#project-read-screen button,
+#project-write-screen button,
+#project-media-screen button {
     border: 2px solid #41b050;
 }
 #project-read-screen .btn-circular,
@@ -154,6 +177,7 @@ label {
 #project-media-screen .btn-circular,
 #todo-screen .goto-project-btn {
     background: #41b050;
+    border: 2px solid #41b050;
 }
 #project-read-screen .btn-circular:hover,
 #project-write-screen .btn-circular:hover,
@@ -186,11 +210,39 @@ label {
 #review-details-screen .btn-circular,
 #todo-screen .goto-review-btn {
     background: #faa82d;
+    border: 2px solid #faa82d;
 }
 #review-overview-screen .btn-circular:hover,
 #review-details-screen .btn-circular:hover,
 #todo-screen .goto-review-btn:hover {
     background: #fecc81;
+}
+#review-overview-screen .inner-wrapper {
+    top: 75px;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    overflow: scroll;
+}
+.project-to-review-btn {
+    min-width: 500px;
+    display: block;
+    margin: 0 auto 20px;
+    overflow: hidden;
+}
+#review-details-screen h3 {
+    padding-left: 25px;
+    color: #faa82d;
+    line-height: 1.3;
+    max-height: 100px;
+    overflow: scroll;
+}
+#review-details-screen #review-details-title {
+    padding-left: 0;
+    color: #555;
+    overflow: initial;
+}
+#review-details-screen .inner-wrapper .btn-circular {
+    margin-top: 25px;
 }
 
 /********** T O D O  S C R E E N **********/
@@ -418,18 +470,18 @@ textarea {
 #login-picker button,
 #project-picker button,
 .project-partner-holder button {
-    color: #333;
+/*    color: #333;
     border-radius: 7px;
     border: solid #ddd 1px;
     background: #fff;
     background-image: none;
-    text-shadow: none;
+    text-shadow: none;*/
 }
 #login-picker button:hover,
 #project-picker button:hover,
 .project-partner-holder button:hover {
-    background: #aaa;
-    color: #fff;
+/*    background: #aaa;
+    color: #fff;*/
 }
 /*#project-picker h2 {
     text-align: center;
@@ -438,12 +490,12 @@ textarea {
     border-bottom: none;
 }
 #project-picker button {
-    min-width: 350px;
+    min-width: 500px;
     display: block;
     margin: 0 auto;
-    height: 75px;
+    height: 55px;
     font-size: 16px;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
 /********** N A V B A R **********/

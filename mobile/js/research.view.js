@@ -70,7 +70,7 @@
         app.users.sort();
 
         app.users.each(function(user) {
-          var button = jQuery('<button class="btn project-partner-button">');
+          var button = jQuery('<button class="btn project-partner-button btn-default btn-base">');
           button.val(user.get('username'));
           button.text(user.get('display_name'));
           jQuery('.project-partner-holder').append(button);
@@ -94,7 +94,7 @@
       jQuery('.project-theme-holder').html('');
       if (Skeletor.Model.awake.tags.length > 0) {
         Skeletor.Model.awake.tags.each(function(tag) {
-          var button = jQuery('<button class="btn project-theme-button">');
+          var button = jQuery('<button class="btn project-theme-button btn-default btn-base">');
           button.val(tag.get('name'));
           button.text(tag.get('name'));
           jQuery('.project-theme-holder').append(button);
