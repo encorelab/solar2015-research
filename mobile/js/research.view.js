@@ -351,14 +351,18 @@
     },
 
     toggleFavouriteStatus: function(ev) {
+      var view = this;
+
       jQuery('#project-write-screen .favourite-icon').addClass('hidden');
 
       if (jQuery(ev.target).hasClass('favourite-icon-unselected')) {
         jQuery('#project-write-screen .favourite-icon-selected').removeClass('hidden');
-        // SET IT IN THE MODEL AS WELL
+        view.model.set('favourite',true);
+        view.model.save();
       } else {
         jQuery('#project-write-screen .favourite-icon-unselected').removeClass('hidden');
-        // SET IT IN THE MODEL AS WELL
+        view.model.set('favourite',false);
+        view.model.save();
       }
     },
 
@@ -366,16 +370,17 @@
     checkToAddNewTile: function() {
       var view = this;
 
-      // if there is no model yet
-      // if (!view.model) {
-      //   // create a tile object
-      //   view.model = new Model.Brainstorm();
-      //   view.model.set('author',app.username);
-      //   view.model.set('published',false);
-      //   view.model.wake(app.config.wakeful.url);
-      //   view.model.save();
-      //   view.collection.add(view.model);
-      // }
+      //if there is no model yet
+      if (!view.model) {
+        // create a tile object
+        view.model = new Model.Tile();
+        view.model.set('project_id',app.project.id);
+        view.model.set('type', "text");
+        view.model.set('from_proposal', false);
+        view.model.wake(app.config.wakeful.url);
+        view.model.save();
+        view.collection.add(view.model);
+      }
     },
 
     checkForAutoSave: function(ev) {

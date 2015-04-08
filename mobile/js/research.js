@@ -225,14 +225,6 @@
       p = Skeletor.Model.awake.projects.get(projectId);
     }
 
-    // all of the views will take this model
-    app.newProjectView.model = p;
-    app.proposalsView.model = p;
-    app.projectWriteView.model = p;
-    app.projectReadView.model = p;
-    //app.projectMediaView.model = p;
-    app.reviewOverviewView.model = p;
-
     app.project = p;
 
     // note that this is done again in newProjectView (think about making this awake?)
@@ -313,14 +305,14 @@
      if (app.projectWriteView === null) {
        app.projectWriteView = new app.View.ProjectWriteView({
          el: '#project-write-screen',
-         collection: Skeletor.Model.awake.projects
+         collection: Skeletor.Model.awake.tiles
        });
      }
 
      if (app.projectMediaView === null) {
        app.projectMediaView = new app.View.ProjectMediaView({
          el: '#project-media-screen',
-         collection: Skeletor.Model.awake.projects
+         collection: Skeletor.Model.awake.tiles
        });
      }
 
