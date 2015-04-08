@@ -32,10 +32,11 @@
   app.users = null;
   app.username = null;
   app.groupname = null;
+  app.project = null;
 
   // TODO: think about creating top level view that contains the model, all other views inherit from that?
   app.newProjectView = null;
-  app.proposalView = null;
+  app.proposalsView = null;
   app.projectReadView = null;
   app.projectWriteView = null;
   app.projectMediaView = null;
@@ -226,11 +227,13 @@
 
     // all of the views will take this model
     app.newProjectView.model = p;
-    app.proposalView.model = p;
+    app.proposalsView.model = p;
     app.projectWriteView.model = p;
     app.projectReadView.model = p;
     //app.projectMediaView.model = p;
     app.reviewOverviewView.model = p;
+
+    app.project = p;
 
     // note that this is done again in newProjectView (think about making this awake?)
     app.groupname = p.get('name');
@@ -261,7 +264,7 @@
         if (jQuery(this).hasClass('goto-proposal-btn')) {
           jQuery('#proposal-nav-btn').addClass('active');
           jQuery('#proposal-screen').removeClass('hidden');
-          app.proposalView.render();
+          app.proposalsView.render();
         } else if (jQuery(this).hasClass('goto-project-btn')) {
           jQuery('#project-nav-btn').addClass('active');
           jQuery('#project-read-screen').removeClass('hidden');
@@ -293,8 +296,8 @@
        });
      }
 
-     if (app.proposalView === null) {
-       app.proposalView = new app.View.ProposalView({
+     if (app.proposalsView === null) {
+       app.proposalsView = new app.View.ProposalsView({
          el: '#proposal-screen',
          collection: Skeletor.Model.awake.projects
        });
@@ -303,7 +306,7 @@
      if (app.projectReadView === null) {
        app.projectReadView = new app.View.ProjectReadView({
          el: '#project-read-screen',
-         collection: Skeletor.Model.awake.projects
+         collection: Skeletor.Model.awake.tiles
        });
      }
 

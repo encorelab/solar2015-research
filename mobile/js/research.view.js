@@ -34,8 +34,8 @@
       _.each(jQuery('.selected'), function(b) {
         partners.push(jQuery(b).val());
       });
-      view.model.set('associated_users',partners);
-      view.model.save();
+      app.project.set('associated_users',partners);
+      app.project.save();
 
       // move to the next screen
       jQuery('#new-project-student-picker').addClass('hidden');
@@ -45,8 +45,8 @@
     addThemeToProject: function(ev) {
       var view = this;
 
-      view.model.set('theme',jQuery(ev.target).val());
-      view.model.save();
+      app.project.set('theme',jQuery(ev.target).val());
+      app.project.save();
 
       jQuery().toastmessage('showSuccessToast', "You have created a new project!");
 
@@ -108,13 +108,13 @@
 
 
   /**
-    ProposalView
+    ProposalsView
   **/
-  app.View.ProposalView = Backbone.View.extend({
+  app.View.ProposalsView = Backbone.View.extend({
 
     initialize: function () {
       var view = this;
-      console.log('Initializing ProposalView...', view.el);
+      console.log('Initializing ProposalsView...', view.el);
 
       view.collection.on('sync', view.onModelSaved, view);
     },
@@ -130,13 +130,13 @@
 
       if (name.length > 0) {
         app.clearAutoSaveTimer();
-        view.model.set('name',name);
-        var proposal = view.model.get('proposal');
+        app.project.set('name',name);
+        var proposal = app.project.get('proposal');
         proposal.research_question = jQuery('#proposal-screen [name=research_question]').val();
         proposal.need_to_knows = jQuery('#proposal-screen [name=need_to_knows]').val();
         proposal.published = true;
-        view.model.set('proposal',proposal);
-        view.model.save();
+        app.project.set('proposal',proposal);
+        app.project.save();
         // show who is 'logged in' as the group, since that's our 'user' in this case
         app.groupname = name;
         jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
@@ -163,24 +163,24 @@
       app.clearAutoSaveTimer();
 
       // save after 10 keystrokes
-      app.autoSave(view.model, field, input, false, jQuery(ev.target).data("nested"));
+      app.autoSave(app.project, field, input, false, jQuery(ev.target).data("nested"));
 
       // setting up a timer so that if we stop typing we save stuff after 5 seconds
       app.autoSaveTimer = setTimeout(function(){
-        app.autoSave(view.model, field, input, true, jQuery(ev.target).data("nested"));
+        app.autoSave(app.project, field, input, true, jQuery(ev.target).data("nested"));
       }, 5000);
     },
 
     render: function () {
       var view = this;
-      console.log("Rendering ProposalView...");
+      console.log("Rendering ProposalsView...");
 
-      jQuery('#proposal-screen [name=name]').text(view.model.get('name'));
-      jQuery('#proposal-screen [name=research_question]').text(view.model.get('proposal').research_question);
-      jQuery('#proposal-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
+      jQuery('#proposal-screen [name=name]').text(app.project.get('name'));
+      jQuery('#proposal-screen [name=research_question]').text(app.project.get('proposal').research_question);
+      jQuery('#proposal-screen [name=need_to_knows]').text(app.project.get('proposal').need_to_knows);
 
       // they can't be allowed to change the name of their project once they've first created it, since it's now the unique identifier (le sigh)
-      if (view.model && view.model.get('proposal').published === true) {
+      if (app.project && app.project.get('proposal').published === true) {
         jQuery('#proposal-screen [name=name]').addClass('disabled');
       } else {
         jQuery('#proposal-screen [name=name]').removeClass('disabled');
@@ -325,7 +325,7 @@
     setupResumedTile: function(tile) {
       // var view = this;
 
-      // view.model = tile;
+      // app.project = tile;
       // view.model.wake(app.config.wakeful.url);
       // jQuery('#tile-title-input').val(tile.get('title'));
       // jQuery('#tile-body-input').val(tile.get('body'));
@@ -669,7 +669,7 @@
     },
 
     events: {
-      'click .project-to-review-btn'         : 'switchToProjectDetailsView',
+      'click .project-to-review-btn' : 'switchToProjectDetailsView',
     },
 
     switchToProjectDetailsView: function(ev) {
@@ -708,14 +708,14 @@
       };
 
       // projects with proposals that are published and that is not this group's project name
-      // this render will sometimes fire before we have a model attached, hence the view.model in the return
+      // this render will sometimes fire before we have a model attached, hence the app.project in the return
       var unreviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (view.model && proj.get('name') !== view.model.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === false);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === false);
       });
       view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
 
       var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (view.model && proj.get('name') !== view.model.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === true);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === true);
       });
       view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
