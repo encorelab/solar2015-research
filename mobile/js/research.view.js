@@ -209,37 +209,40 @@
         view.render();
       });
 
-      view.render();
-
       return view;
     },
 
     events: {
-      'click #nav-write-btn'         : 'switchToWriteView',
+      'click #nav-write-btn'         : 'newOrResumeOrEditTile',
       'click #nav-media-btn'         : 'switchToMediaView',
       'click #nav-poster-btn'        : 'switchToPosterView',
-      'click .tile-container'        : 'showTileDetails'
+      'click .tile-container'        : 'newOrResumeOrEditTile'
     },
 
-    switchToWriteView: function() {
+    newOrResumeOrEditTile: function(ev) {
       var view = this;
-      // check for resume here!
-      //var model = findWhere
-      // check if we need to resume
-      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
-      // if (tileToResume) {
-      //   view.setupResumedTile(tileToResume);
-      // } else if (it was a clicked on tile) {
-      // } else { }
+      var m;
 
-      // else create a tile object
-      var m = new Model.Tile();
-      m.set('project_id',app.project.id);
-      m.set('type', "text");
-      m.set('from_proposal', false);
-      m.wake(app.config.wakeful.url);
-      m.save();
-      view.collection.add(m);
+      // EDIT TILE
+      //if (ev.target has soemthing)
+
+      // check if we need to resume
+      var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, published: false});
+      if (tileToResume) {
+        // RESUME TILE
+        m = tileToResume;
+      } else {
+        // NEW TILE
+        m = new Model.Tile();
+        m.set('project_id',app.project.id);
+        m.set('author', app.username);
+        m.set('type', "text");
+        m.set('from_proposal', false);
+        m.wake(app.config.wakeful.url);
+        m.save();
+        view.collection.add(m);
+      }
+
       app.projectWriteView.model = m;
 
       app.hideAllContainers();
@@ -258,17 +261,6 @@
       //jQuery('#project-write-screen').removeClass('hidden');
     },
 
-    // showTileDetails: function(ev) {
-    //   // retrieve the brainstorm with the id in data-id
-    //   var brainstorm = app.readView.collection.get(jQuery(ev.target).data('id'));
-    //   jQuery('#tile-details .tile-title').text(brainstorm.get('title'));
-    //   jQuery('#tile-details .tile-body').text(brainstorm.get('body'));
-    //   jQuery('#tile-details .tile-author').text("- " + brainstorm.get('author'));
-
-
-    //   jQuery('#tile-details').modal({keyboard: true, backdrop: true});
-    // },
-
     populateList: function(tiles, listId) {
       var view = this;
 
@@ -277,7 +269,9 @@
 
       _.each(tiles, function(tile){
         var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'author': '- '+tile.get('author') });
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body')});
+
+        // TODO: add favouriteness here
 
         var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
         if (existingNote.length === 0) {
@@ -292,21 +286,17 @@
       var view = this;
       console.log("Rendering ProjectReadView...");
 
-      // sort newest to oldest
+      // sort newest to oldest (prepend!)
       view.collection.comparator = function(model) {
         return model.get('created_at');
       };
 
-      // add the tiles to the list under the following ordered conditions:
-      // - my tiles, by date (since we're using prepend)
-      // - everyone else's tiles, by date (since we're using prepend)
-      var myPublishedTiles = view.collection.sort().where({published: true});// NARROW THIS DOWN TO ONLY MY PROJ
+      var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
       var list = jQuery('#tiles-list');
 
       _.each(myPublishedTiles, function(tile){
         var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body') });
-        // tile.get.id
+        var listItem = listItemTemplate({ 'id': tile.get.id, 'title': tile.get('title'), 'body': tile.get('body') });
 
         var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
         if (existingNote.length === 0) {
