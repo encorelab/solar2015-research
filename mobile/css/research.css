@@ -35,6 +35,19 @@ label {
     vertical-align: middle;
 }
 
+textarea {
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    user-select: text;
+    color: #333;
+    width: 100%;
+    padding: 25px 2% 1%;
+}
+#review-details-screen textarea {
+    padding: 1% 2%;
+    height: 75px;
+}
+
 
 /********** R E S E A R C H **********/
 
@@ -278,11 +291,11 @@ label {
 }
 
 #my-tiles-list > li {
-    outline: 2px solid #c31fa4;
+    outline: 2px solid #41b050;
 }
 
 #others-tiles-list > li {
-    outline: 2px dashed #db7bc8;
+    outline: 2px dashed #8dd098;
 }
 /*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
 .tile-container {
@@ -327,7 +340,7 @@ label {
 #others-tiles-list .tile-author {
     height: 15%;
     padding-top: 10px;
-    color: #c31fa4;
+    color: #41b050;
 }
 
 @media handheld and (orientation: landscape) {
@@ -358,25 +371,27 @@ label {
 }
 
 .fa-lightbulb-o {
-    color: #c31fa4;
+    color: #41b050;
     position: absolute;
     top: 25%;
     right: 2%;
     padding: 10px 20px;
 }
 .fa-lightbulb-o:hover {
-    color: #DB77C8;
+    color: #8dd098;
 }
 
-.fa-star-o, .fa-star {
-    color: #c31fa4;
+.fa-star-o,
+.fa-star {
+    color: #41b050;
     position: absolute;
     bottom: 25%;
     right: 2%;
     padding: 10px 20px;
 }
-.fa-star-o:hover, .fa-star:hover {
-    color: #DB77C8;
+.fa-star-o:hover,
+.fa-star:hover {
+    color: #8dd098;
 }
 
 /********** P R O J E C T  M E D I A  S C R E E N **********/
@@ -426,15 +441,6 @@ ul {
 
 .hidden {
     display: none;
-}
-
-textarea {
-    -moz-user-select: text;
-    -webkit-user-select: text;
-    user-select: text;
-    color: #333;
-    width: 100%;
-    padding: 25px 2% 1%;
 }
 
 /*so the scroll bar appears at all times*/
