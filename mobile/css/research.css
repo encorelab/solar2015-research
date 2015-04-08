@@ -51,13 +51,6 @@ textarea {
 
 /********** R E S E A R C H **********/
 
-#project-write-screen,
-#project-read-screen {
-    position: relative;
-    height: 100%;
-    padding-top: 50px;
-}
-
 .nav-read-btn,
 .nav-write-btn {
     margin-left: -25px;
@@ -73,6 +66,10 @@ textarea {
 
 .side-nav {
     padding: 0;
+}
+
+.side-nav button + button {
+    margin-top: 25px;
 }
 
 .btn {
@@ -177,6 +174,18 @@ textarea {
 }
 
 /********** P R O J E C T **********/
+
+#project-write-screen,
+#project-read-screen {
+    position: relative;
+    /*height: 100%;*/
+    height: calc(100% - 50px);
+    padding-top: 50px;
+}
+#project-write-screen .inner-wrapper,
+#project-read-screen .inner-wrapper {
+    height: calc(100% - 50px);
+}
 
 #project-read-screen h2,
 #project-write-screen h2,
@@ -286,7 +295,7 @@ textarea {
 /********** P R O J E C T  R E A D  S C R E E N **********/
 
 #project-read-screen .inner-wrapper {
-    height: 100%;
+    /*height: 100%;*/
     margin-top: 75px;
 }
 
