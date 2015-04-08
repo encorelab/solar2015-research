@@ -84,6 +84,10 @@ label {
     color: #fff;
     padding: 0;
 }
+#proposal-screen .inner-wrapper .btn-circular,
+#review-details-screen .inner-wrapper .btn-circular {
+    margin-top: 25px;
+}
 
 .project-partner-holder button {
     margin-right: 15px;
@@ -92,10 +96,13 @@ label {
 .project-partner-holder button:nth-child(5n) {
     margin-right: 0;
 }
+#submit-partners-btn {
+    height: 55px;
+}
 
 /* this should be changed, depending on the final colour of the button (used in the new-project sections) */
 .selected {
-    background: pink !important;
+    background: #fecc81 !important;
 }
 
 .sentence-starter {
@@ -140,9 +147,6 @@ label {
 #todo-screen .goto-proposal-btn:hover {
     background: #beb6f7;
 }
-#proposal-screen .btn-circular {
-    margin-top: 25px;
-}
 .project-theme-holder {
     width: 400px;
     margin: 0 auto;
@@ -161,8 +165,10 @@ label {
 
 /********** P R O J E C T **********/
 
-#submit-partners-btn {
-    height: 55px;
+#project-read-screen h2,
+#project-write-screen h2,
+#project-media-screen h2 {
+    color: #41b050;
 }
 #project-read-screen textarea,
 #project-write-screen textarea,
@@ -193,12 +199,14 @@ label {
     color: #faa82d;
 }
 #review-overview-screen button,
-#review-details-screen button {
+#review-details-screen button,
+#submit-partners-btn {
     border: 2px solid #faa82d;
     background: #fecc81;
 }
 #review-overview-screen button:hover,
-#review-details-screen button:hover {
+#review-details-screen button:hover,
+#submit-partners-btn:hover {
     background: #fff;
 }
 
@@ -241,9 +249,7 @@ label {
     color: #555;
     overflow: initial;
 }
-#review-details-screen .inner-wrapper .btn-circular {
-    margin-top: 25px;
-}
+
 
 /********** T O D O  S C R E E N **********/
 /*#todo-screen h2 {
@@ -548,6 +554,32 @@ input:disabled {
         margin-left: 25px;
     }
 
+}
+
+/*Small devices PORTRAIT (tablets, more than 768px tall)*/
+@media all and (min-height: 768px) and (orientation: portrait) {
+
+    .project-partner-holder button {
+        margin-right: 15px;
+        min-width: 150px;
+    }
+    .project-partner-holder button:nth-child(5n) {
+        margin-right: 15px;
+    }
+    .project-partner-holder button:nth-child(3n) {
+        margin-right: 0;
+    }
+
+    #proposal-screen textarea[name="research_question"],
+    #proposal-screen textarea[name="need_to_knows"],
+    #review-details-screen textarea {
+        height: 100px;
+    }
+
+    #review-details-screen h3[name="research_question"],
+    #review-details-screen h3[name="need_to_knows"] {
+        max-height: 150px;
+    }
 }
 
 /* Large devices (LARGE DESKTOPS, 1200px and up) */
