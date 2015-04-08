@@ -38,7 +38,7 @@
   app.newProjectView = null;
   app.proposalsView = null;
   app.projectReadView = null;
-  //app.projectWriteView = null;
+  app.projectWriteView = null;
   app.projectMediaView = null;
   app.reviewOverviewView = null;        // lolololol
   app.reviewDetailsView = null;
@@ -301,12 +301,12 @@
        });
      }
 
-     // if (app.projectWriteView === null) {
-     //   app.projectWriteView = new app.View.ProjectWriteView({
-     //     el: '#project-write-screen',
-     //     collection: Skeletor.Model.awake.tiles
-     //   });
-     // }
+     if (app.projectWriteView === null) {
+       app.projectWriteView = new app.View.ProjectWriteView({
+         el: '#project-write-screen',
+         collection: Skeletor.Model.awake.tiles
+       });
+     }
 
      if (app.projectMediaView === null) {
        app.projectMediaView = new app.View.ProjectMediaView({

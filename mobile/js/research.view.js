@@ -222,24 +222,29 @@
     },
 
     switchToWriteView: function() {
-      //check for resume here!
+      var view = this;
+      // check for resume here!
+      //var model = findWhere
+      // check if we need to resume
+      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
+      // if (tileToResume) {
+      //   view.setupResumedTile(tileToResume);
+      // } else if (it was a clicked on tile) {
+      // } else { }
 
       // else create a tile object
-      var projectWV = new app.View.ProjectWriteView({
-        el: '#project-write-screen',
-        collection: Skeletor.Model.awake.tiles
-      });
-
-      projectWV.model = new Model.Tile();
-      projectWV.model.set('project_id',app.project.id);
-      projectWV.model.set('type', "text");
-      projectWV.model.set('from_proposal', false);
-      projectWV.model.wake(app.config.wakeful.url);
-      projectWV.model.save();
-      projectWV.collection.add(projectWV.model);
+      var m = new Model.Tile();
+      m.set('project_id',app.project.id);
+      m.set('type', "text");
+      m.set('from_proposal', false);
+      m.wake(app.config.wakeful.url);
+      m.save();
+      view.collection.add(m);
+      app.projectWriteView.model = m;
 
       app.hideAllContainers();
       jQuery('#project-write-screen').removeClass('hidden');
+      app.projectWriteView.render();
     },
 
     switchToMediaView: function() {
@@ -314,14 +319,7 @@
       var view = this;
       console.log('Initializing ProjectWriteView...', view.el);
 
-      view.collection.on('sync', view.onModelSaved, view);
-
-      // check if we need to resume
-      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
-      // if (tileToResume) {
-      //   view.setupResumedTile(tileToResume);
-      // } else if (it was a clicked on tile) {
-      // } else { }
+      //view.collection.on('sync', view.onModelSaved, view);
     },
 
     events: {
@@ -336,23 +334,8 @@
       'keyup :input'                      : 'checkForAutoSave'
     },
 
-    setupResumedTile: function(tile) {
-      // var view = this;
-
-      // app.project = tile;
-      // view.model.wake(app.config.wakeful.url);
-      // jQuery('#tile-title-input').val(tile.get('title'));
-      // jQuery('#tile-body-input').val(tile.get('body'));
-    },
-
     showSentenceStarters: function() {
-      var view = this;
-
-      // setting up to add sentence starter content to a tile, so need to make sure we have a model to add it to
-      // if (!view.model) {
-      //   view.checkToAddNewTile();
-      // }
-      // jQuery('#sentence-starter-modal').modal({keyboard: true, backdrop: true});
+      jQuery('#sentence-starter-modal').modal({keyboard: true, backdrop: true});
     },
 
     appendSentenceStarter: function(ev) {
@@ -398,19 +381,20 @@
 
     // destroy a model, if there's something to destroy
     cancelTile: function() {
-      // var view = this;
+      var view = this;
 
-      // // if there is a tile
-      // if (view.model) {
-      //   // confirm delete
-      //   if (confirm("Are you sure you want to delete this tile?")) {
-      //     app.clearAutoSaveTimer();
-      //     view.model.destroy();
-      //     // and we need to set it to null to 'remove' it from the local collection
-      //     view.model = null;
-      //     jQuery('.input-field').val('');
-      //   }
-      // }
+      // if there is a tile
+      if (view.model) {
+        // confirm delete
+        if (confirm("Are you sure you want to delete this tile?")) {
+          app.clearAutoSaveTimer();
+          view.model.destroy();
+          // and we need to set it to null to 'remove' it from the local collection
+          view.model = null;
+          jQuery('.input-field').val('');
+          view.switchToReadView();
+        }
+      }
     },
 
     publishTile: function() {
@@ -430,7 +414,6 @@
         view.model = null;
         jQuery('.input-field').val('');
         view.switchToReadView();
-        // do we need more clean up here too?
       } else {
         jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
       }
@@ -439,14 +422,11 @@
     switchToReadView: function() {
       app.hideAllContainers();
       jQuery('#project-read-screen').removeClass('hidden');
-
-      // NOTE: might have to do some cleanup here?
-      //could all clean up for publish and cancel be done here too?
     },
 
-    onModelSaved: function(model, response, options) {
-      model.set('modified_at', new Date());
-    },
+    // onModelSaved: function(model, response, options) {
+    //   model.set('modified_at', new Date());
+    // },
 
     render: function () {
       var view = this;
