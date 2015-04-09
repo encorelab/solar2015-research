@@ -209,6 +209,10 @@
         view.render();
       });
 
+      view.collection.on('destroy', function(n) {
+        view.fullRerender();
+      });
+
       return view;
     },
 
@@ -224,6 +228,7 @@
       var m;
 
       // check if we need to resume
+      // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
       var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, published: false});
 
       // if the clicked element has a data-id (ie is a tile)
@@ -237,7 +242,7 @@
         m = tileToResume;
       } else {
         // NEW TILE
-        console.log('Starting a new tile..');
+        console.log('Starting a new tile...');
         m = new Model.Tile();
         m.set('project_id',app.project.id);
         m.set('author', app.username);
@@ -266,7 +271,7 @@
       //jQuery('#project-write-screen').removeClass('hidden');
     },
 
-    render: function () {
+    render: function() {
       var view = this;
       console.log("Rendering ProjectReadView...");
 
@@ -294,6 +299,34 @@
         } else {
           existingNote.replaceWith(listItem);
         }
+      });
+    },
+
+    // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason)
+    fullRerender: function() {
+      var view = this;
+      console.log("Doing a full rerender for ProjectReadView...");
+
+      // sort newest to oldest (prepend!)
+      view.collection.comparator = function(model) {
+        return model.get('created_at');
+      };
+
+      var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
+      var list = jQuery('#tiles-list');
+      list.html("");
+
+      _.each(myPublishedTiles, function(tile){
+        var starStatus;
+        if (tile.get('favourite') === true) {
+          starStatus = "fa-star";
+        } else {
+          starStatus = "fa-star-o";
+        }
+        var listItemTemplate = _.template(jQuery(view.template).text());
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+
+        list.prepend(listItem);
       });
     }
 
