@@ -728,10 +728,14 @@
     ReviewDetailsView
   **/
   app.View.ReviewDetailsView = Backbone.View.extend({
+    template: '',
+    // template: '#review-details-template',
 
     initialize: function () {
       var view = this;
       console.log('Initializing ReviewDetailsView...', view.el);
+
+      view.template = _.template(jQuery('#review-details-template').text());
 
       return view;
     },
@@ -740,7 +744,7 @@
       'click #return-to-overview-btn' : 'switchToProjectOverviewView',
       'click #publish-review-btn'     : 'publishReview',
       'click #cancel-review-btn'      : 'cancelReview',
-      'keyup :input'                  : 'checkForAutoSave'
+      'keyup :input'                  : 'startModifying'
     },
 
     publishReview: function() {
@@ -787,6 +791,17 @@
       jQuery('#review-overview-screen').removeClass('hidden');
     },
 
+    startModifying: function(ev) {
+      var view = this;
+
+      // set a write lock on the model
+      var proposal = view.model.get('proposal');
+      proposal.write_lock = app.project.get('name');
+      view.model.save();
+
+      view.checkForAutoSave(ev);
+    },
+
     checkForAutoSave: function(ev) {
       var view = this,
           field = ev.target.name,
@@ -806,22 +821,19 @@
     render: function () {
       var view = this;
       console.log("Rendering ReviewDetailsView...");
-
-      jQuery('#review-details-screen .input-field').val("");
-      jQuery('#review-details-screen [name=research_question]').text(view.model.get('proposal').research_question);
-      jQuery('#review-details-screen [name=need_to_knows]').text(view.model.get('proposal').need_to_knows);
-      jQuery('#review-details-screen [name=review_research_question]').val(view.model.get('proposal').review_research_question);
-      jQuery('#review-details-screen [name=review_need_to_knows]').val(view.model.get('proposal').review_need_to_knows);
-
-      if (view.model.get('proposal').review_published === true) {
-        jQuery('#review-details-title').text('"' + view.model.get('name') + '" has already been reviewed by ' + view.model.get('proposal').reviewer + '. You may view it, but not make any changes');
-        jQuery('#review-details-screen .input-field').addClass('disabled');
-        jQuery('.modify-proposal-btn').addClass('disabled');
+      // clearing the root element of the view
+      view.$el.html("");
+      // create json object from model
+      var modJson = view.model.toJSON();
+      // if the proposal has a write lock
+      if (view.model.get('proposal').write_lock !== app.project.get('name')) {
+        modJson.write_lock = true;
       } else {
-        jQuery('#review-details-title').text('You are currently reviewing "' + view.model.get('name') + '". Read each section of your peer’s proposal, and add comments.');
-        jQuery('#review-details-screen .input-field').removeClass('disabled');
-        jQuery('.modify-proposal-btn').removeClass('disabled');
+        modJson.write_lock = false;
       }
+      // create everything by rendering a template
+      view.$el.html(view.template(modJson));
+      return view;
     }
 
   });
