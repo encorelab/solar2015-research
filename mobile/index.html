@@ -51,6 +51,32 @@
         </li>
     </script>
 
+    <script id="review-details-template" type="text/template">
+        <div class="row">
+                <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
+                    <button id="return-to-overview-btn" class="fa fa-arrow-left fa-3x btn-circular"></button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                    <% if (proposal.review_published) { %>
+                        <h3 id="review-details-title"><b><%= name %></b> has already been reviewed by <i><%= proposal.reviewer %></i>. You may view it, but not make any changes</h3>
+                    <% } else { %>
+                        <h3 id="review-details-title">You are currently reviewing <b><%= name %></b>. Read each section of your peer’s proposal, and add comments.</h3>
+                    <% } %>
+                    <h3 name="research_question"><%= proposal.research_question %></h3>
+                    <textarea class="input-field <%= (proposal.review_published || write_lock) ? 'disabled' : '' %>" data-nested="proposal" name="review_research_question" placeholder="Does this research question make sense? Do you have any suggestions of how it could be improved?"><%= proposal.review_research_question %></textarea>
+                    <h3 name="need_to_knows"><%= proposal.need_to_knows %></h3>
+                    <textarea class="input-field <%= (proposal.review_published || write_lock) ? 'disabled' : '' %> " data-nested="proposal" name="review_need_to_knows" placeholder="Is there anything else that you think your peers should consider?"><%= proposal.review_need_to_knows %></textarea>
+                    <% if (proposal.review_published === false && write_lock === false) { %>
+                        <button id="publish-review-btn" class="modify-proposal-btn btn-circular fa fa-check fa-3x pull-right"></button>
+                        <button id="cancel-review-btn" class="modify-proposal-btn btn-circular fa fa-times fa-3x pull-right"></button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </script>
+
 </head>
 
 <body>
@@ -239,22 +265,7 @@
 
     <!-- ReviewDetails Screen -->
     <div id="review-details-screen" class="container-fluid user-screen">
-        <div class="row">
-            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
-                <button id="return-to-overview-btn" class="fa fa-arrow-left fa-3x btn-circular"></button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3 id="review-details-title"></h3>
-                <h3 name="research_question"></h3>
-                <textarea class="input-field" data-nested="proposal" name="review_research_question" placeholder="Does this research question make sense? Do you have any suggestions of how it could be improved?"></textarea>
-                <h3 name="need_to_knows"></h3>
-                <textarea class="input-field" data-nested="proposal" name="review_need_to_knows" placeholder="Is there anything else that you think your peers should consider?"></textarea>
-                <button id="publish-review-btn" class="modify-proposal-btn btn-circular fa fa-check fa-3x pull-right"></button>
-                <button id="cancel-review-btn" class="modify-proposal-btn btn-circular fa fa-times fa-3x pull-right"></button>
-            </div>
-        </div>
+
     </div>
 
 
