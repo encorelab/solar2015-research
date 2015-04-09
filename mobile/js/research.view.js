@@ -221,7 +221,8 @@
       'click #nav-write-btn'         : 'newOrResumeOrEditTextTile',
       'click #nav-media-btn'         : 'newOrResumeOrEditMediaTile',
       'click #nav-poster-btn'        : 'switchToPosterView',
-      'click .tile-container'        : 'newOrResumeOrEditTextTile' // WARNING, TROUBLE
+      'click .text-tile-container'   : 'newOrResumeOrEditTextTile',
+      'click .media-tile-container'  : 'newOrResumeOrEditMediaTile',
     },
 
     newOrResumeOrEditTextTile: function(ev) {
@@ -362,14 +363,25 @@
       list.html("");
 
       _.each(myPublishedTiles, function(tile){
-        var starStatus;
+        var starStatus = null,
+            listItemTemplate = null,
+            listItem = null;
+
         if (tile.get('favourite') === true) {
           starStatus = "fa-star";
         } else {
           starStatus = "fa-star-o";
         }
-        var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+
+        if (tile.get('type') === "text") {
+          listItemTemplate = _.template(jQuery(view.textTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+        } else if (tile.get('type') === "media") {
+          listItemTemplate = _.template(jQuery(view.mediaTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        } else {
+          console.error("Unknown tile type!");
+        }
 
         list.prepend(listItem);
       });
