@@ -348,8 +348,6 @@
       'click .nav-read-btn'               : 'switchToReadView',
       'click .cancel-tile-btn'            : 'cancelTile',
       'click .publish-tile-btn'           : 'publishTile',
-      'click #tile-title-input'           : 'checkToAddNewTile',
-      'click #tile-body-input'            : 'checkToAddNewTile',
       'click #lightbulb-icon'             : 'showSentenceStarters',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .sentence-starter'           : 'appendSentenceStarter',
@@ -474,19 +472,6 @@
     initialize: function() {
       var view = this;
       console.log('Initializing ProjectMediaView...', view.el);
-
-      // UI stuff
-      jQuery('#upload-btn').addClass('hidden');
-
-      // check if we need to resume
-      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
-      // if (tileToResume) {
-      //   view.setupResumedTile(tileToResume);
-      // } else if (it was a clicked on tile) {
-      // } else { }
-
-      // new tile!
-      // SHIZE - do we want a model here? I want a model here, but it doesn't need a collection, eg
     },
 
     events: {
