@@ -233,7 +233,7 @@
         }
       });
 
-      this.Tiles = this.db.Collection('projects').extend({
+      this.Tiles = this.db.Collection('tiles').extend({
         model: Skeletor.Model.Tile
       });
 

@@ -200,7 +200,7 @@
       var view = this;
       console.log('Initializing ProjectReadView...', view.el);
 
-      // we don't need this, since there's no editing of content in this version
+      // we don't need this, since there's no editing of content in this version?
       view.collection.on('change', function(n) {
         view.render();
       });
@@ -209,21 +209,55 @@
         view.render();
       });
 
-      view.render();
+      view.collection.on('destroy', function(n) {
+        view.fullRerender();
+      });
 
       return view;
     },
 
     events: {
-      'click #nav-write-btn'         : 'switchToWriteView',
+      'click #nav-write-btn'         : 'newOrResumeOrEditTile',
       'click #nav-media-btn'         : 'switchToMediaView',
       'click #nav-poster-btn'        : 'switchToPosterView',
-      'click .tile-container'        : 'showTileDetails'
+      'click .tile-container'        : 'newOrResumeOrEditTile'
     },
 
-    switchToWriteView: function() {
+    newOrResumeOrEditTile: function(ev) {
+      var view = this;
+      var m;
+
+      // check if we need to resume
+      // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
+      var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, published: false});
+
+      // if the clicked element has a data-id (ie is a tile)
+      if (jQuery(ev.target).data('id')) {
+        // EDIT TILE
+        console.log('Editing...');
+        m = view.collection.get(jQuery(ev.target).data('id'));
+      } else if (tileToResume) {
+        // RESUME TILE
+        console.log('Resuming...');
+        m = tileToResume;
+      } else {
+        // NEW TILE
+        console.log('Starting a new tile...');
+        m = new Model.Tile();
+        m.set('project_id',app.project.id);
+        m.set('author', app.username);
+        m.set('type', "text");
+        m.set('from_proposal', false);
+        m.wake(app.config.wakeful.url);
+        m.save();
+        view.collection.add(m);
+      }
+
+      app.projectWriteView.model = m;
+
       app.hideAllContainers();
       jQuery('#project-write-screen').removeClass('hidden');
+      app.projectWriteView.render();
     },
 
     switchToMediaView: function() {
@@ -237,54 +271,63 @@
       //jQuery('#project-write-screen').removeClass('hidden');
     },
 
-    // // TODO: create more views, definitely one for the tiles
-    // showTileDetails: function(ev) {
-    //   // retrieve the brainstorm with the id in data-id
-    //   var brainstorm = app.readView.collection.get(jQuery(ev.target).data('id'));
-    //   jQuery('#tile-details .tile-title').text(brainstorm.get('title'));
-    //   jQuery('#tile-details .tile-body').text(brainstorm.get('body'));
-    //   jQuery('#tile-details .tile-author').text("- " + brainstorm.get('author'));
-
-
-    //   jQuery('#tile-details').modal({keyboard: true, backdrop: true});
-    // },
-
-    // populateList: function(brainstorms, listId) {
-    //   var view = this;
-
-    //   // we have two lists now, so decide which one we're dealing with here
-    //   var list = jQuery('#'+listId);
-
-    //   _.each(brainstorms, function(brainstorm){
-    //     var listItemTemplate = _.template(jQuery(view.template).text());
-    //     var listItem = listItemTemplate({ 'id': brainstorm.get('_id'), 'title': brainstorm.get('title'), 'body': brainstorm.get('body'), 'author': '- '+brainstorm.get('author') });
-
-    //     var existingNote = list.find("[data-id='" + brainstorm.get('_id') + "']");
-    //     if (existingNote.length === 0) {
-    //       list.prepend(listItem);
-    //     } else {
-    //       existingNote.replaceWith(listItem);
-    //     }
-    //   });
-    // },
-
-    render: function () {
+    render: function() {
       var view = this;
       console.log("Rendering ProjectReadView...");
 
-      // // sort newest to oldest
-      // view.collection.comparator = function(model) {
-      //   return model.get('created_at');
-      // };
+      // sort newest to oldest (prepend!)
+      view.collection.comparator = function(model) {
+        return model.get('created_at');
+      };
 
-      // // add the brainstorms to the list under the following ordered conditions:
-      // // - my brainstorms, by date (since we're using prepend)
-      // // - everyone else's brainstorms, by date (since we're using prepend)
-      // var myPublishedBrainstorms = view.collection.sort().where({published: true, author: app.username});
-      // view.populateList(myPublishedBrainstorms, "my-tiles-list");
+      var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
+      var list = jQuery('#tiles-list');
 
-      // var othersPublishedBrainstorms = view.collection.sort().filter(function(b) { return (b.get('published') === true && b.get('author') !== app.username); });
-      // view.populateList(othersPublishedBrainstorms, "others-tiles-list");
+      _.each(myPublishedTiles, function(tile){
+        var starStatus;
+        if (tile.get('favourite') === true) {
+          starStatus = "fa-star";
+        } else {
+          starStatus = "fa-star-o";
+        }
+        var listItemTemplate = _.template(jQuery(view.template).text());
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+
+        var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
+        if (existingNote.length === 0) {
+          list.prepend(listItem);
+        } else {
+          existingNote.replaceWith(listItem);
+        }
+      });
+    },
+
+    // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason)
+    fullRerender: function() {
+      var view = this;
+      console.log("Doing a full rerender for ProjectReadView...");
+
+      // sort newest to oldest (prepend!)
+      view.collection.comparator = function(model) {
+        return model.get('created_at');
+      };
+
+      var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
+      var list = jQuery('#tiles-list');
+      list.html("");
+
+      _.each(myPublishedTiles, function(tile){
+        var starStatus;
+        if (tile.get('favourite') === true) {
+          starStatus = "fa-star";
+        } else {
+          starStatus = "fa-star-o";
+        }
+        var listItemTemplate = _.template(jQuery(view.template).text());
+        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+
+        list.prepend(listItem);
+      });
     }
 
   });
@@ -298,56 +341,30 @@
       var view = this;
       console.log('Initializing ProjectWriteView...', view.el);
 
-      // check if we need to resume
-      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
-      // if (tileToResume) {
-      //   view.setupResumedTile(tileToResume);
-      // } else if (it was a clicked on tile) {
-      // } else { }
-
-      // new tile!
-      // SHIZE - do we want a model here? I want a model here, but it doesn't need a collection, eg
-
+      //view.collection.on('sync', view.onModelSaved, view);
     },
 
     events: {
       'click .nav-read-btn'               : 'switchToReadView',
       'click .cancel-tile-btn'            : 'cancelTile',
       'click .publish-tile-btn'           : 'publishTile',
-      'click #tile-title-input'           : 'checkToAddNewTile',
-      'click #tile-body-input'            : 'checkToAddNewTile',
       'click #lightbulb-icon'             : 'showSentenceStarters',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .sentence-starter'           : 'appendSentenceStarter',
       'keyup :input'                      : 'checkForAutoSave'
     },
 
-    setupResumedTile: function(tile) {
-      // var view = this;
-
-      // app.project = tile;
-      // view.model.wake(app.config.wakeful.url);
-      // jQuery('#tile-title-input').val(tile.get('title'));
-      // jQuery('#tile-body-input').val(tile.get('body'));
-    },
-
     showSentenceStarters: function() {
-      var view = this;
-
-      // setting up to add sentence starter content to a tile, so need to make sure we have a model to add it to
-      // if (!view.model) {
-      //   view.checkToAddNewTile();
-      // }
-      // jQuery('#sentence-starter-modal').modal({keyboard: true, backdrop: true});
+      jQuery('#sentence-starter-modal').modal({keyboard: true, backdrop: true});
     },
 
     appendSentenceStarter: function(ev) {
       // add the sentence starter text to the current body (note that this won't start the autoSave trigger)
-      // var bodyText = jQuery('#tile-body-input').val();
-      // bodyText += jQuery(ev.target).text();
-      // jQuery('#tile-body-input').val(bodyText);
+      var bodyText = jQuery('#tile-body-input').val();
+      bodyText += jQuery(ev.target).text();
+      jQuery('#tile-body-input').val(bodyText);
 
-      // jQuery('#sentence-starter-modal').modal('hide');
+      jQuery('#sentence-starter-modal').modal('hide');
     },
 
     toggleFavouriteStatus: function(ev) {
@@ -366,75 +383,60 @@
       }
     },
 
-    // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
-    checkToAddNewTile: function() {
-      var view = this;
-
-      //if there is no model yet
-      if (!view.model) {
-        // create a tile object
-        view.model = new Model.Tile();
-        view.model.set('project_id',app.project.id);
-        view.model.set('type', "text");
-        view.model.set('from_proposal', false);
-        view.model.wake(app.config.wakeful.url);
-        view.model.save();
-        view.collection.add(view.model);
-      }
-    },
-
     checkForAutoSave: function(ev) {
-      // var view = this,
-      //     field = ev.target.name,
-      //     input = ev.target.value;
-      // // clear timer on keyup so that a save doesn't happen while typing
-      // app.clearAutoSaveTimer();
+      var view = this,
+          field = ev.target.name,
+          input = ev.target.value;
+      // clear timer on keyup so that a save doesn't happen while typing
+      app.clearAutoSaveTimer();
 
-      // // save after 10 keystrokes
-      // app.autoSave(view.model, field, input, false);
+      // save after 10 keystrokes
+      app.autoSave(view.model, field, input, false);
 
-      // // setting up a timer so that if we stop typing we save stuff after 5 seconds
-      // app.autoSaveTimer = setTimeout(function(){
-      //   app.autoSave(view.model, field, input, true);
-      // }, 5000);
+      // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      app.autoSaveTimer = setTimeout(function(){
+        app.autoSave(view.model, field, input, true);
+      }, 5000);
     },
 
     // destroy a model, if there's something to destroy
     cancelTile: function() {
-      // var view = this;
+      var view = this;
 
-      // // if there is a tile
-      // if (view.model) {
-      //   // confirm delete
-      //   if (confirm("Are you sure you want to delete this tile?")) {
-      //     app.clearAutoSaveTimer();
-      //     view.model.destroy();
-      //     // and we need to set it to null to 'remove' it from the local collection
-      //     view.model = null;
-      //     jQuery('.input-field').val('');
-      //   }
-      // }
+      // if there is a tile
+      if (view.model) {
+        // confirm delete
+        if (confirm("Are you sure you want to delete this tile?")) {
+          app.clearAutoSaveTimer();
+          view.model.destroy();
+          // and we need to set it to null to 'remove' it from the local collection
+          view.model = null;
+          jQuery('.input-field').val('');
+          view.switchToReadView();
+        }
+      }
     },
 
     publishTile: function() {
-      // var view = this;
-      // var title = jQuery('#tile-title-input').val();
-      // var body = app.turnUrlsToLinks(jQuery('#tile-body-input').val());
+      var view = this;
+      var title = jQuery('#tile-title-input').val();
+      var body = jQuery('#tile-body-input').val();
 
-      // if (title.length > 0 && body.length > 0) {
-      //   app.clearAutoSaveTimer();
-      //   view.model.set('title',title);
-      //   view.model.set('body',body);
-      //   view.model.set('published', true);
-      //   view.model.set('modified_at', new Date());
-      //   view.model.save();
-      //   jQuery().toastmessage('showSuccessToast', "Published to tile wall");
+      if (title.length > 0 && body.length > 0) {
+        app.clearAutoSaveTimer();
+        view.model.set('title',title);
+        view.model.set('body',body);
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
 
-      //   view.model = null;
-      //   jQuery('.input-field').val('');
-      // } else {
-      //   jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
-      // }
+        view.model = null;
+        jQuery('.input-field').val('');
+        view.switchToReadView();
+      } else {
+        jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
+      }
     },
 
     switchToReadView: function() {
@@ -442,17 +444,23 @@
       jQuery('#project-read-screen').removeClass('hidden');
     },
 
+    // onModelSaved: function(model, response, options) {
+    //   model.set('modified_at', new Date());
+    // },
+
     render: function () {
       var view = this;
       console.log("Rendering ProjectWriteView...");
 
-      // UI to mirror favourite statusness
-      //jQuery('.favourite-icon').addClass('hidden');
-      // if (MODEL.favourite === true) {
+      jQuery('.favourite-icon').addClass('hidden');
+      if (view.model.get('favourite') === true) {
+        jQuery('.favourite-icon-selected').removeClass('hidden');
+      } else {
+        jQuery('.favourite-icon-unselected').removeClass('hidden');
+      }
 
-      // } else {
-      //   favourite-icon-unselected
-      // }
+      jQuery('#tile-title-input').val(view.model.get('title'));
+      jQuery('#tile-body-input').val(view.model.get('body'));
     }
   });
 
@@ -464,19 +472,6 @@
     initialize: function() {
       var view = this;
       console.log('Initializing ProjectMediaView...', view.el);
-
-      // UI stuff
-      jQuery('#upload-btn').addClass('hidden');
-
-      // check if we need to resume
-      // var tileToResume = view.collection.tiles.findWhere({author: app.username, published: false});
-      // if (tileToResume) {
-      //   view.setupResumedTile(tileToResume);
-      // } else if (it was a clicked on tile) {
-      // } else { }
-
-      // new tile!
-      // SHIZE - do we want a model here? I want a model here, but it doesn't need a collection, eg
     },
 
     events: {

@@ -43,10 +43,10 @@
     <!-- Tile template -->
     <script id="tile-template" type="text/template">
         <li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
-            <div class="tile">
+            <div class="tile" data-id=<%= id %>>
+                <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <h3 class="tile-title" data-id=<%= id %>><%= title %></h3>
                 <div class="tile-body" data-id=<%= id %>><%= body %></div>
-                <div class="tile-author" data-id=<%= id %>><%= author %></div>
             </div>
         </li>
     </script>
@@ -125,7 +125,7 @@
     <!-- New Project Screen -->
     <div id="new-project-screen" class="container-fluid user-screen">
         <div id="new-project-student-picker" class="row">
-            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+            <div class="inner-wrapper col-xs-10 col-xs-offset-1">
                 <h2>Select the names of all students who will work on this project<h2>
                 <div class="project-partner-holder">
                     <!-- populated by the view -->
@@ -170,8 +170,7 @@
         </div>
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <ul id="my-tiles-list" class="row"></ul>
-                <ul id="others-tiles-list" class="row"></ul>
+                <ul id="tiles-list" class="row"></ul>
                 <!-- gets filled by the readScreenView -->
             </div>
         </div>
@@ -237,11 +236,13 @@
                        <img id="photo-upload-spinner" class="hidden" src="img/loading.gif"></img>
                        <!-- <button id="upload-btn" class="btn btn-default btn-word-wrap hidden">Add this photo to a tile</button> -->
                    </div>
-                    <i class="fa fa-star-o fa-4x favourite-icon favourite-icon-unselected"></i>
-                    <i class="fa fa-star fa-4x favourite-icon favourite-icon-selected"></i>
-                    Is this a drawing, model, or other form of representation that you constructed yourself?
-                    <button id="self-originator-btn" class="originator-btn btn">Yes</button>
-                    <button id="others-originator-btn" class="originator-btn btn">No</button>
+                   <div class="self-photo-query">
+                        <i class="fa fa-star-o fa-4x favourite-icon favourite-icon-unselected"></i>
+                        <i class="fa fa-star fa-4x favourite-icon favourite-icon-selected"></i>
+                        <h3>Is this a drawing, model, or other form of representation that you constructed yourself?</h3>
+                        <button id="self-originator-btn" class="originator-btn btn btn-base btn-default">Yes</button>
+                        <button id="others-originator-btn" class="originator-btn btn btn-base btn-default">No</button>
+                    </div>
                 </div>
                 <button class="publish-tile-btn btn-circular fa fa-check fa-3x pull-right"></button>
                 <button class="cancel-tile-btn btn-circular fa fa-times fa-3x pull-right"></button>
@@ -253,7 +254,7 @@
     <!-- ReviewOverview Screen -->
     <div id="review-overview-screen" class="container-fluid user-screen">
         <div class="row">
-            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+            <div class="inner-wrapper col-xs-8 col-xs-offset-2">
                 <h2>Select a proposal to review</h2>
                 <!-- I must be trolling myself with these names, but I honestly think it's the most correctly descriptive -->
                 <ul id="review-overview-unreviewed-projects-container" class="row"></ul>
@@ -302,26 +303,6 @@
                         <br/>
                         <div class="modal-body projects-holder">
                             <!-- filled by javascript with buttons for user login -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tile-details" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="true">
-        <div class="table">
-            <div class="table-cell">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h3 class="modal-title tile-title"><!-- filled by read-screen view --></h4>
-                        </div>
-                        <div class="modal-body">
-                        <!-- filled by read-screen view -->
-                            <div class="tile-body"></div>
-                            <div class="tile-author"></div>
                         </div>
                     </div>
                 </div>
