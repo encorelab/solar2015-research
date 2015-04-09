@@ -266,18 +266,18 @@
 
       // check if we need to resume
       // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
-      // var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
+      var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
 
-      // // if the clicked element has a data-id (ie is a tile)
-      // if (jQuery(ev.target).data('id') && false) {
-      //   // EDIT TILE
-      //   console.log('Editing...');
-      //   m = view.collection.get(jQuery(ev.target).data('id'));
-      // } else if (tileToResume && false) {
-      //   // RESUME TILE
-      //   console.log('Resuming...');
-      //   m = tileToResume;
-      // } else {
+      // if the clicked element has a data-id (ie is a tile)
+      if (jQuery(ev.target).data('id')) {
+        // EDIT TILE
+        console.log('Editing...');
+        m = view.collection.get(jQuery(ev.target).data('id'));
+      } else if (tileToResume) {
+        // RESUME TILE
+        console.log('Resuming...');
+        m = tileToResume;
+      } else {
         // NEW TILE
         console.log('Starting a new media tile...');
         m = new Model.Tile();
@@ -288,7 +288,7 @@
         m.wake(app.config.wakeful.url);
         m.save();
         view.collection.add(m);
- //     }
+     }
 
       app.projectMediaView.model = m;
 
