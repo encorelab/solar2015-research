@@ -194,7 +194,8 @@
     ProjectReadView
   **/
   app.View.ProjectReadView = Backbone.View.extend({
-    template: "#tile-template",
+    textTemplate: "#text-tile-template",
+    mediaTemplate: "#media-tile-template",
 
     initialize: function () {
       var view = this;
@@ -316,14 +317,25 @@
       var list = jQuery('#tiles-list');
 
       _.each(myPublishedTiles, function(tile){
-        var starStatus;
+        var starStatus = null,
+            listItemTemplate = null,
+            listItem = null;
+
         if (tile.get('favourite') === true) {
           starStatus = "fa-star";
         } else {
           starStatus = "fa-star-o";
         }
-        var listItemTemplate = _.template(jQuery(view.template).text());
-        var listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+
+        if (tile.get('type') === "text") {
+          listItemTemplate = _.template(jQuery(view.textTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+        } else if (tile.get('type') === "media") {
+          listItemTemplate = _.template(jQuery(view.mediaTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        } else {
+          console.error("Unknown tile type!");
+        }
 
         var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
         if (existingNote.length === 0) {
@@ -334,7 +346,8 @@
       });
     },
 
-    // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason)
+    // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason). This seems to be working.
+    //TODO: recombine this and use a flag to set up the full rerender
     fullRerender: function() {
       var view = this;
       console.log("Doing a full rerender for ProjectReadView...");

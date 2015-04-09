@@ -36,17 +36,27 @@
     <script type="text/javascript" src="../shared/js/model.js"></script>
     <script type="text/javascript" src="../shared/js/rollcall.js"></script>
 
-
     <script type="text/javascript" src="js/research.js"></script>
     <script type="text/javascript" src="js/research.view.js"></script>
 
-    <!-- Tile template -->
-    <script id="tile-template" type="text/template">
+    <!-- Templates -->
+    <script id="text-tile-template" type="text/template">
         <li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <h3 class="tile-title" data-id=<%= id %>><%= title %></h3>
                 <div class="tile-body" data-id=<%= id %>><%= body %></div>
+            </div>
+        </li>
+    </script>
+
+    <script id="media-tile-template" type="text/template">
+        <li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
+            <div class="tile" data-id=<%= id %>>
+                <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
+                <div class="tile-url" data-id=<%= id %>>
+                    <img src=<%= url %>></img>
+                </div>
             </div>
         </li>
     </script>
