@@ -217,19 +217,19 @@
     },
 
     events: {
-      'click #nav-write-btn'         : 'newOrResumeOrEditTile',
-      'click #nav-media-btn'         : 'switchToMediaView',
+      'click #nav-write-btn'         : 'newOrResumeOrEditTextTile',
+      'click #nav-media-btn'         : 'newOrResumeOrEditMediaTile',
       'click #nav-poster-btn'        : 'switchToPosterView',
-      'click .tile-container'        : 'newOrResumeOrEditTile'
+      'click .tile-container'        : 'newOrResumeOrEditTextTile' // WARNING, TROUBLE
     },
 
-    newOrResumeOrEditTile: function(ev) {
+    newOrResumeOrEditTextTile: function(ev) {
       var view = this;
       var m;
 
       // check if we need to resume
       // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
-      var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, published: false});
+      var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: "text", published: false});
 
       // if the clicked element has a data-id (ie is a tile)
       if (jQuery(ev.target).data('id')) {
@@ -242,7 +242,7 @@
         m = tileToResume;
       } else {
         // NEW TILE
-        console.log('Starting a new tile...');
+        console.log('Starting a new text tile...');
         m = new Model.Tile();
         m.set('project_id',app.project.id);
         m.set('author', app.username);
@@ -260,9 +260,41 @@
       app.projectWriteView.render();
     },
 
-    switchToMediaView: function() {
+    newOrResumeOrEditMediaTile: function(ev) {
+      var view = this;
+      var m;
+
+      // check if we need to resume
+      // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
+      // var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
+
+      // // if the clicked element has a data-id (ie is a tile)
+      // if (jQuery(ev.target).data('id') && false) {
+      //   // EDIT TILE
+      //   console.log('Editing...');
+      //   m = view.collection.get(jQuery(ev.target).data('id'));
+      // } else if (tileToResume && false) {
+      //   // RESUME TILE
+      //   console.log('Resuming...');
+      //   m = tileToResume;
+      // } else {
+        // NEW TILE
+        console.log('Starting a new media tile...');
+        m = new Model.Tile();
+        m.set('project_id',app.project.id);
+        m.set('author', app.username);
+        m.set('type', "media");
+        m.set('from_proposal', false);
+        m.wake(app.config.wakeful.url);
+        m.save();
+        view.collection.add(m);
+ //     }
+
+      app.projectMediaView.model = m;
+
       app.hideAllContainers();
       jQuery('#project-media-screen').removeClass('hidden');
+      app.projectMediaView.render();
     },
 
     switchToPosterView: function() {
@@ -480,52 +512,36 @@
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
-      'change #photo-file'                : "uploadPhoto",
-      // 'click #upload-btn'                 : "uploadPhoto",
-      'click .finish-btn'                 : "publishObservation",
-      'keyup :input'                      : 'checkForAutoSave'
-    },
-
-    setupResumedTile: function(tile) {
-      // var view = this;
-
-      // view.model = tile;
-      // view.model.wake(app.config.wakeful.url);
-      // jQuery('#tile-title-input').val(tile.get('title'));
-      // jQuery('#tile-body-input').val(tile.get('body'));
+      'change #photo-file'                : "uploadPhoto"
     },
 
     toggleFavouriteStatus: function(ev) {
+      var view = this;
+
       jQuery('#project-media-screen .favourite-icon').addClass('hidden');
 
       if (jQuery(ev.target).hasClass('favourite-icon-unselected')) {
         jQuery('#project-media-screen .favourite-icon-selected').removeClass('hidden');
-        // SET IT IN THE MODEL AS WELL - or are we using a model?
+        view.model.set('favourite',true);
+        view.model.save();
       } else {
         jQuery('#project-media-screen .favourite-icon-unselected').removeClass('hidden');
-        // SET IT IN THE MODEL AS WELL
+        view.model.set('favourite',false);
+        view.model.save();
       }
     },
 
     toggleOriginator: function(ev) {
+      var view = this;
+
       jQuery('.originator-btn').removeClass('disabled');
       jQuery('.originator-btn').removeClass('selected');
       jQuery(ev.target).addClass('disabled');
       jQuery(ev.target).addClass('selected');
 
-      // TODO: add it to the model
-      // and remember to add this to the render as well
+      view.model.set('originator',jQuery(ev.target).data('originator'));
+      view.model.save();
     },
-
-    // enableUpload: function() {
-    //   if (jQuery('#photo-file').val()) {
-    //     jQuery('#upload-btn').removeClass('hidden');
-    //     jQuery('#upload-btn').addClass('highlighted');
-    //     setTimeout(function() {
-    //       jQuery('#upload-btn').removeClass('highlighted');
-    //     }, 1500);
-    //   }
-    // },
 
     // another nother attempt at this - now trigger on change so that the user only has to ever do one thing (remove enable upload)
     uploadPhoto: function() {
@@ -534,9 +550,6 @@
       var file = jQuery('#photo-file')[0].files.item(0);
       var formData = new FormData();
       formData.append('file', file);
-
-      // disable the upload btn again (until a file is chosen again)
-      // jQuery('#upload-btn').addClass('hidden');
 
       jQuery('#photo-upload-spinner').removeClass('hidden');
 
@@ -560,81 +573,41 @@
         jQuery('#photo-upload-spinner').addClass('hidden');
         console.log("UPLOAD SUCCEEDED!");
         console.log(xhr.getAllResponseHeaders());
-        // app.observation.get('data').photo_url = data.url;            TODO: add me when we have a model or whatevs
-        // app.observation.save();
-        jQuery('#upload-btn').text("Replace Photo");
-        jQuery('.camera-icon').attr('src',app.config.pikachu.url + data.url);
+        // add it to the model
+        view.model.set('url',data.url);
+        view.model.save();
+        view.render();
       }
     },
 
-    // does it make more sense to put this in the initialize? (and then also in the publish and cancel?)
-    checkToAddNewTile: function() {
+    cancelTile: function() {
       var view = this;
 
-      // if there is no model yet
-      // if (!view.model) {
-      //   // create a tile object
-      //   view.model = new Model.Brainstorm();
-      //   view.model.set('author',app.username);
-      //   view.model.set('published',false);
-      //   view.model.wake(app.config.wakeful.url);
-      //   view.model.save();
-      //   view.collection.add(view.model);
-      // }
-    },
-
-    checkForAutoSave: function(ev) {
-      // var view = this,
-      //     field = ev.target.name,
-      //     input = ev.target.value;
-      // // clear timer on keyup so that a save doesn't happen while typing
-      // app.clearAutoSaveTimer();
-
-      // // save after 10 keystrokes
-      // app.autoSave(view.model, field, input, false);
-
-      // // setting up a timer so that if we stop typing we save stuff after 5 seconds
-      // app.autoSaveTimer = setTimeout(function(){
-      //   app.autoSave(view.model, field, input, true);
-      // }, 5000);
-    },
-
-    // destroy a model, if there's something to destroy
-    cancelTile: function() {
-      // var view = this;
-
-      // // if there is a tile
-      // if (view.model) {
-      //   // confirm delete
-      //   if (confirm("Are you sure you want to delete this tile?")) {
-      //     app.clearAutoSaveTimer();
-      //     view.model.destroy();
-      //     // and we need to set it to null to 'remove' it from the local collection
-      //     view.model = null;
-      //     jQuery('.input-field').val('');
-      //   }
-      // }
+      // if there is a tile
+      if (view.model) {
+        // confirm delete
+        if (confirm("Are you sure you want to delete this tile?")) {
+          app.clearAutoSaveTimer();
+          view.model.destroy();
+          // and we need to set it to null to 'remove' it from the local collection
+          view.model = null;
+          jQuery('.input-field').val('');
+          view.switchToReadView();
+        }
+      }
     },
 
     publishTile: function() {
-      // var view = this;
-      // var title = jQuery('#tile-title-input').val();
-      // var body = app.turnUrlsToLinks(jQuery('#tile-body-input').val());
+      var view = this;
 
-      // if (title.length > 0 && body.length > 0) {
-      //   app.clearAutoSaveTimer();
-      //   view.model.set('title',title);
-      //   view.model.set('body',body);
-      //   view.model.set('published', true);
-      //   view.model.set('modified_at', new Date());
-      //   view.model.save();
-      //   jQuery().toastmessage('showSuccessToast', "Published to tile wall");
+      view.model.set('published', true);
+      view.model.set('modified_at', new Date());
+      view.model.save();
+      jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
 
-      //   view.model = null;
-      //   jQuery('.input-field').val('');
-      // } else {
-      //   jQuery().toastmessage('showErrorToast', "You need to complete both fields to submit your tile...");
-      // }
+      view.model = null;
+      jQuery('.input-field').val('');
+      view.switchToReadView();
     },
 
     switchToReadView: function() {
@@ -643,7 +616,35 @@
     },
 
     render: function () {
+      var view = this;
       console.log("Rendering ProjectMediaView...");
+
+      // favourite button (the star)
+      jQuery('.favourite-icon').addClass('hidden');
+      if (view.model.get('favourite') === true) {
+        jQuery('.favourite-icon-selected').removeClass('hidden');
+      } else {
+        jQuery('.favourite-icon-unselected').removeClass('hidden');
+      }
+
+      // originator buttons
+      // doing it this way since I don't want to deal with radio buttons
+      jQuery('.originator-btn').removeClass('disabled');
+      jQuery('.originator-btn').removeClass('selected');
+      if (view.model.get('originator') === "self") {
+        jQuery('#self-originator-btn').addClass('disabled');
+        jQuery('#self-originator-btn').addClass('selected');
+      } else if (view.model.get('originator') === "other") {
+        jQuery('#others-originator-btn').addClass('disabled');
+        jQuery('#others-originator-btn').addClass('selected');
+      }
+
+      // photo
+      if (view.model.get('url')) {
+        jQuery('.camera-icon').attr('src',app.config.pikachu.url + view.model.get('url'));
+      } else {
+        jQuery('.camera-icon').attr('src','img/camera_icon.png');
+      }
     }
   });
 
