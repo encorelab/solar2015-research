@@ -119,7 +119,12 @@
 
     events: {
       'click #publish-proposal-btn' : 'publishProposal',
+      'click .nav-splash-btn'       : 'switchToSplashView',
       'keyup :input'                : 'checkForAutoSave'
+    },
+
+    switchToSplashView: function() {
+      app.resetToSplashScreen();
     },
 
     publishProposal: function() {
