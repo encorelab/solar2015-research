@@ -675,10 +675,10 @@
 
 
   /**
-    ReviewOverviewItemView
-    This is one part of ReviewOverviewView which shows many parts
+    ReviewView
+    This is one part of ReviewsView which shows many parts
   **/
-  app.View.ReviewOverviewItemView = Backbone.View.extend({
+  app.View.ReviewView = Backbone.View.extend({
     template: _.template("<li><button class='project-to-review-btn btn' data-id='<%= _id %>'><%= theme %> - <%= name %></button></li>"),
 
     events: {
@@ -693,7 +693,7 @@
 
     initialize: function () {
       var view = this;
-      console.log('Initializing ReviewOverviewItemView...', view.el);
+      console.log('Initializing ReviewView...', view.el);
 
       view.model.on('change', view.render, view);
 
@@ -712,13 +712,13 @@
   });
 
   /**
-    ReviewOverviewView
+    ReviewsView
   **/
-  app.View.ReviewOverviewView = Backbone.View.extend({
+  app.View.ReviewsView = Backbone.View.extend({
 
     initialize: function () {
       var view = this;
-      console.log('Initializing ReviewOverviewView...', view.el);
+      console.log('Initializing ReviewsView...', view.el);
 
       view.collection.on('change', function(n) {
         view.render();
@@ -744,7 +744,7 @@
     // },
 
     addOne: function(proj, listToAddTo) {
-      var reviewItemView = new app.View.ReviewOverviewItemView({model: proj});
+      var reviewItemView = new app.View.ReviewView({model: proj});
       listToAddTo.append(reviewItemView.render().el);
     },
 
@@ -769,12 +769,17 @@
 
     render: function () {
       var view = this;
-      console.log("Rendering ReviewOverviewView...");
+      console.log("Rendering ReviewsView...");
 
       // sort by theme
       view.collection.comparator = function(model) {
         return model.get('theme');
       };
+
+      // COLIN README
+      // This seems a great candidate for helpers in the model. Call a function that spits out a part of the proposals
+      // We could have 4 of them or one that takes some parameter describing what we want. Then all we have to do here is to call
+      // the function of the collection and throw it into populateList
 
       // projects with proposals that are published and that is not this group's project name
       // this render will sometimes fire before we have a model attached, hence the app.project in the return
@@ -784,8 +789,20 @@
       });
       view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
 
+      // dealing with stuff locked by current project
+      var projectsLockedByCurrentProject = view.collection.sort().filter(function(proj) {
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock === app.project.get('name'));
+      });
+      view.populateList(projectsLockedByCurrentProject, "review-overview-locked-by-us-projects-container");
+
+      // dealing with stuff locked by other projects
+      var projectsLockedByOtherProjects = view.collection.sort().filter(function(proj) {
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock && proj.get('proposal').write_lock !== app.project.get('name'));
+      });
+      view.populateList(projectsLockedByOtherProjects, "review-overview-locked-by-others-projects-container");
+
       var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') &&proj.get('proposal').review_published === true);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === true);
       });
       view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
