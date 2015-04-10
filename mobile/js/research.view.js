@@ -149,8 +149,8 @@
         });
 
         // create the new proposal tiles
-        view.createProposalTile("Research question(s)", researchQuestionVal);
         view.createProposalTile("Foundational knowledge", needToKnowsVal);
+        view.createProposalTile("Research question(s)", researchQuestionVal);
 
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
 
@@ -225,7 +225,7 @@
       var view = this;
       console.log('Initializing ProjectReadView...', view.el);
 
-      // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!
+      // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!  If this is too much rendering on the fly, then we will want to revert back to view.render for change and add
       // these binds should only fire when the collection changes are for your project
       view.collection.on('change', function(n) {
         if (n.get('project_id') === app.project.id && n.get('published') === true) {
@@ -659,14 +659,20 @@
     publishTile: function() {
       var view = this;
 
-      view.model.set('published', true);
-      view.model.set('modified_at', new Date());
-      view.model.save();
-      jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
+      if (view.model.get('url') && view.model.get('originator')) {
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
 
-      view.model = null;
-      jQuery('.input-field').val('');
-      view.switchToReadView();
+        view.model = null;
+        jQuery('.input-field').val('');
+        // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+        jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
+        view.switchToReadView();
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please add a picture or video and confirm whether this is your own drawing, model, or other form of representation...");
+      }
     },
 
     switchToReadView: function() {
