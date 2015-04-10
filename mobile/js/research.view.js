@@ -115,8 +115,6 @@
     initialize: function () {
       var view = this;
       console.log('Initializing ProposalsView...', view.el);
-
-      view.collection.on('sync', view.onModelSaved, view);
     },
 
     events: {
@@ -129,17 +127,30 @@
       var name = jQuery('#proposal-screen [name=name]').val();
 
       if (name.length > 0) {
+        var researchQuestionVal = jQuery('#proposal-screen [name=research_question]').val();
+        var needToKnowsVal = jQuery('#proposal-screen [name=need_to_knows]').val();
+
         app.clearAutoSaveTimer();
         app.project.set('name',name);
         var proposal = app.project.get('proposal');
-        proposal.research_question = jQuery('#proposal-screen [name=research_question]').val();
-        proposal.need_to_knows = jQuery('#proposal-screen [name=need_to_knows]').val();
+        proposal.research_question = researchQuestionVal;
+        proposal.need_to_knows = needToKnowsVal;
         proposal.published = true;
         app.project.set('proposal',proposal);
         app.project.save();
+
         // show who is 'logged in' as the group, since that's our 'user' in this case
         app.groupname = name;
         jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
+
+        // delete all previous proposal tiles for this project
+        Skeletor.Model.awake.tiles.where({ 'project_id': app.project.id, 'from_proposal': true }).forEach(function(tile) {
+          tile.destroy();
+        });
+
+        // create the new proposal tiles
+        view.createProposalTile("Research question(s)", researchQuestionVal);
+        view.createProposalTile("Foundational knowledge", needToKnowsVal);
 
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
 
@@ -149,8 +160,21 @@
       }
     },
 
-    onModelSaved: function(model, response, options) {
-      model.set('modified_at', new Date());
+    createProposalTile: function(titleText, bodyText) {
+      var view = this;
+
+      var m = new Model.Tile();
+      m.set('project_id', app.project.id);
+      m.set('author', app.username);
+      m.set('type', "text");
+      m.set('title', titleText);
+      m.set('body', bodyText);
+      m.set('favourite', true);
+      m.set('from_proposal', true);
+      m.set('published', true);
+      m.wake(app.config.wakeful.url);
+      m.save();
+      Skeletor.Model.awake.tiles.add(m);
     },
 
     // this version of autosave works with nested content. The nested structure must be spelled out *in the html*
@@ -203,6 +227,7 @@
 
       // we don't need this, since there's no editing of content in this version?
       view.collection.on('change', function(n) {
+        // TODO! only call render if it's your stuff
         view.render();
       });
 
@@ -246,7 +271,7 @@
         // NEW TILE
         console.log('Starting a new text tile...');
         m = new Model.Tile();
-        m.set('project_id',app.project.id);
+        m.set('project_id', app.project.id);
         m.set('author', app.username);
         m.set('type', "text");
         m.set('from_proposal', false);
@@ -693,7 +718,7 @@
 
     initialize: function () {
       var view = this;
-      console.log('Initializing ReviewView...', view.el);
+      //console.log('Initializing ReviewView...', view.el);
 
       view.model.on('change', view.render, view);
 
@@ -792,24 +817,24 @@
       // this render will sometimes fire before we have a model attached, hence the app.project in the return
       // Armin 09.04.2015: No theme no deal (avoid breaking render)
       var unreviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false);
       });
       view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
 
       // dealing with stuff locked by current project
       var projectsLockedByCurrentProject = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock === app.project.get('name'));
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock === app.project.get('name'));
       });
       view.populateList(projectsLockedByCurrentProject, "review-overview-locked-by-us-projects-container");
 
       // dealing with stuff locked by other projects
       var projectsLockedByOtherProjects = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock && proj.get('proposal').write_lock !== app.project.get('name'));
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock && proj.get('proposal').write_lock !== app.project.get('name'));
       });
       view.populateList(projectsLockedByOtherProjects, "review-overview-locked-by-others-projects-container");
 
       var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === true);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === true);
       });
       view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
