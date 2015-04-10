@@ -225,18 +225,26 @@
       var view = this;
       console.log('Initializing ProjectReadView...', view.el);
 
-      // we don't need this, since there's no editing of content in this version?
+      // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!
+      // these binds should only fire when the collection changes are for your project
       view.collection.on('change', function(n) {
-        // TODO! only call render if it's your stuff
-        view.render();
+        if (n.get('project_id') === app.project.id && n.get('published') === true) {
+          //view.render();
+          view.fullRerender();
+        }
       });
 
       view.collection.on('add', function(n) {
-        view.render();
+        if (n.get('project_id') === app.project.id) {
+          //view.render();
+          view.fullRerender();
+        }
       });
 
       view.collection.on('destroy', function(n) {
-        view.fullRerender();
+        if (n.get('project_id') === app.project.id) {
+          view.fullRerender();
+        }
       });
 
       return view;
@@ -338,6 +346,7 @@
       view.collection.comparator = function(model) {
         return model.get('created_at');
       };
+      // NB: this wants to be modified_at, but that doesn't work correctly yet (would work in fullrerender) because we don't redraw the tiles on every change
 
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
       var list = jQuery('#tiles-list');
@@ -380,7 +389,7 @@
 
       // sort newest to oldest (prepend!)
       view.collection.comparator = function(model) {
-        return model.get('created_at');
+        return model.get('modified_at');
       };
 
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
