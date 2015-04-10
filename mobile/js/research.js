@@ -40,7 +40,7 @@
   app.projectReadView = null;
   app.projectWriteView = null;
   app.projectMediaView = null;
-  app.reviewOverviewView = null;        // lolololol
+  app.reviewsView = null;        // lolololol
   app.reviewDetailsView = null;
 
   app.keyCount = 0;
@@ -264,7 +264,7 @@
         } else if (jQuery(this).hasClass('goto-review-btn')) {
           jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');
-          app.reviewOverviewView.render();
+          app.reviewsView.render();
         } else {
           console.log('ERROR: unknown nav button');
         }
@@ -316,14 +316,14 @@
        });
      }
 
-    if (app.reviewOverviewView === null) {
-      app.reviewOverviewView = new app.View.ReviewOverviewView({
+    if (app.reviewsView === null) {
+      app.reviewsView = new app.View.ReviewsView({
         el: '#review-overview-screen',
         collection: Skeletor.Model.awake.projects
       });
     }
 
-    // should this just be instantiated in the reviewOverviewView?
+    // should this just be instantiated in the reviewsView?
     if (app.reviewDetailsView === null) {
       app.reviewDetailsView = new app.View.ReviewDetailsView({
         el: '#review-details-screen'
