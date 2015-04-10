@@ -347,6 +347,20 @@
 
   //*************** HELPER FUNCTIONS ***************//
 
+  app.photoOrVideo = function(url) {
+    var type = null;
+
+    var extension = url.split('.').pop().toLowerCase();
+    if (extension === "jpg" || extension === "gif" || extension === "jpeg" || extension === "png") {
+      type = "photo";
+    } else if (extension === "mp4" || extension === "m4v" || extension === "mov") {
+      type = "video";
+    } else {
+      type = "unknown";
+    }
+
+    return type;
+  };
 
   var idToTimestamp = function(id) {
     var timestamp = id.substring(0,8);

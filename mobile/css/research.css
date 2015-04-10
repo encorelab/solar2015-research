@@ -294,15 +294,8 @@ textarea {
     margin-top: 75px;
 }
 
-#my-tiles-list > li {
-    outline: 2px solid #41b050;
-}
-
-#others-tiles-list > li {
-    outline: 2px dashed #8dd098;
-}
 /*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
-.text-tile-container, .media-tile-container {
+.text-tile-container, .photo-tile-container, .video-tile-container {
     outline-offset: -10px;
     -moz-outline-radius: 10px;
     -webkit-outline-radius: 10px;
@@ -318,6 +311,9 @@ textarea {
     width: 90%; /* = 100% - 2*5% padding */
     padding: 5%;
 }
+.tile img,video {
+    width: 100%;
+}
 .tile-title {
     height: 25%;
     margin-top: 10px;
@@ -329,19 +325,10 @@ textarea {
     line-height: 1.5;
     font-weight: 300;
 }
-#my-tiles-list .tile-body {
-    height: 70%;
-}
-#others-tiles-list .tile-body {
-    height: 55%;
-}
-#my-tiles-list .tile-author {
-    display: none;
-}
-#others-tiles-list .tile-author {
-    height: 15%;
-    padding-top: 10px;
-    color: #41b050;
+
+#project-read-screen .fa-star-o,
+.fa-star {
+    bottom: 3%;
 }
 
 @media handheld and (orientation: landscape) {

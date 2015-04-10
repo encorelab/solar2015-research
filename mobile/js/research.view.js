@@ -230,7 +230,8 @@
   **/
   app.View.ProjectReadView = Backbone.View.extend({
     textTemplate: "#text-tile-template",
-    mediaTemplate: "#media-tile-template",
+    photoTemplate: "#photo-tile-template",
+    videoTemplate: "#video-tile-template",
 
     initialize: function () {
       var view = this;
@@ -266,7 +267,8 @@
       'click #nav-media-btn'         : 'newOrResumeOrEditMediaTile',
       'click #nav-poster-btn'        : 'switchToPosterView',
       'click .text-tile-container'   : 'newOrResumeOrEditTextTile',
-      'click .media-tile-container'  : 'newOrResumeOrEditMediaTile',
+      'click .photo-tile-container'  : 'newOrResumeOrEditMediaTile',
+      'click .video-tile-container'  : 'newOrResumeOrEditMediaTile',
     },
 
     newOrResumeOrEditTextTile: function(ev) {
@@ -280,15 +282,15 @@
       // if the clicked element has a data-id (ie is a tile)
       if (jQuery(ev.target).data('id')) {
         // EDIT TILE
-        console.log('Editing...');
+        console.log("Editing...");
         m = view.collection.get(jQuery(ev.target).data('id'));
       } else if (tileToResume) {
         // RESUME TILE
-        console.log('Resuming...');
+        console.log("Resuming...");
         m = tileToResume;
       } else {
         // NEW TILE
-        console.log('Starting a new text tile...');
+        console.log("Starting a new text tile...");
         m = new Model.Tile();
         m.set('project_id', app.project.id);
         m.set('author', app.username);
@@ -376,8 +378,11 @@
         if (tile.get('type') === "text") {
           listItemTemplate = _.template(jQuery(view.textTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        } else if (tile.get('type') === "media") {
-          listItemTemplate = _.template(jQuery(view.mediaTemplate).text());
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+          listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+          listItemTemplate = _.template(jQuery(view.videoTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
         } else {
           console.error("Unknown tile type!");
@@ -393,7 +398,7 @@
     },
 
     // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason). This seems to be working.
-    //TODO: recombine this and use a flag to set up the full rerender
+    //TODO: recombine this and use a flag to set up the full rerender, or something else...
     fullRerender: function() {
       var view = this;
       console.log("Doing a full rerender for ProjectReadView...");
@@ -421,8 +426,11 @@
         if (tile.get('type') === "text") {
           listItemTemplate = _.template(jQuery(view.textTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        } else if (tile.get('type') === "media") {
-          listItemTemplate = _.template(jQuery(view.mediaTemplate).text());
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+          listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+          listItemTemplate = _.template(jQuery(view.videoTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
         } else {
           console.error("Unknown tile type!");
@@ -582,8 +590,18 @@
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
-      'change #photo-file'                : "uploadPhoto"
+      'change #photo-file'                : 'uploadPhoto'
+      // 'click #play-video-btn'             : 'playVideo',
+      // 'click #photo-file'                 : 'playVideo',
+      // 'click #project-media-screen video' : 'playVideo'
     },
+
+    // playVideo: function() {
+
+    //   jQuery('#project-media-screen video').paused?jQuery('#project-media-screen video').play():jQuery('#project-media-screen video').pause();
+
+
+    // },
 
     toggleFavouriteStatus: function(ev) {
       var view = this;
@@ -716,10 +734,12 @@
       }
 
       // photo
-      if (view.model.get('url')) {
-        jQuery('.camera-icon').attr('src',app.config.pikachu.url + view.model.get('url'));
+      if (view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "photo") {
+        jQuery('.camera-icon').replaceWith(jQuery('<img src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" />'));
+      } else if (view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "video") {
+        jQuery('.camera-icon').replaceWith(jQuery('<video src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" />'));
       } else {
-        jQuery('.camera-icon').attr('src','img/camera_icon.png');
+        jQuery('.camera-icon').replaceWith(jQuery('<img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon" />'));
       }
     }
   });

@@ -50,12 +50,23 @@
         </li>
     </script>
 
-    <script id="media-tile-template" type="text/template">
-        <li class="media-tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
+    <script id="photo-tile-template" type="text/template">
+        <li class="photo-tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <div class="tile-url" data-id=<%= id %>>
                     <img src=<%= url %> data-id=<%= id %>></img>
+                </div>
+            </div>
+        </li>
+    </script>
+
+    <script id="video-tile-template" type="text/template">
+        <li class="video-tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
+            <div class="tile" data-id=<%= id %>>
+                <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
+                <div class="tile-url" data-id=<%= id %>>
+                    <video src=<%= url %> data-id=<%= id %>></video>
                 </div>
             </div>
         </li>
@@ -237,13 +248,13 @@
     <!-- Project Media Screen -->
     <div id="project-media-screen" class="container-fluid user-screen">
         <div class="row">
-            <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
+            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <div id="tile-media-upload-container">
                     <div class="photo-wrapper">
-                       <label for="photo-file" class="camera-icon-label"><img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon"></label>
+                       <label for="photo-file" class="camera-icon-label"><img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon" /></label>
                        <input id="photo-file" type="file" name="file" accept=".jpg,.gif,.jpeg,.png,.mp4,.m4v,.mov" />
                        <!-- this is shown while the file is being uploaded, needs to be styled to sit on top -->
                        <img id="photo-upload-spinner" class="hidden" src="img/loading.gif"></img>
@@ -258,6 +269,10 @@
                 </div>
                 <button class="publish-tile-btn btn-circular fa fa-check fa-3x pull-right"></button>
                 <button class="cancel-tile-btn btn-circular fa fa-times fa-3x pull-right"></button>
+            </div>
+            <!-- TODO: grrrrrroooooossssssss. Fix me plz! -->
+            <div class="col-xs-offset-8" style="position: absolute; right: 5%; top: 45%">
+                <button id="play-video-btn" class="fa fa-play-circle fa-3x btn-circular"></button>
             </div>
         </div>
     </div>
