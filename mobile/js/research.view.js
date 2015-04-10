@@ -649,6 +649,43 @@
 
 
   /**
+    ReviewOverviewItemView
+    This is one part of ReviewOverviewView which shows many parts
+  **/
+  app.View.ReviewOverviewItemView = Backbone.View.extend({
+    template: _.template("<li><button class='project-to-review-btn btn' data-id='<%= _id %>'><%= theme %> - <%= name %></button></li>"),
+
+    events: {
+      'click .project-to-review-btn' : 'switchToProjectDetailsView',
+    },
+
+    render: function () {
+      var view = this;
+      view.$el.html(this.template(view.model.toJSON()));
+      return this;
+    },
+
+    initialize: function () {
+      var view = this;
+      console.log('Initializing ReviewOverviewItemView...', view.el);
+
+      view.model.on('change', view.render, view);
+
+      return view;
+    },
+
+    switchToProjectDetailsView: function(ev) {
+      var view = this;
+      // would it be better to instantiate a new model/view here each time?
+      // app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
+      app.reviewDetailsView.model = view.model;
+      jQuery('#review-overview-screen').addClass('hidden');
+      jQuery('#review-details-screen').removeClass('hidden');
+      app.reviewDetailsView.render();
+    }
+  });
+
+  /**
     ReviewOverviewView
   **/
   app.View.ReviewOverviewView = Backbone.View.extend({
@@ -672,12 +709,17 @@
       'click .project-to-review-btn' : 'switchToProjectDetailsView',
     },
 
-    switchToProjectDetailsView: function(ev) {
-      // would it be better to instantiate a new model/view here each time?
-      app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
-      jQuery('#review-overview-screen').addClass('hidden');
-      jQuery('#review-details-screen').removeClass('hidden');
-      app.reviewDetailsView.render();
+    // switchToProjectDetailsView: function(ev) {
+    //   // would it be better to instantiate a new model/view here each time?
+    //   app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
+    //   jQuery('#review-overview-screen').addClass('hidden');
+    //   jQuery('#review-details-screen').removeClass('hidden');
+    //   app.reviewDetailsView.render();
+    // },
+
+    addOne: function(proj, listToAddTo) {
+      var reviewItemView = new app.View.ReviewOverviewItemView({model: proj});
+      listToAddTo.append(reviewItemView.render().el);
     },
 
     populateList: function(projects, listId) {
@@ -687,14 +729,15 @@
       var list = jQuery('#'+listId);
 
       _.each(projects, function(proj){
-        var listItem = jQuery("<li><button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button></li>" );
+        view.addOne(proj, list);
+        // var listItem = jQuery("<li><button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button></li>" );
 
-        var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
-        if (existingProj.length === 0) {
-          list.prepend(listItem);
-        } else {
-          existingProj.replaceWith(listItem);
-        }
+        // var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
+        // if (existingProj.length === 0) {
+        //   list.prepend(listItem);
+        // } else {
+        //   existingProj.replaceWith(listItem);
+        // }
       });
     },
 
@@ -709,13 +752,14 @@
 
       // projects with proposals that are published and that is not this group's project name
       // this render will sometimes fire before we have a model attached, hence the app.project in the return
+      // Armin 09.04.2015: No theme no deal (avoid breaking render)
       var unreviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === false);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false);
       });
       view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
 
       var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('proposal').review_published === true);
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') &&proj.get('proposal').review_published === true);
       });
       view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
@@ -824,11 +868,12 @@
       view.$el.html("");
       // create json object from model
       var modJson = view.model.toJSON();
+      var pWriteLock = view.model.get('proposal').write_lock;
       // if the proposal has a write lock
-      if (view.model.get('proposal').write_lock !== app.project.get('name')) {
-        modJson.write_lock = true;
-      } else {
+      if (typeof pWriteLock === 'undefined' || pWriteLock === null || pWriteLock === app.project.get('name')) {
         modJson.write_lock = false;
+      } else {
+        modJson.write_lock = true;
       }
       // create everything by rendering a template
       view.$el.html(view.template(modJson));
