@@ -115,6 +115,12 @@
     initialize: function () {
       var view = this;
       console.log('Initializing ProposalsView...', view.el);
+
+      view.collection.on('change', function(n) {
+        if (n.id === app.project.id) {
+          view.render();
+        }
+      });
     },
 
     events: {
