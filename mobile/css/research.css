@@ -247,7 +247,41 @@ textarea {
     transform: translateY(0);
     -webkit-transform: translateY(0);
     overflow: scroll;
+
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
 }
+#review-overview-screen .box1 {
+    -webkit-box-ordinal-group: 1;
+    -moz-box-ordinal-group: 1;
+    box-ordinal-group: 1;
+}
+#review-overview-screen .box2 {
+    -webkit-box-ordinal-group: 2;
+    -moz-box-ordinal-group: 2;
+    box-ordinal-group: 2;
+}
+#review-overview-screen .box3 {
+    -webkit-box-ordinal-group: 3;
+    -moz-box-ordinal-group: 3;
+    box-ordinal-group: 3;
+}
+#review-overview-screen .box4 {
+    -webkit-box-ordinal-group: 4;
+    -moz-box-ordinal-group: 4;
+    box-ordinal-group: 4;
+}
+#review-overview-screen .fail {
+    -webkit-box-ordinal-group: 100;
+    -moz-box-ordinal-group: 100;
+    box-ordinal-group: 100;
+}
+
 .project-to-review-btn {
     min-width: 500px;
     display: block;

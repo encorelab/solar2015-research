@@ -640,7 +640,7 @@
       jQuery('#project-read-screen').removeClass('hidden');
     },
 
-    render: function () {
+    render: function() {
       var view = this;
       console.log("Rendering ProjectMediaView...");
 
@@ -679,14 +679,29 @@
     This is one part of ReviewsView which shows many parts
   **/
   app.View.ReviewView = Backbone.View.extend({
-    template: _.template("<li><button class='project-to-review-btn btn' data-id='<%= _id %>'><%= theme %> - <%= name %></button></li>"),
+    template: _.template("<button class='project-to-review-btn btn' data-id='<%= _id %>'><%= theme %> - <%= name %></button>"),
 
     events: {
       'click .project-to-review-btn' : 'switchToProjectDetailsView',
     },
 
-    render: function () {
+    render: function() {
       var view = this;
+      // remove all classes from root element
+      view.$el.removeClass();
+      // here we decide on where to show the review
+      if (view.model.get('proposal').review_published === true) { // Is review published
+        view.$el.addClass('box4');
+      } else if (view.model.get('proposal').review_published === false && !view.model.get('proposal').write_lock) { // unpublished and without write lock --> up for grabs!
+        view.$el.addClass('box2');
+      } else if (view.model.get('proposal').review_published === false && view.model.get('proposal').write_lock === app.project.get('name')) { // unpublished and with write lock from our project
+        view.$el.addClass('box1');
+      } else if (view.model.get('proposal').review_published === false && view.model.get('proposal').write_lock && view.model.get('proposal').write_lock !== app.project.get('name')) { // unpublished and with write lock from other projects
+        view.$el.addClass('box3');
+      } else {
+        view.$el.addClass('fail');
+      }
+
       view.$el.html(this.template(view.model.toJSON()));
       return this;
     },
@@ -715,17 +730,20 @@
     ReviewsView
   **/
   app.View.ReviewsView = Backbone.View.extend({
+    template: _.template('<h2 class="box1">Reviews locked by our project team but not finished</h2><h2 class="box2">Select a proposal to review</h2><h2 class="box3">Reviews locked by other project teams but not finished</h2><h2 class="box4">Completed reviews</h2><h2 class="fail">Fail</h2>'),
 
-    initialize: function () {
+    initialize: function() {
       var view = this;
-      console.log('Initializing ReviewsView...', view.el);
+      // console.log('Initializing ReviewsView...', view.el);
 
+      // TODO: This has to be here since elements that are unpublished are not show but add fires on creation. So we have to catch the change :(
       view.collection.on('change', function(n) {
-        view.render();
+        // view.render();
       });
 
       view.collection.on('add', function(n) {
-        view.render();
+        view.addOne(n);
+        // view.render();
       });
 
       return view;
@@ -735,83 +753,39 @@
       'click .project-to-review-btn' : 'switchToProjectDetailsView',
     },
 
-    // switchToProjectDetailsView: function(ev) {
-    //   // would it be better to instantiate a new model/view here each time?
-    //   app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
-    //   jQuery('#review-overview-screen').addClass('hidden');
-    //   jQuery('#review-details-screen').removeClass('hidden');
-    //   app.reviewDetailsView.render();
-    // },
 
-    addOne: function(proj, listToAddTo) {
-      var reviewItemView = new app.View.ReviewView({model: proj});
-      listToAddTo.append(reviewItemView.render().el);
-    },
-
-    populateList: function(projects, listId) {
+    addOne: function(proj) {
       var view = this;
-
-      // we have two lists now, so decide which one we're dealing with here
-      var list = jQuery('#'+listId);
-
-      _.each(projects, function(proj){
-        view.addOne(proj, list);
-        // var listItem = jQuery("<li><button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button></li>" );
-
-        // var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
-        // if (existingProj.length === 0) {
-        //   list.prepend(listItem);
-        // } else {
-        //   existingProj.replaceWith(listItem);
-        // }
-      });
+      // wake up the project model
+      proj.wake(app.config.wakeful.url);
+      var reviewItemView = new app.View.ReviewView({model: proj});
+      var listToAddTo = view.$el.find('.inner-wrapper');
+      listToAddTo.append(reviewItemView.render().el);
     },
 
     render: function () {
       var view = this;
       console.log("Rendering ReviewsView...");
 
+      // clear the area
+      view.$el.find('.inner-wrapper').html('');
+
+      // add the headers
+      var headers = view.template();
+      view.$el.find('.inner-wrapper').append(headers);
+
       // sort by theme
       view.collection.comparator = function(model) {
         return model.get('theme');
       };
 
-      // So this suck, we need to clear all and rerender completely. Fixing might be possible but not in the time given so I do this...
-      jQuery('#review-overview-unreviewed-projects-container').html('');
-      jQuery('#review-overview-locked-by-us-projects-container').html('');
-      jQuery('#review-overview-locked-by-others-projects-container').html('');
-      jQuery('#review-overview-reviewed-projects-container').html('');
-
-
-      // COLIN README
-      // This seems a great candidate for helpers in the model. Call a function that spits out a part of the proposals
-      // We could have 4 of them or one that takes some parameter describing what we want. Then all we have to do here is to call
-      // the function of the collection and throw it into populateList
-
-      // projects with proposals that are published and that is not this group's project name
-      // this render will sometimes fire before we have a model attached, hence the app.project in the return
-      // Armin 09.04.2015: No theme no deal (avoid breaking render)
-      var unreviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false);
+      var publishedProjectProposals = view.collection.sort().filter(function(proj) {
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme'));
       });
-      view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
 
-      // dealing with stuff locked by current project
-      var projectsLockedByCurrentProject = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock === app.project.get('name'));
+      publishedProjectProposals.forEach(function(proposal) {
+        view.addOne(proposal);
       });
-      view.populateList(projectsLockedByCurrentProject, "review-overview-locked-by-us-projects-container");
-
-      // dealing with stuff locked by other projects
-      var projectsLockedByOtherProjects = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock && proj.get('proposal').write_lock !== app.project.get('name'));
-      });
-      view.populateList(projectsLockedByOtherProjects, "review-overview-locked-by-others-projects-container");
-
-      var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === true);
-      });
-      view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
 
   });
