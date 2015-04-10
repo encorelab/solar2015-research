@@ -776,6 +776,13 @@
         return model.get('theme');
       };
 
+      // So this suck, we need to clear all and rerender completely. Fixing might be possible but not in the time given so I do this...
+      jQuery('#review-overview-unreviewed-projects-container').html('');
+      jQuery('#review-overview-locked-by-us-projects-container').html('');
+      jQuery('#review-overview-locked-by-others-projects-container').html('');
+      jQuery('#review-overview-reviewed-projects-container').html('');
+
+
       // COLIN README
       // This seems a great candidate for helpers in the model. Call a function that spits out a part of the proposals
       // We could have 4 of them or one that takes some parameter describing what we want. Then all we have to do here is to call
