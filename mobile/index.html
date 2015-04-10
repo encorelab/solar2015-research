@@ -36,17 +36,27 @@
     <script type="text/javascript" src="../shared/js/model.js"></script>
     <script type="text/javascript" src="../shared/js/rollcall.js"></script>
 
-
     <script type="text/javascript" src="js/research.js"></script>
     <script type="text/javascript" src="js/research.view.js"></script>
 
-    <!-- Tile template -->
-    <script id="tile-template" type="text/template">
-        <li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
+    <!-- Templates -->
+    <script id="text-tile-template" type="text/template">
+        <li class="text-tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <h3 class="tile-title" data-id=<%= id %>><%= title %></h3>
                 <div class="tile-body" data-id=<%= id %>><%= body %></div>
+            </div>
+        </li>
+    </script>
+
+    <script id="media-tile-template" type="text/template">
+        <li class="media-tile-container col-xs-12 col-sm-4 col-lg-3" data-id=<%= id %>>
+            <div class="tile" data-id=<%= id %>>
+                <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
+                <div class="tile-url" data-id=<%= id %>>
+                    <img src=<%= url %> data-id=<%= id %>></img>
+                </div>
             </div>
         </li>
     </script>
@@ -234,14 +244,13 @@
                        <input id="photo-file" type="file" name="file" accept=".jpg,.gif,.jpeg,.png,.mp4,.m4v,.mov" />
                        <!-- this is shown while the file is being uploaded, needs to be styled to sit on top -->
                        <img id="photo-upload-spinner" class="hidden" src="img/loading.gif"></img>
-                       <!-- <button id="upload-btn" class="btn btn-default btn-word-wrap hidden">Add this photo to a tile</button> -->
                    </div>
                    <div class="self-photo-query">
                         <i class="fa fa-star-o fa-4x favourite-icon favourite-icon-unselected"></i>
                         <i class="fa fa-star fa-4x favourite-icon favourite-icon-selected"></i>
                         <h3>Is this a drawing, model, or other form of representation that you constructed yourself?</h3>
-                        <button id="self-originator-btn" class="originator-btn btn btn-base btn-default">Yes</button>
-                        <button id="others-originator-btn" class="originator-btn btn btn-base btn-default">No</button>
+                        <button id="self-originator-btn" class="originator-btn btn btn-base btn-default" data-originator="self">Yes</button>
+                        <button id="others-originator-btn" class="originator-btn btn btn-base btn-default" data-originator="other">No</button>
                     </div>
                 </div>
                 <button class="publish-tile-btn btn-circular fa fa-check fa-3x pull-right"></button>

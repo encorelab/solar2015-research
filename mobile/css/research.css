@@ -302,7 +302,7 @@ textarea {
     outline: 2px dashed #8dd098;
 }
 /*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
-.tile-container {
+.text-tile-container, .media-tile-container {
     outline-offset: -10px;
     -moz-outline-radius: 10px;
     -webkit-outline-radius: 10px;
@@ -311,9 +311,6 @@ textarea {
     padding-bottom: 33.33%; /* = width for a 1:1 aspect ratio */
     overflow: hidden;
     min-height: 192px;
-}
-#others-tiles-list .tile-container:last-child {
-    margin-bottom: 25px;
 }
 .tile {
     position: absolute;
@@ -635,7 +632,7 @@ input:disabled {
 /* Large devices (LARGE DESKTOPS, 1200px and up) */
 @media all and (min-width: 1200px) {
 
-    .tile-container {
+    .text-tile-container, .media-tile-container {
         padding-bottom: 25%; /* = width for a 1:1 aspect ratio */
     }
 
