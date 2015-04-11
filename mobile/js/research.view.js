@@ -760,6 +760,12 @@
       var view = this;
       // remove all classes from root element
       view.$el.removeClass();
+
+      // hiding unpublished proposals
+      if (view.model.get('proposal').published === false) {
+        view.$el.addClass('hidden');
+      }
+
       // here we decide on where to show the review
       if (view.model.get('proposal').review_published === true) { // Is review published
         view.$el.addClass('box4');
@@ -809,12 +815,12 @@
 
       // TODO: This has to be here since elements that are unpublished are not show but add fires on creation. So we have to catch the change :(
       view.collection.on('change', function(n) {
-        // view.render();
+        view.render();
       });
 
       view.collection.on('add', function(n) {
-        view.addOne(n);
-        // view.render();
+        // view.addOne(n);
+        view.render();
       });
 
       return view;
