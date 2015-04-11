@@ -55,7 +55,7 @@
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <div class="tile-url" data-id=<%= id %>>
-                    <img src=<%= url %> data-id=<%= id %>></img>
+                    <img src=<%= url %> data-id=<%= id %> />
                 </div>
             </div>
         </li>
@@ -147,7 +147,7 @@
     <div id="new-project-screen" class="container-fluid user-screen">
         <div id="new-project-student-picker" class="row">
             <div class="inner-wrapper col-xs-10 col-xs-offset-1">
-                <h2>Select the names of all students who will work on this project<h2>
+                <h2>Select the names of all students who will work on this project</h2>
                 <div class="project-partner-holder">
                     <!-- populated by the view -->
                 </div>
@@ -257,7 +257,7 @@
                        <label for="photo-file" class="camera-icon-label"><img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon" /></label>
                        <input id="photo-file" type="file" name="file" accept=".jpg,.gif,.jpeg,.png,.mp4,.m4v,.mov" />
                        <!-- this is shown while the file is being uploaded, needs to be styled to sit on top -->
-                       <img id="photo-upload-spinner" class="hidden" src="img/loading.gif"></img>
+                       <img id="photo-upload-spinner" class="hidden" src="img/loading.gif" alt="photo upload spinner" />
                    </div>
                    <div class="self-photo-query">
                         <i class="fa fa-star-o fa-4x favourite-icon favourite-icon-unselected"></i>
@@ -281,7 +281,7 @@
     <!-- ReviewOverview Screen -->
     <div id="review-overview-screen" class="container-fluid user-screen">
         <div class="row">
-            <div class="inner-wrapper col-xs-8 col-xs-offset-2">
+            <div class="inner-wrapper  col-xs-offset-2">
                 <!-- <h2 class="box1">Reviews locked by our project team but not finished</h2> -->
                 <!-- <ul id="review-overview-locked-by-us-projects-container" class="row"></ul> -->
                 <!-- <h2 class="box2">Select a proposal to review</h2> -->

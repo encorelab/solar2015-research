@@ -58,7 +58,6 @@ textarea {
 
 .inner-wrapper,
 .side-nav {
-  position: absolute;
   top: 50%;
   transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
@@ -66,6 +65,7 @@ textarea {
 
 .side-nav {
     padding: 0;
+    position: absolute;
 }
 
 .side-nav button + button {
@@ -93,6 +93,9 @@ textarea {
     border: none;
     color: #fff;
     padding: 0;
+}
+#proposal-screen .inner-wrapper {
+    position: absolute;
 }
 #proposal-screen .inner-wrapper .btn-circular,
 #review-details-screen .inner-wrapper .btn-circular {
@@ -182,6 +185,12 @@ textarea {
     height: calc(100% - 50px);
 }*/
 
+#project-read-screen .inner-wrapper,
+#project-write-screen .inner-wrapper,
+#project-media-screen .inner-wrapper {
+    position: absolute;
+}
+
 #project-read-screen h2,
 #project-write-screen h2,
 #project-media-screen h2 {
@@ -230,6 +239,9 @@ textarea {
 #review-overview-screen textarea,
 #review-details-screen textarea {
     border: 2px solid #faa82d;
+}
+#todo-screen .inner-wrapper {
+    position: absolute;
 }
 #review-overview-screen .btn-circular,
 #review-details-screen .btn-circular,
@@ -326,6 +338,7 @@ textarea {
 #project-read-screen .inner-wrapper {
     /*height: 100%;*/
     margin-top: 75px;
+    position: absolute;
 }
 
 /*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
