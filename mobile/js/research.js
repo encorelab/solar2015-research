@@ -153,6 +153,9 @@
       app.runState = Skeletor.getState('RUN');
       app.runState.wake(app.config.wakeful.url);
       app.runState.on('change', app.reflectRunState);
+
+      // console.log('Waking up the projects collection');
+      // Skeletor.Model.awake.projects.wake(app.config.wakeful.url);
     })
     .done(function () {
       ready();
@@ -226,6 +229,7 @@
     }
 
     app.project = p;
+    app.project.wake(app.config.wakeful.url);
 
     // note that this is done again in newProjectView (think about making this awake?)
     app.groupname = p.get('name');
@@ -343,6 +347,20 @@
 
   //*************** HELPER FUNCTIONS ***************//
 
+  app.photoOrVideo = function(url) {
+    var type = null;
+
+    var extension = url.split('.').pop().toLowerCase();
+    if (extension === "jpg" || extension === "gif" || extension === "jpeg" || extension === "png") {
+      type = "photo";
+    } else if (extension === "mp4" || extension === "m4v" || extension === "mov") {
+      type = "video";
+    } else {
+      type = "unknown";
+    }
+
+    return type;
+  };
 
   var idToTimestamp = function(id) {
     var timestamp = id.substring(0,8);

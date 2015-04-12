@@ -116,12 +116,21 @@
       var view = this;
       console.log('Initializing ProposalsView...', view.el);
 
-      view.collection.on('sync', view.onModelSaved, view);
+      view.collection.on('change', function(n) {
+        if (n.id === app.project.id) {
+          view.render();
+        }
+      });
     },
 
     events: {
       'click #publish-proposal-btn' : 'publishProposal',
+      'click .nav-splash-btn'       : 'switchToSplashView',
       'keyup :input'                : 'checkForAutoSave'
+    },
+
+    switchToSplashView: function() {
+      app.resetToSplashScreen();
     },
 
     publishProposal: function() {
@@ -129,17 +138,30 @@
       var name = jQuery('#proposal-screen [name=name]').val();
 
       if (name.length > 0) {
+        var researchQuestionVal = jQuery('#proposal-screen [name=research_question]').val();
+        var needToKnowsVal = jQuery('#proposal-screen [name=need_to_knows]').val();
+
         app.clearAutoSaveTimer();
         app.project.set('name',name);
         var proposal = app.project.get('proposal');
-        proposal.research_question = jQuery('#proposal-screen [name=research_question]').val();
-        proposal.need_to_knows = jQuery('#proposal-screen [name=need_to_knows]').val();
+        proposal.research_question = researchQuestionVal;
+        proposal.need_to_knows = needToKnowsVal;
         proposal.published = true;
         app.project.set('proposal',proposal);
         app.project.save();
+
         // show who is 'logged in' as the group, since that's our 'user' in this case
         app.groupname = name;
         jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
+
+        // delete all previous proposal tiles for this project
+        Skeletor.Model.awake.tiles.where({ 'project_id': app.project.id, 'from_proposal': true }).forEach(function(tile) {
+          tile.destroy();
+        });
+
+        // create the new proposal tiles
+        view.createProposalTile("Foundational knowledge", needToKnowsVal);
+        view.createProposalTile("Research question(s)", researchQuestionVal);
 
         jQuery().toastmessage('showSuccessToast', "Your proposal has been published. You can come back and edit any time...");
 
@@ -149,8 +171,21 @@
       }
     },
 
-    onModelSaved: function(model, response, options) {
-      model.set('modified_at', new Date());
+    createProposalTile: function(titleText, bodyText) {
+      var view = this;
+
+      var m = new Model.Tile();
+      m.set('project_id', app.project.id);
+      m.set('author', app.username);
+      m.set('type', "text");
+      m.set('title', titleText);
+      m.set('body', bodyText);
+      m.set('favourite', true);
+      m.set('from_proposal', true);
+      m.set('published', true);
+      m.wake(app.config.wakeful.url);
+      m.save();
+      Skeletor.Model.awake.tiles.add(m);
     },
 
     // this version of autosave works with nested content. The nested structure must be spelled out *in the html*
@@ -195,23 +230,33 @@
   **/
   app.View.ProjectReadView = Backbone.View.extend({
     textTemplate: "#text-tile-template",
-    mediaTemplate: "#media-tile-template",
+    photoTemplate: "#photo-tile-template",
+    videoTemplate: "#video-tile-template",
 
     initialize: function () {
       var view = this;
       console.log('Initializing ProjectReadView...', view.el);
 
-      // we don't need this, since there's no editing of content in this version?
+      // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!  If this is too much rendering on the fly, then we will want to revert back to view.render for change and add
+      // these binds should only fire when the collection changes are for your project
       view.collection.on('change', function(n) {
-        view.render();
+        if (n.get('project_id') === app.project.id && n.get('published') === true) {
+          //view.render();
+          view.fullRerender();
+        }
       });
 
       view.collection.on('add', function(n) {
-        view.render();
+        if (n.get('project_id') === app.project.id) {
+          //view.render();
+          view.fullRerender();
+        }
       });
 
       view.collection.on('destroy', function(n) {
-        view.fullRerender();
+        if (n.get('project_id') === app.project.id) {
+          view.fullRerender();
+        }
       });
 
       return view;
@@ -222,7 +267,8 @@
       'click #nav-media-btn'         : 'newOrResumeOrEditMediaTile',
       'click #nav-poster-btn'        : 'switchToPosterView',
       'click .text-tile-container'   : 'newOrResumeOrEditTextTile',
-      'click .media-tile-container'  : 'newOrResumeOrEditMediaTile',
+      'click .photo-tile-container'  : 'newOrResumeOrEditMediaTile',
+      'click .video-tile-container'  : 'newOrResumeOrEditMediaTile',
     },
 
     newOrResumeOrEditTextTile: function(ev) {
@@ -236,17 +282,17 @@
       // if the clicked element has a data-id (ie is a tile)
       if (jQuery(ev.target).data('id')) {
         // EDIT TILE
-        console.log('Editing...');
+        console.log("Editing...");
         m = view.collection.get(jQuery(ev.target).data('id'));
       } else if (tileToResume) {
         // RESUME TILE
-        console.log('Resuming...');
+        console.log("Resuming...");
         m = tileToResume;
       } else {
         // NEW TILE
-        console.log('Starting a new text tile...');
+        console.log("Starting a new text tile...");
         m = new Model.Tile();
-        m.set('project_id',app.project.id);
+        m.set('project_id', app.project.id);
         m.set('author', app.username);
         m.set('type', "text");
         m.set('from_proposal', false);
@@ -313,6 +359,7 @@
       view.collection.comparator = function(model) {
         return model.get('created_at');
       };
+      // NB: this wants to be modified_at, but that doesn't work correctly yet (would work in fullrerender) because we don't redraw the tiles on every change
 
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
       var list = jQuery('#tiles-list');
@@ -331,8 +378,11 @@
         if (tile.get('type') === "text") {
           listItemTemplate = _.template(jQuery(view.textTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        } else if (tile.get('type') === "media") {
-          listItemTemplate = _.template(jQuery(view.mediaTemplate).text());
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+          listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+          listItemTemplate = _.template(jQuery(view.videoTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
         } else {
           console.error("Unknown tile type!");
@@ -348,14 +398,14 @@
     },
 
     // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason). This seems to be working.
-    //TODO: recombine this and use a flag to set up the full rerender
+    //TODO: recombine this and use a flag to set up the full rerender, or something else...
     fullRerender: function() {
       var view = this;
       console.log("Doing a full rerender for ProjectReadView...");
 
       // sort newest to oldest (prepend!)
       view.collection.comparator = function(model) {
-        return model.get('created_at');
+        return model.get('modified_at');
       };
 
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
@@ -376,8 +426,11 @@
         if (tile.get('type') === "text") {
           listItemTemplate = _.template(jQuery(view.textTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        } else if (tile.get('type') === "media") {
-          listItemTemplate = _.template(jQuery(view.mediaTemplate).text());
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+          listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+          listItemTemplate = _.template(jQuery(view.videoTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
         } else {
           console.error("Unknown tile type!");
@@ -537,8 +590,15 @@
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
-      'change #photo-file'                : "uploadPhoto"
+      'change #photo-file'                : 'uploadPhoto'
+      // 'click #play-video-btn'             : 'playVideo',
+      // 'click #photo-file'                 : 'playVideo',
+      // 'click #project-media-screen video' : 'playVideo'
     },
+
+    // playVideo: function() {
+
+    // },
 
     toggleFavouriteStatus: function(ev) {
       var view = this;
@@ -625,14 +685,20 @@
     publishTile: function() {
       var view = this;
 
-      view.model.set('published', true);
-      view.model.set('modified_at', new Date());
-      view.model.save();
-      jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
+      if (view.model.get('url') && view.model.get('originator')) {
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
 
-      view.model = null;
-      jQuery('.input-field').val('');
-      view.switchToReadView();
+        view.model = null;
+        jQuery('.input-field').val('');
+        // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+        jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
+        view.switchToReadView();
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please add a picture or video and confirm whether this is your own drawing, model, or other form of representation...");
+      }
     },
 
     switchToReadView: function() {
@@ -640,7 +706,7 @@
       jQuery('#project-read-screen').removeClass('hidden');
     },
 
-    render: function () {
+    render: function() {
       var view = this;
       console.log("Rendering ProjectMediaView...");
 
@@ -665,10 +731,12 @@
       }
 
       // photo
-      if (view.model.get('url')) {
-        jQuery('.camera-icon').attr('src',app.config.pikachu.url + view.model.get('url'));
+      if (view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "photo") {
+        jQuery('.camera-icon').replaceWith(jQuery('<img src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" />'));
+      } else if (view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "video") {
+        jQuery('.camera-icon').replaceWith(jQuery('<video src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" controls />'));
       } else {
-        jQuery('.camera-icon').attr('src','img/camera_icon.png');
+        jQuery('.camera-icon').replaceWith(jQuery('<img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon" />'));
       }
     }
   });
@@ -679,21 +747,42 @@
     This is one part of ReviewsView which shows many parts
   **/
   app.View.ReviewView = Backbone.View.extend({
-    template: _.template("<li><button class='project-to-review-btn btn' data-id='<%= _id %>'><%= theme %> - <%= name %></button></li>"),
+    template: _.template("<button class='project-to-review-btn btn' data-id='<%= _id %>'><%= theme %> - <%= name %></button>"),
 
     events: {
       'click .project-to-review-btn' : 'switchToProjectDetailsView',
     },
 
-    render: function () {
+    render: function() {
       var view = this;
+      // remove all classes from root element
+      view.$el.removeClass();
+
+      // hiding unpublished proposals
+      if (view.model.get('proposal').published === false) {
+        view.$el.addClass('hidden');
+      }
+
+      // here we decide on where to show the review
+      if (view.model.get('proposal').review_published === true) { // Is review published
+        view.$el.addClass('box4');
+      } else if (view.model.get('proposal').review_published === false && !view.model.get('proposal').write_lock) { // unpublished and without write lock --> up for grabs!
+        view.$el.addClass('box2');
+      } else if (view.model.get('proposal').review_published === false && view.model.get('proposal').write_lock === app.project.get('name')) { // unpublished and with write lock from our project
+        view.$el.addClass('box1');
+      } else if (view.model.get('proposal').review_published === false && view.model.get('proposal').write_lock && view.model.get('proposal').write_lock !== app.project.get('name')) { // unpublished and with write lock from other projects
+        view.$el.addClass('box3');
+      } else {
+        view.$el.addClass('fail');
+      }
+
       view.$el.html(this.template(view.model.toJSON()));
       return this;
     },
 
     initialize: function () {
       var view = this;
-      console.log('Initializing ReviewView...', view.el);
+      //console.log('Initializing ReviewView...', view.el);
 
       view.model.on('change', view.render, view);
 
@@ -715,16 +804,19 @@
     ReviewsView
   **/
   app.View.ReviewsView = Backbone.View.extend({
+    template: _.template('<h2 class="box1">Reviews locked by our project team but not finished</h2><h2 class="box2">Select a proposal to review</h2><h2 class="box3">Reviews locked by other project teams but not finished</h2><h2 class="box4">Completed reviews</h2><h2 class="fail">Fail</h2>'),
 
-    initialize: function () {
+    initialize: function() {
       var view = this;
-      console.log('Initializing ReviewsView...', view.el);
+      // console.log('Initializing ReviewsView...', view.el);
 
+      // TODO: This has to be here since elements that are unpublished are not show but add fires on creation. So we have to catch the change :(
       view.collection.on('change', function(n) {
         view.render();
       });
 
       view.collection.on('add', function(n) {
+        // view.addOne(n);
         view.render();
       });
 
@@ -735,83 +827,39 @@
       'click .project-to-review-btn' : 'switchToProjectDetailsView',
     },
 
-    // switchToProjectDetailsView: function(ev) {
-    //   // would it be better to instantiate a new model/view here each time?
-    //   app.reviewDetailsView.model = Skeletor.Model.awake.projects.get(jQuery(ev.target).data("id"));
-    //   jQuery('#review-overview-screen').addClass('hidden');
-    //   jQuery('#review-details-screen').removeClass('hidden');
-    //   app.reviewDetailsView.render();
-    // },
 
-    addOne: function(proj, listToAddTo) {
-      var reviewItemView = new app.View.ReviewView({model: proj});
-      listToAddTo.append(reviewItemView.render().el);
-    },
-
-    populateList: function(projects, listId) {
+    addOne: function(proj) {
       var view = this;
-
-      // we have two lists now, so decide which one we're dealing with here
-      var list = jQuery('#'+listId);
-
-      _.each(projects, function(proj){
-        view.addOne(proj, list);
-        // var listItem = jQuery("<li><button class='project-to-review-btn btn' data-id='" + proj.get('_id') + "'>" + proj.get('theme') + " - " + proj.get('name') + "</button></li>" );
-
-        // var existingProj = list.find("[data-id='" + proj.get('_id') + "']");
-        // if (existingProj.length === 0) {
-        //   list.prepend(listItem);
-        // } else {
-        //   existingProj.replaceWith(listItem);
-        // }
-      });
+      // wake up the project model
+      proj.wake(app.config.wakeful.url);
+      var reviewItemView = new app.View.ReviewView({model: proj});
+      var listToAddTo = view.$el.find('.inner-wrapper');
+      listToAddTo.append(reviewItemView.render().el);
     },
 
     render: function () {
       var view = this;
       console.log("Rendering ReviewsView...");
 
+      // clear the area
+      view.$el.find('.inner-wrapper').html('');
+
+      // add the headers
+      var headers = view.template();
+      view.$el.find('.inner-wrapper').append(headers);
+
       // sort by theme
       view.collection.comparator = function(model) {
         return model.get('theme');
       };
 
-      // So this suck, we need to clear all and rerender completely. Fixing might be possible but not in the time given so I do this...
-      jQuery('#review-overview-unreviewed-projects-container').html('');
-      jQuery('#review-overview-locked-by-us-projects-container').html('');
-      jQuery('#review-overview-locked-by-others-projects-container').html('');
-      jQuery('#review-overview-reviewed-projects-container').html('');
-
-
-      // COLIN README
-      // This seems a great candidate for helpers in the model. Call a function that spits out a part of the proposals
-      // We could have 4 of them or one that takes some parameter describing what we want. Then all we have to do here is to call
-      // the function of the collection and throw it into populateList
-
-      // projects with proposals that are published and that is not this group's project name
-      // this render will sometimes fire before we have a model attached, hence the app.project in the return
-      // Armin 09.04.2015: No theme no deal (avoid breaking render)
-      var unreviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false);
+      var publishedProjectProposals = view.collection.sort().filter(function(proj) {
+        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme'));
       });
-      view.populateList(unreviewedProjectsWithPublishedProposals, "review-overview-unreviewed-projects-container");
 
-      // dealing with stuff locked by current project
-      var projectsLockedByCurrentProject = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock === app.project.get('name'));
+      publishedProjectProposals.forEach(function(proposal) {
+        view.addOne(proposal);
       });
-      view.populateList(projectsLockedByCurrentProject, "review-overview-locked-by-us-projects-container");
-
-      // dealing with stuff locked by other projects
-      var projectsLockedByOtherProjects = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === false && proj.get('proposal').write_lock && proj.get('proposal').write_lock !== app.project.get('name'));
-      });
-      view.populateList(projectsLockedByOtherProjects, "review-overview-locked-by-others-projects-container");
-
-      var reviewedProjectsWithPublishedProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme') && proj.get('proposal').review_published === true);
-      });
-      view.populateList(reviewedProjectsWithPublishedProposals, "review-overview-reviewed-projects-container");
     }
 
   });
