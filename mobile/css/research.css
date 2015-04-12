@@ -301,10 +301,18 @@ textarea {
     box-ordinal-group: 100;
 }
 
+.box1,
+.box2,
+.box3,
+.box4,
+.fail {
+    margin-bottom: 20px;
+}
+
 .project-to-review-btn {
     min-width: 500px;
     display: block;
-    margin: 0 auto 20px;
+    margin: 0 auto;
     overflow: hidden;
 }
 #review-details-screen h3 {
@@ -411,7 +419,7 @@ textarea {
 .fa-circle {
     position: absolute;
     bottom: 1%;
-    right: 6.5%;
+    right: 7%;
     color: #fff;
     z-index: 1;
 
