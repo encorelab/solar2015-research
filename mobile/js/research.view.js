@@ -598,9 +598,6 @@
 
     // playVideo: function() {
 
-    //   jQuery('#project-media-screen video').paused?jQuery('#project-media-screen video').play():jQuery('#project-media-screen video').pause();
-
-
     // },
 
     toggleFavouriteStatus: function(ev) {
@@ -737,7 +734,7 @@
       if (view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "photo") {
         jQuery('.camera-icon').replaceWith(jQuery('<img src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" />'));
       } else if (view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "video") {
-        jQuery('.camera-icon').replaceWith(jQuery('<video src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" />'));
+        jQuery('.camera-icon').replaceWith(jQuery('<video src="' + app.config.pikachu.url + view.model.get('url') + '" class="camera-icon img-responsive" controls />'));
       } else {
         jQuery('.camera-icon').replaceWith(jQuery('<img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon" />'));
       }
