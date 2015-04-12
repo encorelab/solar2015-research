@@ -524,6 +524,15 @@ textarea {
     width: 100%;
     max-height: 400px;
 }
+.fa-spinner {
+    font-size: 14em;
+    position: absolute;
+    z-index: 999;
+    top: 13%;
+    left: 8%;
+    color: #41b050;
+    background: #fff;
+}
 .fa-play-circle {
     position: absolute;
     margin-top: 25px;
