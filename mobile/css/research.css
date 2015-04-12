@@ -58,14 +58,15 @@ textarea {
 
 .inner-wrapper,
 .side-nav {
-  top: 50%;
-  transform: translateY(-50%);
-  -webkit-transform: translateY(-50%);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
 }
 
 .side-nav {
     padding: 0;
-    position: absolute;
+    /*position: absolute;*/
 }
 
 .side-nav button + button {
@@ -94,9 +95,9 @@ textarea {
     color: #fff;
     padding: 0;
 }
-#proposal-screen .inner-wrapper {
+/*#proposal-screen .inner-wrapper {
     position: absolute;
-}
+}*/
 #proposal-screen .inner-wrapper .btn-circular,
 #review-details-screen .inner-wrapper .btn-circular {
     margin-top: 25px;
@@ -126,6 +127,8 @@ textarea {
 }
 #submit-partners-btn {
     height: 55px;
+    display: block;
+    margin: 0 auto;
 }
 
 /* this should be changed, depending on the final colour of the button (used in the new-project sections) */
@@ -185,10 +188,12 @@ textarea {
     height: calc(100% - 50px);
 }*/
 
-#project-read-screen .inner-wrapper,
-#project-write-screen .inner-wrapper,
-#project-media-screen .inner-wrapper {
-    position: absolute;
+#project-read-screen .inner-wrapper
+/*#project-write-screen .inner-wrapper,*/
+/*#project-media-screen .inner-wrapper*/ {
+    /*position: absolute;*/
+    height: 100%;
+    margin-top: 75px;
 }
 
 #project-read-screen h2,
@@ -240,9 +245,9 @@ textarea {
 #review-details-screen textarea {
     border: 2px solid #faa82d;
 }
-#todo-screen .inner-wrapper {
+/*#todo-screen .inner-wrapper {
     position: absolute;
-}
+}*/
 #review-overview-screen .btn-circular,
 #review-details-screen .btn-circular,
 #todo-screen .goto-review-btn {
@@ -255,6 +260,8 @@ textarea {
     background: #fecc81;
 }
 #review-overview-screen .inner-wrapper {
+    display: flex;
+    position: static !important;
     top: 75px;
     transform: translateY(0);
     -webkit-transform: translateY(0);
@@ -315,9 +322,6 @@ textarea {
 
 
 /********** T O D O  S C R E E N **********/
-/*#todo-screen h2 {
-    text-align: center;
-}*/
 .todo-btn {
     color: #fff;
     min-width: 350px;
@@ -338,45 +342,75 @@ textarea {
 #project-read-screen .inner-wrapper {
     /*height: 100%;*/
     margin-top: 75px;
-    position: absolute;
+    /*position: absolute;*/
+}
+.fa-pencil {
+    padding-left: 5px;
+}
+.fa-share-square-o {
+    padding-left: 6px;
+    padding-top: 3px;
 }
 
 /*to create the square tiles http://stackoverflow.com/questions/20456694/grid-of-responsive-squares*/
-.text-tile-container, .photo-tile-container, .video-tile-container {
+.text-tile-container,
+.photo-tile-container,
+.video-tile-container {
     outline-offset: -10px;
-    -moz-outline-radius: 10px;
-    -webkit-outline-radius: 10px;
+/*    -moz-outline-radius: 10px; if we want rounded corners uncomment
+    -webkit-outline-radius: 10px;*/
     float: left;
     position: relative;
     padding-bottom: 33.33%; /* = width for a 1:1 aspect ratio */
     overflow: hidden;
     min-height: 192px;
 }
+#tiles-list > li {
+    outline: 2px solid #41b050;
+}
+#tiles-list .self {
+    outline: 3px dashed #99ff00;
+}
+#tiles-list > li:last-child {
+    margin-bottom: 25px;
+}
 .tile {
     position: absolute;
-    height: 90%; /* = 100% - 2*5% padding */
+    height: 85%; /* = 100% - 2*5% padding */
     width: 90%; /* = 100% - 2*5% padding */
     padding: 5%;
+    margin-top: 5%;
+    overflow: hidden;
 }
-.tile img,video {
+.tile img,
+.tile video {
     width: 100%;
 }
 .tile-title {
-    height: 25%;
-    margin-top: 10px;
+    height: 27%;
+    margin: 0;
+    padding-bottom: 15px;
     overflow: hidden;
     font-weight: 600;
 }
 .tile-body {
+    height: 73%;
+    margin-top: 15px;
     overflow: hidden;
     line-height: 1.5;
     font-weight: 300;
 }
 
 #project-read-screen .fa-star-o,
-.fa-star {
-    bottom: 3%;
+#project-read-screen .fa-star {
+    /*bottom: 3%;*/
+    bottom: 0;
+    text-shadow: 0 0 0.3em #ffff66, 0 0 0.3em #ffff66, 0 0 0.3em #ffff66;
 }
+/*#project-read-screen .fa-star-o::after,
+#project-read-screen .fa-star::after {
+    content: "\f04d";
+}*/
 
 @media handheld and (orientation: landscape) {
     .tile-body {
@@ -390,6 +424,10 @@ textarea {
 
 /********** P R O J E C T  W R I T E  S C R E E N **********/
 
+.fa-arrow-left {
+    padding-right: 4px;
+}
+
 #tile-title-input {
     margin-bottom: 25px;
 }
@@ -402,7 +440,6 @@ textarea {
 #tile-body-input {
     height: 250px;
     padding-right: 60px;
-
 }
 
 .fa-lightbulb-o {
@@ -418,7 +455,7 @@ textarea {
 
 .fa-star-o,
 .fa-star {
-    color: #41b050;
+    color: #fedf00;
     position: absolute;
     bottom: 25%;
     right: 1%;
@@ -426,7 +463,7 @@ textarea {
 }
 .fa-star-o:hover,
 .fa-star:hover {
-    color: #8dd098;
+    color: #ffff66;
 }
 
 .sentence-starter {
@@ -437,6 +474,9 @@ textarea {
 }
 .sentence-starter:hover{
     background: #fff;
+}
+#project-write-screen button.close {
+    border: none;
 }
 
 #tile-details .modal-content,
@@ -462,7 +502,23 @@ textarea {
     display: inline-block;
 }
 #tile-media-upload-container input[type=file] {
-    margin: 0 auto;
+    margin: 15px 0 0 55px;
+}
+.photo-wrapper {
+    /*width: 37%;*/
+    max-width: 300px;
+    max-height: 400px;
+    /*overflow: hidden;*/
+}
+#tile-media-upload-container video,
+#tile-media-upload-container img {
+    width: 100%;
+    max-height: 400px;
+}
+.fa-play-circle {
+    position: absolute;
+    margin-top: 25px;
+    left: 125px;
 }
 .self-photo-query {
     width: 50%;
@@ -483,6 +539,9 @@ textarea {
     margin: 0 auto;
     margin-top: 25px;
     background: #8dd098;
+}
+#project-media-screen .selected {
+    background: #99ff00 !important;
 }
 #self-originator-btn:hover,
 #others-originator-btn:hover {
@@ -617,7 +676,7 @@ input:disabled {
 
 .login-button {
     margin: 1%;
-    min-width: 6em;
+    min-width: 7em;
 }
 
 .input-alert {
