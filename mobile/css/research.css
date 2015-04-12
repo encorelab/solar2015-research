@@ -405,7 +405,16 @@ textarea {
 #project-read-screen .fa-star {
     /*bottom: 3%;*/
     bottom: 0;
-    text-shadow: 0 0 0.3em #ffff66, 0 0 0.3em #ffff66, 0 0 0.3em #ffff66;
+    z-index: 999;
+    /*text-shadow: 0 0 0.3em #ffff66, 0 0 0.3em #ffff66, 0 0 0.3em #ffff66;*/
+}
+.fa-circle {
+    position: absolute;
+    bottom: 1%;
+    right: 6.5%;
+    color: #fff;
+    z-index: 1;
+
 }
 /*#project-read-screen .fa-star-o::after,
 #project-read-screen .fa-star::after {
