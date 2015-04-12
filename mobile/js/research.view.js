@@ -240,21 +240,23 @@
       // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!  If this is too much rendering on the fly, then we will want to revert back to view.render for change and add
       // these binds should only fire when the collection changes are for your project
       view.collection.on('change', function(n) {
-        if (n.get('project_id') === app.project.id && n.get('published') === true) {
+        // If the change fires while project not chosen yet we get an error
+        if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
           //view.render();
           view.fullRerender();
         }
       });
 
       view.collection.on('add', function(n) {
-        if (n.get('project_id') === app.project.id) {
+        // If the add fires while project not chosen yet we get an error
+        if (app.project && n.get('project_id') === app.project.id) {
           //view.render();
           view.fullRerender();
         }
       });
 
       view.collection.on('destroy', function(n) {
-        if (n.get('project_id') === app.project.id) {
+        if (app.project && n.get('project_id') === app.project.id) {
           view.fullRerender();
         }
       });
