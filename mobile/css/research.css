@@ -120,6 +120,10 @@ textarea {
     margin-bottom: 15px;
 }
 
+
+.project-partner-holder {
+    max-width: 915px;
+}
 .project-partner-holder button {
     margin-right: 15px;
     min-width: 150px;
