@@ -639,6 +639,7 @@
       formData.append('file', file);
 
       jQuery('#photo-upload-spinner').removeClass('hidden');
+      jQuery('.camera-icon-label').addClass('invisible');
 
       jQuery.ajax({
         url: app.config.pikachu.url,
@@ -653,11 +654,13 @@
 
       function failure(err) {
         jQuery('#photo-upload-spinner').addClass('hidden');
+        jQuery('.camera-icon-label').removeClass('invisible');
         jQuery().toastmessage('showErrorToast', "Photo could not be uploaded. Please try again");
       }
 
       function success(data, status, xhr) {
         jQuery('#photo-upload-spinner').addClass('hidden');
+        jQuery('.camera-icon-label').removeClass('invisible');
         console.log("UPLOAD SUCCEEDED!");
         console.log(xhr.getAllResponseHeaders());
         // add it to the model

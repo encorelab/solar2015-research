@@ -616,6 +616,10 @@ ul {
     display: none;
 }
 
+.invisible {
+    visibility: hidden;
+}
+
 /*so the scroll bar appears at all times*/
 ::-webkit-scrollbar {
     -webkit-appearance: none;
