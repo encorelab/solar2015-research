@@ -152,7 +152,7 @@
 
         // show who is 'logged in' as the group, since that's our 'user' in this case
         app.groupname = name;
-        jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
+        jQuery('.username-display a').text(app.groupname);
 
         // delete all previous proposal tiles for this project
         Skeletor.Model.awake.tiles.where({ 'project_id': app.project.id, 'from_proposal': true }).forEach(function(tile) {
