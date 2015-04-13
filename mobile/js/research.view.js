@@ -255,11 +255,12 @@
         }
       });
 
-      view.collection.on('destroy', function(n) {
-        if (app.project && n.get('project_id') === app.project.id) {
-          view.fullRerender();
-        }
-      });
+      // removed cause this doesn't do anything given this structure :(
+      // view.collection.on('destroy', function(n) {
+      //   if (app.project && n.get('project_id') === app.project.id) {
+      //     view.fullRerender();
+      //   }
+      // });
 
       return view;
     },
@@ -304,6 +305,7 @@
       }
 
       app.projectWriteView.model = m;
+      app.projectWriteView.model.wake(app.config.wakeful.url);
 
       app.hideAllContainers();
       jQuery('#project-write-screen').removeClass('hidden');
@@ -341,6 +343,7 @@
      }
 
       app.projectMediaView.model = m;
+      app.projectMediaView.model.wake(app.config.wakeful.url);
 
       app.hideAllContainers();
       jQuery('#project-media-screen').removeClass('hidden');
@@ -361,7 +364,6 @@
       view.collection.comparator = function(model) {
         return model.get('created_at');
       };
-      // NB: this wants to be modified_at, but that doesn't work correctly yet (would work in fullrerender) because we don't redraw the tiles on every change
 
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
       var list = jQuery('#tiles-list');
@@ -414,7 +416,7 @@
       var list = jQuery('#tiles-list');
       list.html("");
 
-      _.each(myPublishedTiles, function(tile){
+      _.each(myPublishedTiles, function(tile) {
         var starStatus = null,
             listItemTemplate = null,
             listItem = null;
@@ -425,15 +427,27 @@
           starStatus = "fa-star-o";
         }
 
+        // if (tile.get('type') === "text") {
+        //   listItemTemplate = _.template(jQuery(view.textTemplate).text());
+        //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+        // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+        //   listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+        //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+        //   listItemTemplate = _.template(jQuery(view.videoTemplate).text());
+        //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        // } else {
+        //   console.error("Unknown tile type!");
+        // }
         if (tile.get('type') === "text") {
           listItemTemplate = _.template(jQuery(view.textTemplate).text());
           listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
         } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
           listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
         } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
           listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+          listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
         } else {
           console.error("Unknown tile type!");
         }

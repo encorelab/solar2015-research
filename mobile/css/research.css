@@ -253,7 +253,7 @@ textarea {
 }
 #review-overview-screen .inner-wrapper {
     display: flex;
-    position: static !important;
+    /*position: static !important;*/
     top: 75px;
     transform: translateY(0);
     -webkit-transform: translateY(0);
@@ -398,6 +398,10 @@ textarea {
     overflow: hidden;
     line-height: 1.5;
     font-weight: 300;
+}
+
+.fa-file-image-o, .fa-file-video-o {
+    font-size: 16em;
 }
 
 #project-read-screen .fa-star-o,
