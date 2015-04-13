@@ -382,7 +382,7 @@
         app.username = user.get('username');
 
         jQuery.cookie('brainstorm_mobile_username', app.username, { expires: 1, path: '/' });
-        jQuery('.username-display a').text(app.runId+"'s class - "+user.get('display_name'));
+        jQuery('.username-display a').text(user.get('display_name'));
 
         hideLogin();
         hideUserLoginPicker();
