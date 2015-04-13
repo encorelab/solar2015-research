@@ -243,7 +243,7 @@
         // If the change fires while project not chosen yet we get an error
         if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
           //view.render();
-          view.fullRerender();
+          view.render();
         }
       });
 
@@ -251,15 +251,16 @@
         // If the add fires while project not chosen yet we get an error
         if (app.project && n.get('project_id') === app.project.id) {
           //view.render();
-          view.fullRerender();
+          view.render();
         }
       });
 
-      view.collection.on('destroy', function(n) {
-        if (app.project && n.get('project_id') === app.project.id) {
-          view.fullRerender();
-        }
-      });
+      // removed cause this doesn't do anything given this structure :(
+      // view.collection.on('destroy', function(n) {
+      //   if (app.project && n.get('project_id') === app.project.id) {
+      //     view.render();
+      //   }
+      // });
 
       return view;
     },
@@ -304,6 +305,7 @@
       }
 
       app.projectWriteView.model = m;
+      app.projectWriteView.model.wake(app.config.wakeful.url);
 
       app.hideAllContainers();
       jQuery('#project-write-screen').removeClass('hidden');
@@ -341,6 +343,7 @@
      }
 
       app.projectMediaView.model = m;
+      app.projectMediaView.model.wake(app.config.wakeful.url);
 
       app.hideAllContainers();
       jQuery('#project-media-screen').removeClass('hidden');
@@ -359,7 +362,7 @@
 
       // sort newest to oldest (prepend!)
       view.collection.comparator = function(model) {
-        return model.get('created_at');
+        return model.get('modified_at');
       };
       // NB: this wants to be modified_at, but that doesn't work correctly yet (would work in fullrerender) because we don't redraw the tiles on every change
 
@@ -458,7 +461,7 @@
 
     events: {
       'click .nav-read-btn'               : 'switchToReadView',
-      'click .cancel-tile-btn'            : 'cancelTile',
+      // 'click .cancel-tile-btn'            : 'cancelTile',
       'click .publish-tile-btn'           : 'publishTile',
       'click #lightbulb-icon'             : 'showSentenceStarters',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
@@ -512,22 +515,22 @@
     },
 
     // destroy a model, if there's something to destroy
-    cancelTile: function() {
-      var view = this;
+    // cancelTile: function() {
+    //   var view = this;
 
-      // if there is a tile
-      if (view.model) {
-        // confirm delete
-        if (confirm("Are you sure you want to delete this tile?")) {
-          app.clearAutoSaveTimer();
-          view.model.destroy();
-          // and we need to set it to null to 'remove' it from the local collection
-          view.model = null;
-          jQuery('.input-field').val('');
-          view.switchToReadView();
-        }
-      }
-    },
+    //   // if there is a tile
+    //   if (view.model) {
+    //     // confirm delete
+    //     if (confirm("Are you sure you want to delete this tile?")) {
+    //       app.clearAutoSaveTimer();
+    //       view.model.destroy();
+    //       // and we need to set it to null to 'remove' it from the local collection
+    //       view.model = null;
+    //       jQuery('.input-field').val('');
+    //       view.switchToReadView();
+    //     }
+    //   }
+    // },
 
     publishTile: function() {
       var view = this;
@@ -588,7 +591,7 @@
 
     events: {
       'click .nav-read-btn'               : 'switchToReadView',
-      'click .cancel-tile-btn'            : 'cancelTile',
+      // 'click .cancel-tile-btn'            : 'cancelTile',
       'click .publish-tile-btn'           : 'publishTile',
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
@@ -670,24 +673,24 @@
       }
     },
 
-    cancelTile: function() {
-      var view = this;
+    // cancelTile: function() {
+    //   var view = this;
 
-      // if there is a tile
-      if (view.model) {
-        // confirm delete
-        if (confirm("Are you sure you want to delete this tile?")) {
-          app.clearAutoSaveTimer();
-          view.model.destroy();
-          // and we need to set it to null to 'remove' it from the local collection
-          view.model = null;
-          jQuery('.input-field').val('');
-          // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
-          jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
-          view.switchToReadView();
-        }
-      }
-    },
+    //   // if there is a tile
+    //   if (view.model) {
+    //     // confirm delete
+    //     if (confirm("Are you sure you want to delete this tile?")) {
+    //       app.clearAutoSaveTimer();
+    //       view.model.destroy();
+    //       // and we need to set it to null to 'remove' it from the local collection
+    //       view.model = null;
+    //       jQuery('.input-field').val('');
+    //       // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+    //       jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
+    //       view.switchToReadView();
+    //     }
+    //   }
+    // },
 
     publishTile: function() {
       var view = this;

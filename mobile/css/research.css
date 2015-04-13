@@ -706,7 +706,7 @@ input:disabled {
 
 .login-button {
     margin: 1%;
-    min-width: 7em;
+    min-width: 7.3em;
 }
 
 .input-alert {
@@ -740,6 +740,13 @@ input:disabled {
         margin-right: 0;
     }
 
+    .nav-splash-btn,
+    #nav-write-btn,
+    #nav-media-btn,
+    #nav-poster-btn {
+        margin-left: -25px;
+    }
+
     #proposal-screen textarea[name="research_question"],
     #proposal-screen textarea[name="need_to_knows"],
     #review-details-screen textarea {
@@ -755,7 +762,12 @@ input:disabled {
 /* Large devices (LARGE DESKTOPS, 1200px and up) */
 @media all and (min-width: 1200px) {
 
-    .text-tile-container, .media-tile-container {
+    .project-partner-holder button {
+        min-width: 170px;
+    }
+
+    .text-tile-container,
+    .media-tile-container {
         padding-bottom: 25%; /* = width for a 1:1 aspect ratio */
     }
 
