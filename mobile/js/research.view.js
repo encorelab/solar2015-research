@@ -243,7 +243,7 @@
         // If the change fires while project not chosen yet we get an error
         if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
           //view.render();
-          view.fullRerender();
+          view.render();
         }
       });
 
@@ -251,15 +251,16 @@
         // If the add fires while project not chosen yet we get an error
         if (app.project && n.get('project_id') === app.project.id) {
           //view.render();
-          view.fullRerender();
+          view.render();
         }
       });
 
-      view.collection.on('destroy', function(n) {
-        if (app.project && n.get('project_id') === app.project.id) {
-          view.fullRerender();
-        }
-      });
+      // removed cause this doesn't do anything given this structure :(
+      // view.collection.on('destroy', function(n) {
+      //   if (app.project && n.get('project_id') === app.project.id) {
+      //     view.render();
+      //   }
+      // });
 
       return view;
     },
@@ -361,7 +362,7 @@
 
       // sort newest to oldest (prepend!)
       view.collection.comparator = function(model) {
-        return model.get('created_at');
+        return model.get('modified_at');
       };
       // NB: this wants to be modified_at, but that doesn't work correctly yet (would work in fullrerender) because we don't redraw the tiles on every change
 
