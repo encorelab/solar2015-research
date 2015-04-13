@@ -752,6 +752,11 @@ input:disabled {
     .tile-title {
         height: 23%;
     }
+    .fa-file-image-o,
+    .fa-file-video-o {
+        font-size: 11em;
+        margin-left: 14px;
+    }
     #project-read-screen .fa-star-o,
     #project-read-screen .fa-star {
         right: -1.5%;
@@ -764,6 +769,9 @@ input:disabled {
     }
     .self-photo-query {
         margin-left: 8%;
+    }
+    .project-to-review-btn {
+        min-width: 475px;
     }
 }
 
@@ -783,8 +791,7 @@ input:disabled {
     .tile h3 {
         font-size: 20px;
     }
-    .tile .title-body,
-    .tile .title-author {
+    .tile .title-body {
         font-size: 16px;
         line-height: 1.2;
     }
