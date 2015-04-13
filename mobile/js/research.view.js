@@ -825,7 +825,7 @@
     ReviewsView
   **/
   app.View.ReviewsView = Backbone.View.extend({
-    template: _.template('<h2 class="box1">Reviews locked by our project team but not finished</h2><h2 class="box2">Select a proposal to review</h2><h2 class="box3">Reviews locked by other project teams but not finished</h2><h2 class="box4">Completed reviews</h2><h2 class="fail">Fail</h2>'),
+    template: _.template('<h2 class="box1">Reviews locked by our project team but not finished</h2><h2 class="box2">Select a proposal to review</h2><h2 class="box3">Reviews locked by other project teams but not finished</h2><h2 class="box4">Completed reviews</h2>'),
 
     initialize: function() {
       var view = this;
