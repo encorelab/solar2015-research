@@ -912,6 +912,7 @@
         proposal.reviewer = app.groupname;
         proposal.review_published = true;
         view.model.set('proposal',proposal);
+        // view.switchToProjectOverviewView();
         view.model.save();
         jQuery().toastmessage('showSuccessToast', "Your review has been sent!");
         view.switchToProjectOverviewView();
@@ -937,9 +938,10 @@
 
     switchToProjectOverviewView: function(ev) {
       var view = this;
-      view.model = null;
+      // view.model = null;
       jQuery('#review-details-screen').addClass('hidden');
       jQuery('#review-overview-screen').removeClass('hidden');
+      app.reviewsView.render(); // I hate this but somehow all other clients rerender but not ourselves
     },
 
     startModifying: function(ev) {
