@@ -304,6 +304,7 @@
       }
 
       app.projectWriteView.model = m;
+      app.projectWriteView.model.wake(app.config.wakeful.url);
 
       app.hideAllContainers();
       jQuery('#project-write-screen').removeClass('hidden');
@@ -341,6 +342,7 @@
      }
 
       app.projectMediaView.model = m;
+      app.projectWriteView.model.wake(app.config.wakeful.url);
 
       app.hideAllContainers();
       jQuery('#project-media-screen').removeClass('hidden');
