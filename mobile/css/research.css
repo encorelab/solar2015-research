@@ -375,7 +375,7 @@ textarea {
 }
 .tile {
     position: absolute;
-    height: 85%; /* = 100% - 2*5% padding */
+    height: 86%; /* = 100% - 2*5% padding */
     width: 90%; /* = 100% - 2*5% padding */
     padding: 5%;
     margin-top: 5%;
@@ -387,14 +387,15 @@ textarea {
 }
 .tile-title {
     height: 27%;
+    max-height: 52px;
     margin: 0;
     padding-bottom: 15px;
     overflow: hidden;
     font-weight: 600;
 }
 .tile-body {
-    height: 73%;
-    margin-top: 15px;
+    height: 75%;
+    margin-top: 5px;
     overflow: hidden;
     line-height: 1.5;
     font-weight: 300;
@@ -753,6 +754,9 @@ input:disabled {
     }
     .tile-title {
         height: 23%;
+    }
+    .tile-body {
+        height: 69%;
     }
     .fa-file-image-o,
     .fa-file-video-o {
