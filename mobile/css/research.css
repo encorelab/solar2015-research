@@ -296,6 +296,10 @@ textarea {
     -moz-box-ordinal-group: 100;
     box-ordinal-group: 100;
 }
+#review-overview-screen .own-review {
+    border: 2px solid #2DF2FA;
+    background: #81D3FE;
+}
 
 .box1,
 .box2,
