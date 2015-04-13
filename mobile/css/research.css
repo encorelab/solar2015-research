@@ -400,8 +400,10 @@ textarea {
     font-weight: 300;
 }
 
-.fa-file-image-o, .fa-file-video-o {
-    font-size: 16em;
+.fa-file-image-o,
+.fa-file-video-o {
+    font-size: 13em;
+    margin-left: 5%;
 }
 
 #project-read-screen .fa-star-o,
