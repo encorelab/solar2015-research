@@ -940,6 +940,8 @@
         var proposal = view.model.get('proposal');
         proposal.review_research_question = "";
         proposal.review_need_to_knows = "";
+        // Also remove the lock
+        delete proposal.write_lock;
         view.model.set('proposal',proposal);
         view.model.save();
         jQuery('.input-field').val('');
