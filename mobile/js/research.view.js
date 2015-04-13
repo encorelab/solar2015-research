@@ -679,6 +679,8 @@
           // and we need to set it to null to 'remove' it from the local collection
           view.model = null;
           jQuery('.input-field').val('');
+          // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+          jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
           view.switchToReadView();
         }
       }
