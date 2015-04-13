@@ -111,6 +111,8 @@ textarea {
 }
 #project-picker button {
     min-width: 500px;
+    max-width: 500px;
+    overflow: hidden;
     display: block;
     margin: 0 auto;
     height: 55px;
@@ -188,14 +190,6 @@ textarea {
     height: calc(100% - 50px);
 }*/
 
-#project-read-screen .inner-wrapper
-/*#project-write-screen .inner-wrapper,*/
-/*#project-media-screen .inner-wrapper*/ {
-    /*position: absolute;*/
-    height: 100%;
-    margin-top: 75px;
-}
-
 #project-read-screen h2,
 #project-write-screen h2,
 #project-media-screen h2 {
@@ -245,9 +239,7 @@ textarea {
 #review-details-screen textarea {
     border: 2px solid #faa82d;
 }
-/*#todo-screen .inner-wrapper {
-    position: absolute;
-}*/
+
 #review-overview-screen .btn-circular,
 #review-details-screen .btn-circular,
 #todo-screen .goto-review-btn {
@@ -348,9 +340,8 @@ textarea {
 /********** P R O J E C T  R E A D  S C R E E N **********/
 
 #project-read-screen .inner-wrapper {
-    /*height: 100%;*/
+    height: 100%;
     margin-top: 75px;
-    /*position: absolute;*/
 }
 .fa-pencil {
     padding-left: 5px;
@@ -409,12 +400,16 @@ textarea {
     font-weight: 300;
 }
 
+.fa-file-image-o,
+.fa-file-video-o {
+    font-size: 13em;
+    margin-left: 5%;
+}
+
 #project-read-screen .fa-star-o,
 #project-read-screen .fa-star {
-    /*bottom: 3%;*/
     bottom: 0;
     z-index: 999;
-    /*text-shadow: 0 0 0.3em #ffff66, 0 0 0.3em #ffff66, 0 0 0.3em #ffff66;*/
 }
 .fa-circle {
     position: absolute;
@@ -429,14 +424,14 @@ textarea {
     content: "\f04d";
 }*/
 
-@media handheld and (orientation: landscape) {
+/*@media handheld and (orientation: landscape) {
     .tile-body {
         height: 58%;
     }
     .tile-author {
         padding-top: 10px;
     }
-}
+}*/
 
 
 /********** P R O J E C T  W R I T E  S C R E E N **********/
@@ -655,30 +650,19 @@ ul {
     vertical-align: middle;
 }
 
-/***** login & project picker + partner modals *****/
-#login-picker button,
-#project-picker button,
-.project-partner-holder button {
-/*    color: #333;
-    border-radius: 7px;
-    border: solid #ddd 1px;
-    background: #fff;
-    background-image: none;
-    text-shadow: none;*/
-}
-#login-picker button:hover,
-#project-picker button:hover,
-.project-partner-holder button:hover {
-/*    background: #aaa;
-    color: #fff;*/
-}
-
 
 /********** N A V B A R **********/
 
 .navbar-inverse .navbar-nav>.active>a {
     background-image: -webkit-linear-gradient(to bottom,#3c3c3c 0,#222 100%);
     background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
+}
+
+.username-display a {
+    max-height: 35px;
+    max-width: 500px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 /* This hides any element with class alert directly after an input field with a pattern (regex) */
@@ -731,16 +715,21 @@ input:disabled {
 
     .project-partner-holder button {
         margin-right: 15px;
-        min-width: 150px;
+        min-width: 140px;
     }
     .project-partner-holder button:nth-child(5n) {
         margin-right: 15px;
     }
-    .project-partner-holder button:nth-child(3n) {
+    .project-partner-holder button:nth-child(4n) {
         margin-right: 0;
     }
 
+    .username-display a {
+        max-width: 300px;
+    }
+
     .nav-splash-btn,
+    .nav-read-btn,
     #nav-write-btn,
     #nav-media-btn,
     #nav-poster-btn {
@@ -757,6 +746,35 @@ input:disabled {
     #review-details-screen h3[name="need_to_knows"] {
         max-height: 150px;
     }
+
+    .tile {
+        padding: 5% 7% 0 1%;
+        height: 87%;
+    }
+    .tile-title {
+        height: 23%;
+    }
+    .fa-file-image-o,
+    .fa-file-video-o {
+        font-size: 11em;
+        margin-left: 14px;
+    }
+    #project-read-screen .fa-star-o,
+    #project-read-screen .fa-star {
+        right: -1.5%;
+    }
+    .fa-circle {
+        bottom: 1.5%;
+    }
+    #tile-media-upload-container {
+        margin-left: 15%;
+    }
+    .self-photo-query {
+        margin-left: 8%;
+    }
+    .project-to-review-btn {
+        min-width: 475px;
+    }
 }
 
 /* Large devices (LARGE DESKTOPS, 1200px and up) */
@@ -767,15 +785,15 @@ input:disabled {
     }
 
     .text-tile-container,
-    .media-tile-container {
+    .photo-tile-container,
+    .video-tile-container {
         padding-bottom: 25%; /* = width for a 1:1 aspect ratio */
     }
 
     .tile h3 {
         font-size: 20px;
     }
-    .tile .title-body,
-    .tile .title-author {
+    .tile .title-body {
         font-size: 16px;
         line-height: 1.2;
     }

@@ -233,7 +233,7 @@
 
     // note that this is done again in newProjectView (think about making this awake?)
     app.groupname = p.get('name');
-    jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
+    jQuery('.username-display a').text(app.groupname);
 
     app.reflectRunState(projectId);
   };
@@ -264,7 +264,7 @@
         } else if (jQuery(this).hasClass('goto-project-btn')) {
           jQuery('#project-nav-btn').addClass('active');
           jQuery('#project-read-screen').removeClass('hidden');
-          app.projectReadView.render();
+          app.projectReadView.fullRerender();
         } else if (jQuery(this).hasClass('goto-review-btn')) {
           jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');
