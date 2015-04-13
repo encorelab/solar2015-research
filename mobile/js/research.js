@@ -233,7 +233,7 @@
 
     // note that this is done again in newProjectView (think about making this awake?)
     app.groupname = p.get('name');
-    jQuery('.username-display a').text(app.runId + "'s class - " + app.groupname);
+    jQuery('.username-display a').text(app.groupname);
 
     app.reflectRunState(projectId);
   };
