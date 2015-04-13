@@ -402,8 +402,8 @@ textarea {
 
 .fa-file-image-o,
 .fa-file-video-o {
-    font-size: 13em;
-    margin-left: 5%;
+    font-size: 15em;
+    margin-left: 6%;
 }
 
 #project-read-screen .fa-star-o,
@@ -788,6 +788,11 @@ input:disabled {
     .photo-tile-container,
     .video-tile-container {
         padding-bottom: 25%; /* = width for a 1:1 aspect ratio */
+    }
+    .fa-file-image-o,
+    .fa-file-video-o {
+        font-size: 13em;
+        margin-left: 5%;
     }
 
     .tile h3 {
