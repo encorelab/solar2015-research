@@ -41,6 +41,7 @@
   app.projectWriteView = null;
   app.projectMediaView = null;
   app.projectNewPosterView = null;
+  app.projectPosterChunkView = null;
   app.reviewsView = null;        // lolololol
   app.reviewDetailsView = null;
 
@@ -324,6 +325,12 @@
      if (app.projectNewPosterView === null) {
        app.projectNewPosterView = new app.View.ProjectNewPosterView({
          el: '#project-new-poster-screen'
+       });
+     }
+
+     if (app.projectPosterChunkView === null) {
+       app.projectPosterChunkView = new app.View.ProjectPosterChunkView({
+         el: '#project-poster-chunk-screen'
        });
      }
 

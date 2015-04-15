@@ -353,10 +353,14 @@
     switchToPosterView: function() {
       // jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
       app.hideAllContainers();
-      // if (poster exists) {
-      // } else
-      app.projectNewPosterView.render();
-      jQuery('#project-new-poster-screen').removeClass('hidden');
+      // if there's a poster for this project already, go to chunk screen, else go to new poster screen
+      if (app.project.get('poster_title') && app.project.get('poster_title').length > 0) {
+        app.projectPosterChunkView.render();
+        jQuery('#project-poster-chunk-screen').removeClass('hidden');
+      } else {
+        app.projectNewPosterView.render();
+        jQuery('#project-new-poster-screen').removeClass('hidden');
+      }
     },
 
     render: function() {
@@ -798,6 +802,9 @@
         app.project.save();
 
         jQuery().toastmessage('showSuccessToast', "You have started your poster!");
+
+        app.hideAllContainers();
+        jQuery('#project-poster-chunk-screen').removeClass('hidden');
       } else {
         jQuery().toastmessage('showErrorToast', "Please add a title to your poster...");
       }
@@ -828,6 +835,53 @@
       jQuery('.new-poster-theme-holder [name=' + app.project.get('theme') + ']').addClass('selected');
     }
   });
+
+
+/**
+  ProjectPosterChunkView
+**/
+app.View.ProjectPosterChunkView = Backbone.View.extend({
+  initialize: function() {
+    var view = this;
+    console.log('Initializing ProjectPosterChunkView...', view.el);
+  },
+
+  events: {
+    'click .nav-read-btn'               : 'switchToReadView'
+    // 'click .cancel-tile-btn'            : 'cancelTile',   maybe better than the back button
+    //'click .publish-chunk-btn'           : 'publishChunk'
+  },
+
+  // publishTile: function() {
+  //   var view = this;
+
+  //   if (view.model.get('url') && view.model.get('originator')) {
+  //     view.model.set('published', true);
+  //     view.model.set('modified_at', new Date());
+  //     view.model.save();
+  //     jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
+
+  //     view.model = null;
+  //     jQuery('.input-field').val('');
+  //     // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
+  //     jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
+  //     view.switchToReadView();
+  //   } else {
+  //     jQuery().toastmessage('showErrorToast', "Please add a picture or video and confirm whether this is your own drawing, model, or other form of representation...");
+  //   }
+  // },
+
+  switchToReadView: function() {
+    app.hideAllContainers();
+    jQuery('#project-read-screen').removeClass('hidden');
+  },
+
+  render: function() {
+    var view = this;
+    console.log("Rendering ProjectPosterChunkView...");
+
+  }
+});
 
 
   /**
