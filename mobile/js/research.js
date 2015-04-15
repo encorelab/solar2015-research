@@ -449,7 +449,12 @@
     _.each(app.config.runs, function(run) {
       var button = jQuery('<button class="btn btn-default btn-base login-button">');
       button.val(run);
-      button.text(run);
+      // hacky fix so that we don't have to mess around with run names (eg solar2015-michael)
+      if (run === "michael") {
+        button.text("mike");
+      } else {
+        button.text(run);
+      }
       jQuery('.login-buttons').append(button);
     });
 
