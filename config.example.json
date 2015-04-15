@@ -3,8 +3,9 @@
         "url": "https://drowsy.coati.encorelab.org",
         "url_dev": "http://localhost:9292",
         "db": "solar2015",
-        "username":"foo",
-        "password":"bar"
+        "username": "foo",
+        "password": "bar",
+        "uic_url": "https://ltg.evl.uic.edu/drowsy/poster"
     },
     "wakeful": {
         "url": "https://coati.encorelab.org/faye",
