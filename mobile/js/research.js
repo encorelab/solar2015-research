@@ -40,6 +40,7 @@
   app.projectReadView = null;
   app.projectWriteView = null;
   app.projectMediaView = null;
+  app.projectNewPosterView = null;
   app.reviewsView = null;        // lolololol
   app.reviewDetailsView = null;
 
@@ -317,6 +318,12 @@
        app.projectMediaView = new app.View.ProjectMediaView({
          el: '#project-media-screen',
          collection: Skeletor.Model.awake.tiles
+       });
+     }
+
+     if (app.projectNewPosterView === null) {
+       app.projectNewPosterView = new app.View.ProjectNewPosterView({
+         el: '#project-new-poster-screen'
        });
      }
 

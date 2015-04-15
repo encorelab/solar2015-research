@@ -579,6 +579,24 @@ textarea {
 }
 
 
+/********** P R O J E C T  N E W  P O S T E R  S C R E E N **********/
+
+.new-poster-theme-holder {
+    width: 400px;
+    margin: 0 auto;
+}
+.new-poster-theme-button {
+    height: 55px;
+    margin-bottom: 35px;
+}
+.new-poster-theme-button:nth-child(odd) {
+    float: left;
+    margin-right: 25px;
+}
+.new-poster-theme-button:nth-child(even) {
+    float: right;
+}
+
 /********** G L O B A L **********/
 
 body, html {

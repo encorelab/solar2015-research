@@ -351,9 +351,12 @@
     },
 
     switchToPosterView: function() {
-      jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
-      //app.hideAllContainers();
-      //jQuery('#project-write-screen').removeClass('hidden');
+      // jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
+      app.hideAllContainers();
+      // if (poster exists) {
+      // } else
+      app.projectNewPosterView.render();
+      jQuery('#project-new-poster-screen').removeClass('hidden');
     },
 
     render: function() {
@@ -759,6 +762,67 @@
       } else {
         jQuery('.camera-icon').replaceWith(jQuery('<img src="img/camera_icon.png" class="camera-icon img-responsive" alt="camera icon" />'));
       }
+    }
+  });
+
+
+  /**
+    ProjectNewPosterScreen
+  **/
+  app.View.ProjectNewPosterView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectNewPosterView...', view.el);
+    },
+
+    events: {
+      'click .create-poster-btn'              : 'createPoster',
+      'click .new-poster-theme-button'        : 'toggleThemeButtonStatus'
+    },
+
+    toggleThemeButtonStatus: function(ev) {
+      jQuery(ev.target).toggleClass('selected');
+    },
+
+    createPoster: function() {
+      var view = this;
+
+      if (jQuery('#project-new-poster-screen [name=poster-title]').val().length > 0) {
+        // poster model?
+
+        // add the title
+
+        // add the themes
+
+        jQuery().toastmessage('showSuccessToast', "You have started your poster!");
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please add a title to your poster...");
+      }
+    },
+
+    switchToReadView: function() {
+      app.hideAllContainers();
+      jQuery('#project-read-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectNewPosterView...");
+
+      // add the theme buttons - need to be careful of random rerenders here, will mess us up
+      jQuery('.new-poster-theme-holder').html('');
+      if (Skeletor.Model.awake.tags.length > 0) {
+        Skeletor.Model.awake.tags.each(function(tag) {
+          var button = jQuery('<button class="btn new-poster-theme-button btn-default btn-base" name=' + tag.get('name') + '>');
+          button.val(tag.get('name'));
+          button.text(tag.get('name'));
+          jQuery('.new-poster-theme-holder').append(button);
+        });
+      } else {
+        console.warn('Tags collection is empty!');
+      }
+
+      jQuery('.new-poster-theme-holder [name=' + app.project.get('theme') + ']').addClass('selected');
     }
   });
 
