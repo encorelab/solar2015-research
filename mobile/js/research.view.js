@@ -794,12 +794,38 @@
       if (jQuery('#project-new-poster-screen [name=poster_title]').val().length > 0) {
         var posterThemes = [];
 
+        // add to the project object in the OISE DB
         app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
         jQuery('.selected').each(function() {
           posterThemes.push(jQuery(this).val());
         });
         app.project.set('poster_themes', posterThemes);
         app.project.save();
+
+        // create all the relevant stuff in the UIC DB (poster and group)
+        // (note poster id is project id)
+        var posterObj = {
+                          "name": app.project.get('poster_title'),
+                          "uuid": app.project.id
+                        }
+        var groupObj = {
+                         "classname": app.runId,
+                         "name": app.project.get('name'),
+                         "nameTags": app.project.get('associated_users'),
+                         "posters" : [ app.project.id ],         // always one element
+                         "uuid" : app.project.id
+                       }
+
+        // TODO: use deferreds here instead, or nest correctly so that we can't proceed without completion
+        jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj)
+        .fail(function( data ) {
+          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+        })
+
+        jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj)
+        .fail(function( data ) {
+          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+        })
 
         jQuery().toastmessage('showSuccessToast', "You have started your poster!");
 
