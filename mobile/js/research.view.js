@@ -787,12 +787,15 @@
     createPoster: function() {
       var view = this;
 
-      if (jQuery('#project-new-poster-screen [name=poster-title]').val().length > 0) {
-        // poster model?
+      if (jQuery('#project-new-poster-screen [name=poster_title]').val().length > 0) {
+        var posterThemes = [];
 
-        // add the title
-
-        // add the themes
+        app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
+        jQuery('.selected').each(function() {
+          posterThemes.push(jQuery(this).val());
+        });
+        app.project.set('poster_themes', posterThemes);
+        app.project.save();
 
         jQuery().toastmessage('showSuccessToast', "You have started your poster!");
       } else {
