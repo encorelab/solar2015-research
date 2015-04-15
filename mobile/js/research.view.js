@@ -798,6 +798,13 @@
       }
 
       view.$el.html(this.template(view.model.toJSON()));
+
+      // Treat review of own project differently
+      if (app.project && view.model.get('name') === app.project.get('name')) {
+        // set a class to a) lock the project from being edited by us
+        view.$el.find('button').addClass('own-review');
+      }
+
       return this;
     },
 
@@ -875,7 +882,7 @@
       };
 
       var publishedProjectProposals = view.collection.sort().filter(function(proj) {
-        return (app.project && proj.get('name') !== app.project.get('name') && proj.get('proposal').published === true && proj.get('theme'));
+        return (app.project && proj.get('proposal').published === true && proj.get('theme'));
       });
 
       publishedProjectProposals.forEach(function(proposal) {
@@ -998,6 +1005,12 @@
       } else {
         modJson.write_lock = true;
       }
+
+      // We now show reviews for our own projects and when a user enters we treat it as if it locked but we don;t use the lock
+      if (!modJson.write_lock && app.project && view.model.get('name') === app.project.get('name')) {
+        modJson.write_lock = true;
+      }
+
       // create everything by rendering a template
       view.$el.html(view.template(modJson));
       return view;

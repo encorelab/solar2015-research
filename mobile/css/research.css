@@ -120,6 +120,10 @@ textarea {
     margin-bottom: 15px;
 }
 
+
+.project-partner-holder {
+    max-width: 915px;
+}
 .project-partner-holder button {
     margin-right: 15px;
     min-width: 150px;
@@ -292,6 +296,10 @@ textarea {
     -moz-box-ordinal-group: 100;
     box-ordinal-group: 100;
 }
+#review-overview-screen .own-review {
+    border: 2px solid #2DF2FA;
+    background: #81D3FE;
+}
 
 .box1,
 .box2,
@@ -375,7 +383,7 @@ textarea {
 }
 .tile {
     position: absolute;
-    height: 85%; /* = 100% - 2*5% padding */
+    height: 86%; /* = 100% - 2*5% padding */
     width: 90%; /* = 100% - 2*5% padding */
     padding: 5%;
     margin-top: 5%;
@@ -387,14 +395,15 @@ textarea {
 }
 .tile-title {
     height: 27%;
+    max-height: 52px;
     margin: 0;
     padding-bottom: 15px;
     overflow: hidden;
     font-weight: 600;
 }
 .tile-body {
-    height: 73%;
-    margin-top: 15px;
+    height: 75%;
+    margin-top: 5px;
     overflow: hidden;
     line-height: 1.5;
     font-weight: 300;
@@ -753,6 +762,9 @@ input:disabled {
     }
     .tile-title {
         height: 23%;
+    }
+    .tile-body {
+        height: 69%;
     }
     .fa-file-image-o,
     .fa-file-video-o {
