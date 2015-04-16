@@ -255,6 +255,7 @@
       logoutUser();
     });
 
+    // this is a or binding to both classes
     jQuery('.top-nav-btn, .todo-btn').click(function() {
       if (app.username) {
         jQuery('.top-nav-btn').removeClass('active');     // unmark all nav items
@@ -266,7 +267,7 @@
         } else if (jQuery(this).hasClass('goto-project-btn')) {
           jQuery('#project-nav-btn').addClass('active');
           jQuery('#project-read-screen').removeClass('hidden');
-          app.projectReadView.fullRerender();
+          app.projectReadView.render();
         } else if (jQuery(this).hasClass('goto-review-btn')) {
           jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');

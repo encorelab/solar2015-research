@@ -226,6 +226,76 @@
 
 
   /**
+   ** Tile View
+   **/
+  app.View.Tile = Backbone.View.extend({
+    textTemplate: "#text-tile-template",
+    photoTemplate: "#photo-tile-template",
+    videoTemplate: "#video-tile-template",
+
+    initialize: function () {
+      var view = this;
+
+      view.model.on('change', function () {
+        view.render();
+      });
+
+      return view;
+    },
+
+    render: function () {
+      var view = this,
+        tile = view.model,
+        listItemTemplate,
+        listItem,
+        starStatus;
+
+      if (tile.get('favourite') === true) {
+        starStatus = "fa-star";
+      } else {
+        starStatus = "fa-star-o";
+      }
+
+      if (tile.get('type') === "text") {
+        // if class is not set do it
+        if (!view.$el.hasClass('text-tile-container')) {
+          view.$el.addClass('text-tile-container');
+        }
+
+        listItemTemplate = _.template(jQuery(view.textTemplate).text());
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+      } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+        // if class is not set do it
+        if (!view.$el.hasClass('photo-tile-container')) {
+          view.$el.addClass('photo-tile-container');
+        }
+
+        listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+      } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+        // if class is not set do it
+        if (!view.$el.hasClass('video-tile-container')) {
+          view.$el.addClass('video-tile-container');
+        }
+
+        listItemTemplate = _.template(jQuery(view.videoTemplate).text());
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+      } else {
+        throw "Unknown tile type!";
+      }
+
+      // view.setElement(listItem);
+      view.$el.html(listItem);
+
+      return view;
+    }
+  });
+
+  /**
+   ** Tiles View
+   **/
+
+  /**
     ProjectReadView
   **/
   app.View.ProjectReadView = Backbone.View.extend({
@@ -239,19 +309,18 @@
 
       // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!  If this is too much rendering on the fly, then we will want to revert back to view.render for change and add
       // these binds should only fire when the collection changes are for your project
-      view.collection.on('change', function(n) {
-        // If the change fires while project not chosen yet we get an error
-        if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
-          //view.render();
-          view.fullRerender();
-        }
-      });
+      // view.collection.on('change', function(n) {
+      //   // If the change fires while project not chosen yet we get an error
+      //   if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
+      //     //view.render();
+      //     view.fullRerender();
+      //   }
+      // });
 
       view.collection.on('add', function(n) {
         // If the add fires while project not chosen yet we get an error
         if (app.project && n.get('project_id') === app.project.id) {
-          //view.render();
-          view.fullRerender();
+          view.addOne(n);
         }
       });
 
@@ -363,6 +432,18 @@
       }
     },
 
+    addOne: function(tileModel) {
+      var view = this;
+      // wake up the project model
+      tileModel.wake(app.config.wakeful.url);
+
+      var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" date-id="'+tileModel.id+'"></li>');
+
+      var tileView = new app.View.Tile({el: tileContainer, model: tileModel});
+      var listToAddTo = view.$el.find('#tiles-list');
+      listToAddTo.append(tileView.render().el);
+    },
+
     render: function() {
       var view = this;
       console.log("Rendering ProjectReadView...");
@@ -373,95 +454,106 @@
       };
 
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
-      var list = jQuery('#tiles-list');
 
-      _.each(myPublishedTiles, function(tile){
-        var starStatus = null,
-            listItemTemplate = null,
-            listItem = null;
+      // clear the house
+      view.$el.find('#tiles-list').html("");
 
-        if (tile.get('favourite') === true) {
-          starStatus = "fa-star";
-        } else {
-          starStatus = "fa-star-o";
-        }
-
-        if (tile.get('type') === "text") {
-          listItemTemplate = _.template(jQuery(view.textTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
-          listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
-          listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-        } else {
-          console.error("Unknown tile type!");
-        }
-
-        var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
-        if (existingNote.length === 0) {
-          list.prepend(listItem);
-        } else {
-          existingNote.replaceWith(listItem);
-        }
+      myPublishedTiles.forEach(function (tile) {
+        view.addOne(tile);
       });
-    },
+
+      // _.each(myPublishedTiles, function(tile){
+      //   var starStatus = null,
+      //       listItemTemplate = null,
+      //       listItem = null;
+
+      //   if (tile.get('favourite') === true) {
+      //     starStatus = "fa-star";
+      //   } else {
+      //     starStatus = "fa-star-o";
+      //   }
+
+      //   if (tile.get('type') === "text") {
+      //     listItemTemplate = _.template(jQuery(view.textTemplate).text());
+      //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+      //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+      //     listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+      //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+      //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+      //     listItemTemplate = _.template(jQuery(view.videoTemplate).text());
+      //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+      //   } else {
+      //     console.error("Unknown tile type!");
+      //   }
+
+      //   var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
+      //   if (existingNote.length === 0) {
+      //     list.prepend(listItem);
+      //   } else {
+      //     existingNote.replaceWith(listItem);
+      //   }
+      // });
+    }
 
     // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason). This seems to be working.
     //TODO: recombine this and use a flag to set up the full rerender, or something else...
-    fullRerender: function() {
-      var view = this;
-      console.log("Doing a full rerender for ProjectReadView...");
+    // fullRerender: function() {
+    //   var view = this;
+    //   console.log("Doing a full rerender for ProjectReadView...");
 
-      // sort newest to oldest (prepend!)
-      view.collection.comparator = function(model) {
-        return model.get('modified_at');
-      };
+    //   // sort newest to oldest (prepend!)
+    //   view.collection.comparator = function(model) {
+    //     return model.get('modified_at');
+    //   };
 
-      var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
-      var list = jQuery('#tiles-list');
-      list.html("");
+    //   var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
 
-      _.each(myPublishedTiles, function(tile) {
-        var starStatus = null,
-            listItemTemplate = null,
-            listItem = null;
+    //   myPublishedTiles.forEach(function (tile) {
+    //     view.addOne(tile);
+    //   });
 
-        if (tile.get('favourite') === true) {
-          starStatus = "fa-star";
-        } else {
-          starStatus = "fa-star-o";
-        }
+    //   // var list = jQuery('#tiles-list');
+    //   // list.html("");
 
-        // if (tile.get('type') === "text") {
-        //   listItemTemplate = _.template(jQuery(view.textTemplate).text());
-        //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
-        //   listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-        //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-        // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
-        //   listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-        //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-        // } else {
-        //   console.error("Unknown tile type!");
-        // }
-        if (tile.get('type') === "text") {
-          listItemTemplate = _.template(jQuery(view.textTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
-          listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
-        } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
-          listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-          listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
-        } else {
-          console.error("Unknown tile type!");
-        }
+    //   // _.each(myPublishedTiles, function(tile) {
+    //   //   var starStatus = null,
+    //   //       listItemTemplate = null,
+    //   //       listItem = null;
 
-        list.prepend(listItem);
-      });
-    }
+    //   //   if (tile.get('favourite') === true) {
+    //   //     starStatus = "fa-star";
+    //   //   } else {
+    //   //     starStatus = "fa-star-o";
+    //   //   }
+
+    //   //   // if (tile.get('type') === "text") {
+    //   //   //   listItemTemplate = _.template(jQuery(view.textTemplate).text());
+    //   //   //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+    //   //   // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+    //   //   //   listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+    //   //   //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+    //   //   // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+    //   //   //   listItemTemplate = _.template(jQuery(view.videoTemplate).text());
+    //   //   //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+    //   //   // } else {
+    //   //   //   console.error("Unknown tile type!");
+    //   //   // }
+    //   //   if (tile.get('type') === "text") {
+    //   //     listItemTemplate = _.template(jQuery(view.textTemplate).text());
+    //   //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+    //   //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+    //   //     listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+    //   //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
+    //   //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+    //   //     listItemTemplate = _.template(jQuery(view.videoTemplate).text());
+    //   //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
+    //   //   } else {
+    //   //     console.error("Unknown tile type!");
+    //   //   }
+
+    //   //   list.prepend(listItem);
+    //   // });
+    // }
 
   });
 
@@ -807,25 +899,25 @@
         var posterObj = {
                           "name": app.project.get('poster_title'),
                           "uuid": app.project.id
-                        }
+                        };
         var groupObj = {
                          "classname": app.runId,
                          "name": app.project.get('name'),
                          "nameTags": app.project.get('associated_users'),
                          "posters" : [ app.project.id ],         // always one element
                          "uuid" : app.project.id
-                       }
+                       };
 
         // TODO: use deferreds here instead, or nest correctly so that we can't proceed without completion
         jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj)
         .fail(function( data ) {
           jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
-        })
+        });
 
         jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj)
         .fail(function( data ) {
           jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
-        })
+        });
 
         jQuery().toastmessage('showSuccessToast', "You have started your poster!");
 
