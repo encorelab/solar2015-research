@@ -883,51 +883,75 @@
   });
 
 
-/**
-  ProjectPosterChunkView
-**/
-app.View.ProjectPosterChunkView = Backbone.View.extend({
-  initialize: function() {
-    var view = this;
-    console.log('Initializing ProjectPosterChunkView...', view.el);
-  },
+  /**
+    ProjectPosterChunkView
+  **/
+  app.View.ProjectPosterChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterChunkView...', view.el);
+    },
 
-  events: {
-    'click .nav-read-btn'               : 'switchToReadView'
-    // 'click .cancel-tile-btn'            : 'cancelTile',   maybe better than the back button
-    //'click .publish-chunk-btn'           : 'publishChunk'
-  },
+    events: {
+      'click #create-text-chunk-btn'            : 'switchToCreateTextChunk',
+      'click #create-media-chunk-btn'           : 'switchToCreateMediaChunk',
+      'click .nav-read-btn'                     : 'switchToReadView'
+    },
 
-  // publishTile: function() {
-  //   var view = this;
+    switchToCreateTextChunk: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
+    },
 
-  //   if (view.model.get('url') && view.model.get('originator')) {
-  //     view.model.set('published', true);
-  //     view.model.set('modified_at', new Date());
-  //     view.model.save();
-  //     jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
+    switchToCreateMediaChunk: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
+    },
 
-  //     view.model = null;
-  //     jQuery('.input-field').val('');
-  //     // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
-  //     jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
-  //     view.switchToReadView();
-  //   } else {
-  //     jQuery().toastmessage('showErrorToast', "Please add a picture or video and confirm whether this is your own drawing, model, or other form of representation...");
-  //   }
-  // },
+    switchToReadView: function() {
+      app.hideAllContainers();
+      jQuery('#project-read-screen').removeClass('hidden');
+    },
 
-  switchToReadView: function() {
-    app.hideAllContainers();
-    jQuery('#project-read-screen').removeClass('hidden');
-  },
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterChunkView...");
 
-  render: function() {
-    var view = this;
-    console.log("Rendering ProjectPosterChunkView...");
+    }
+  });
 
-  }
-});
+
+  /**
+    ProjectPosterTextChunkView
+  **/
+  app.View.ProjectPosterTextChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterTextChunkView...', view.el);
+    },
+
+    events: {
+      'click .publish-chunk-btn'            : 'publishChunk',
+      'click .cancel-chunk-btn'             : 'cancelChunk'               // would this be better as a back button?
+    },
+
+    publishChunk: function() {
+      jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    cancelChunk: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterTextChunkView...");
+    }
+  });
 
 
   /**

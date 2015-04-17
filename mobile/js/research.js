@@ -34,7 +34,6 @@
   app.groupname = null;
   app.project = null;
 
-  // TODO: think about creating top level view that contains the model, all other views inherit from that?
   app.newProjectView = null;
   app.proposalsView = null;
   app.projectReadView = null;
@@ -42,7 +41,9 @@
   app.projectMediaView = null;
   app.projectNewPosterView = null;
   app.projectPosterChunkView = null;
-  app.reviewsView = null;        // lolololol
+  app.projectPosterTextChunkView = null;
+  //app.projectPosterMediaChunkView = null;
+  app.reviewsView = null;
   app.reviewDetailsView = null;
 
   app.keyCount = 0;
@@ -335,6 +336,12 @@
      if (app.projectPosterChunkView === null) {
        app.projectPosterChunkView = new app.View.ProjectPosterChunkView({
          el: '#project-poster-chunk-screen'
+       });
+     }
+
+     if (app.projectPosterTextChunkView === null) {
+       app.projectPosterTextChunkView = new app.View.ProjectPosterTextChunkView({
+         el: '#project-poster-text-chunk-screen'
        });
      }
 
