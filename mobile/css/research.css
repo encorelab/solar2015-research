@@ -196,12 +196,14 @@ textarea {
 
 #project-read-screen h2,
 #project-write-screen h2,
-#project-media-screen h2 {
+#project-media-screen h2,
+#project-new-poster-screen h2 {
     color: #41b050;
 }
 #project-read-screen textarea,
 #project-write-screen textarea,
 #project-media-screen textarea,
+#project-new-poster-screen textarea,
 #project-read-screen button,
 #project-write-screen button,
 #project-media-screen button {
@@ -210,6 +212,7 @@ textarea {
 #project-read-screen .btn-circular,
 #project-write-screen .btn-circular,
 #project-media-screen .btn-circular,
+#project-new-poster-screen .btn-circular,
 #todo-screen .goto-project-btn {
     background: #41b050;
     border: 2px solid #41b050;
@@ -217,6 +220,7 @@ textarea {
 #project-read-screen .btn-circular:hover,
 #project-write-screen .btn-circular:hover,
 #project-media-screen .btn-circular:hover,
+#project-new-poster-screen .btn-circular:hover,
 #todo-screen .goto-project-btn:hover {
     background: #8dd098;
 }
@@ -310,7 +314,7 @@ textarea {
 }
 
 .project-to-review-btn {
-    min-width: 500px;
+    width: 500px;
     display: block;
     margin: 0 auto;
     overflow: hidden;
