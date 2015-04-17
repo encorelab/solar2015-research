@@ -431,16 +431,16 @@
     },
 
     switchToPosterView: function() {
-      // jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
-      app.hideAllContainers();
-      // if there's a poster for this project already, go to chunk screen, else go to new poster screen
-      if (app.project.get('poster_title') && app.project.get('poster_title').length > 0) {
-        app.projectPosterChunkView.render();
-        jQuery('#project-poster-chunk-screen').removeClass('hidden');
-      } else {
-        app.projectNewPosterView.render();
-        jQuery('#project-new-poster-screen').removeClass('hidden');
-      }
+      jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
+      // app.hideAllContainers();
+      // // if there's a poster for this project already, go to chunk screen, else go to new poster screen
+      // if (app.project.get('poster_title') && app.project.get('poster_title').length > 0) {
+      //   app.projectPosterChunkView.render();
+      //   jQuery('#project-poster-chunk-screen').removeClass('hidden');
+      // } else {
+      //   app.projectNewPosterView.render();
+      //   jQuery('#project-new-poster-screen').removeClass('hidden');
+      // }
     },
 
     addOne: function(tileModel) {
@@ -492,8 +492,6 @@
     initialize: function() {
       var view = this;
       console.log('Initializing ProjectWriteView...', view.el);
-
-      //view.collection.on('sync', view.onModelSaved, view);
     },
 
     events: {
@@ -595,10 +593,6 @@
       app.hideAllContainers();
       jQuery('#project-read-screen').removeClass('hidden');
     },
-
-    // onModelSaved: function(model, response, options) {
-    //   model.set('modified_at', new Date());
-    // },
 
     render: function () {
       var view = this;
@@ -893,23 +887,18 @@
     },
 
     events: {
-      'click #create-text-chunk-btn'            : 'createTextChunk',
-      'click #create-media-chunk-btn'           : 'createMediaChunk',
+      'click #create-text-chunk-btn'            : 'createChunk',
+      'click #create-media-chunk-btn'           : 'createChunk',
       'click .nav-read-btn'                     : 'switchToReadView'
     },
 
-    createTextChunk: function() {
-
-      app.hideAllContainers();
-      jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
-    },
-
-    createMediaChunk: function() {
+    createChunk: function(ev) {
       var view = this;
       var m;
+      var type = jQuery(ev.target).data('type');
 
       // check if we need to resume
-      var tileToResume = null     //view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
+      var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: type, published: false});
 
       if (tileToResume) {
         console.log('Resuming...');
@@ -921,18 +910,26 @@
         m.set('project_name',app.project.get('name'));
         m.set('associated_users',app.project.get('associated_users'));
         m.set('author', app.username);
-        m.set('type', "media");
+        m.set('type', type);
         m.wake(app.config.wakeful.url);
         m.save();
         view.collection.add(m);
       }
 
-      app.projectPosterMediaChunkView.model = m;
-      app.projectPosterMediaChunkView.model.wake(app.config.wakeful.url);
-
       app.hideAllContainers();
-      jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
-      app.projectPosterMediaChunkView.render();
+      if (type === "text") {
+        app.projectPosterTextChunkView.model = m;
+        app.projectPosterTextChunkView.model.wake(app.config.wakeful.url);
+        jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
+        app.projectPosterTextChunkView.render();
+      } else if (type = "media") {
+        app.projectPosterMediaChunkView.model = m;
+        app.projectPosterMediaChunkView.model.wake(app.config.wakeful.url);
+        jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
+        app.projectPosterMediaChunkView.render();
+      } else {
+        console.error("Unknown type for new chunk");
+      }
     },
 
     switchToReadView: function() {
@@ -963,10 +960,39 @@
     },
 
     publishChunk: function() {
-      jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+      var view = this;
+      var bodyText = jQuery('#text-chunk-body-input').val();
 
-      app.hideAllContainers();
-      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+      if (bodyText.length > 0) {
+        app.clearAutoSaveTimer();
+        view.model.set('body', bodyText);
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+        view.model = null;
+        jQuery('.input-field').val('');
+        view.switchToChunkView();
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
+      }
+    },
+
+    checkForAutoSave: function(ev) {
+      var view = this,
+          field = ev.target.name,
+          input = ev.target.value;
+      // clear timer on keyup so that a save doesn't happen while typing
+      app.clearAutoSaveTimer();
+
+      // save after 10 keystrokes
+      app.autoSave(view.model, field, input, false);
+
+      // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      app.autoSaveTimer = setTimeout(function(){
+        app.autoSave(view.model, field, input, true);
+      }, 5000);
     },
 
     switchToChunkView: function() {
