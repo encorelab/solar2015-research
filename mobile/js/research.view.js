@@ -347,12 +347,12 @@
       ** we are better of with using change and filtering to react only if published true.
       ** IMPORTANT: in addOne we check that id isn't already in the DOM
       */
-      // view.collection.on('add', function(n) {
-      //   // If the add fires while project not chosen yet we get an error
-      //   if (app.project && n.get('project_id') === app.project.id) {
-      //     view.addOne(n);
-      //   }
-      // });
+      view.collection.on('add', function(n) {
+        // If the add fires while project not chosen yet we get an error
+        if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
+          view.addOne(n);
+        }
+      });
 
       return view;
     },
@@ -447,6 +447,7 @@
       var view = this;
 
       // check if the tile already exists
+      // http://stackoverflow.com/questions/4191386/jquery-how-to-find-an-element-based-on-a-data-attribute-value
       if (jQuery("#tiles-list").find("[data-id='" + tileModel.id + "']").length === 0 ) {
         // wake up the project model
         tileModel.wake(app.config.wakeful.url);
