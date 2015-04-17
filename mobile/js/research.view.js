@@ -884,51 +884,135 @@
   });
 
 
-/**
-  ProjectPosterChunkView
-**/
-app.View.ProjectPosterChunkView = Backbone.View.extend({
-  initialize: function() {
-    var view = this;
-    console.log('Initializing ProjectPosterChunkView...', view.el);
-  },
+  /**
+    ProjectPosterChunkView
+  **/
+  app.View.ProjectPosterChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterChunkView...', view.el);
+    },
 
-  events: {
-    'click .nav-read-btn'               : 'switchToReadView'
-    // 'click .cancel-tile-btn'            : 'cancelTile',   maybe better than the back button
-    //'click .publish-chunk-btn'           : 'publishChunk'
-  },
+    events: {
+      'click #create-text-chunk-btn'            : 'createTextChunk',
+      'click #create-media-chunk-btn'           : 'createMediaChunk',
+      'click .nav-read-btn'                     : 'switchToReadView'
+    },
 
-  // publishTile: function() {
-  //   var view = this;
+    createTextChunk: function() {
 
-  //   if (view.model.get('url') && view.model.get('originator')) {
-  //     view.model.set('published', true);
-  //     view.model.set('modified_at', new Date());
-  //     view.model.save();
-  //     jQuery().toastmessage('showSuccessToast', "Published to the tile wall!");
+      app.hideAllContainers();
+      jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
+    },
 
-  //     view.model = null;
-  //     jQuery('.input-field').val('');
-  //     // clears the value of the photo input. Adapted from http://stackoverflow.com/questions/1043957/clearing-input-type-file-using-jquery
-  //     jQuery('#photo-file').replaceWith(jQuery('#photo-file').clone());
-  //     view.switchToReadView();
-  //   } else {
-  //     jQuery().toastmessage('showErrorToast', "Please add a picture or video and confirm whether this is your own drawing, model, or other form of representation...");
-  //   }
-  // },
+    createMediaChunk: function() {
+      var view = this;
+      var m;
 
-  switchToReadView: function() {
-    app.hideAllContainers();
-    jQuery('#project-read-screen').removeClass('hidden');
-  },
+      // check if we need to resume
+      var tileToResume = null     //view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
 
-  render: function() {
-    var view = this;
-    console.log("Rendering ProjectPosterChunkView...");
+      if (tileToResume) {
+        console.log('Resuming...');
+        m = tileToResume;
+      } else {
+        console.log('Starting a new media chunk...');
+        m = new Model.Chunk();
+        m.set('project_id',app.project.id);
+        m.set('project_name',app.project.get('name'));
+        m.set('associated_users',app.project.get('associated_users'));
+        m.set('author', app.username);
+        m.set('type', "media");
+        m.wake(app.config.wakeful.url);
+        m.save();
+        view.collection.add(m);
+      }
 
-  }
-});
+      app.projectPosterMediaChunkView.model = m;
+      app.projectPosterMediaChunkView.model.wake(app.config.wakeful.url);
+
+      app.hideAllContainers();
+      jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
+      app.projectPosterMediaChunkView.render();
+    },
+
+    switchToReadView: function() {
+      app.hideAllContainers();
+      jQuery('#project-read-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterChunkView...");
+
+    }
+  });
+
+
+  /**
+    ProjectPosterTextChunkView
+  **/
+  app.View.ProjectPosterTextChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterTextChunkView...', view.el);
+    },
+
+    events: {
+      'click .publish-chunk-btn'            : 'publishChunk',
+      'click .nav-chunk-btn'                : 'switchToChunkView'
+    },
+
+    publishChunk: function() {
+      jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    switchToChunkView: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterTextChunkView...");
+    }
+  });
+
+
+  /**
+    ProjectPosterMediaChunkView
+  **/
+  app.View.ProjectPosterMediaChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterMediaChunkView...', view.el);
+    },
+
+    events: {
+      'click .publish-chunk-btn'            : 'publishChunk',
+      'click .nav-chunk-btn'                : 'switchToChunkView'
+    },
+
+    publishChunk: function() {
+      jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    switchToChunkView: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterMediaChunkView...");
+    }
+  });
 
 
   /**
