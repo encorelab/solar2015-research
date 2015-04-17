@@ -923,7 +923,7 @@
         app.projectPosterTextChunkView.model.wake(app.config.wakeful.url);
         jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
         app.projectPosterTextChunkView.render();
-      } else if (type = "media") {
+      } else if (type === "media") {
         app.projectPosterMediaChunkView.model = m;
         app.projectPosterMediaChunkView.model.wake(app.config.wakeful.url);
         jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
