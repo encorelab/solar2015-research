@@ -806,14 +806,14 @@
         // (note poster id is project id)
         var posterObj = {
                           "name": app.project.get('poster_title'),
-                          "uuid": app.project.id
+                          "uuid": app.project.id + '-poster'
                         }
         var groupObj = {
                          "classname": app.runId,
                          "name": app.project.get('name'),
                          "nameTags": app.project.get('associated_users'),
-                         "posters" : [ app.project.id ],         // always one element
-                         "uuid" : app.project.id
+                         "posters" : [ app.project.id + '-poster' ],         // always one element in here
+                         "uuid" : app.project.id + '-gruser'
                        }
 
         // TODO: use deferreds here instead, or nest correctly so that we can't proceed without completion
