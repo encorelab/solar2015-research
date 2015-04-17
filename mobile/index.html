@@ -322,13 +322,29 @@
     <div id="project-poster-text-chunk-screen" class="container-fluid user-screen project">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
-                <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
+                <button class="nav-chunk-btn fa fa-arrow-left fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                <h3>Send text to your poster. You can select a tile to get you started.</h3>
                 <textarea id="text-chunk-title-input" class="input-field" name="title" placeholder="Untitled poster content"></textarea>
                 <!-- <textarea id="text-chunk-body-input" class="input-field" name="body"></textarea> -->
                 <button class="publish-chunk-btn btn-circular fa fa-cloud-upload fa-3x pull-right"></button>
-                <button class="cancel-chunk-btn btn-circular fa fa-times fa-3x pull-right"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Project Poster Media Chunk Screen -->
+    <div id="project-poster-media-chunk-screen" class="container-fluid user-screen project">
+        <div class="row">
+            <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
+                <button class="nav-chunk-btn fa fa-arrow-left fa-3x btn-circular"></button>
+            </div>
+            <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                <h3>Send media to your poster. You can select a tile to get you started.</h3>
+                <div id="media-chunk-media-holder" name="body"></div>
+                <h3>What do you want your peers to know about this media?</h3>
+                <textarea id="media-chunk-title-input" class="input-field" name="title" placeholder="Untitled poster content"></textarea>
             </div>
         </div>
     </div>

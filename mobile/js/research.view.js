@@ -932,7 +932,7 @@
 
     events: {
       'click .publish-chunk-btn'            : 'publishChunk',
-      'click .cancel-chunk-btn'             : 'cancelChunk'               // would this be better as a back button?
+      'click .nav-chunk-btn'                : 'switchToChunkView'
     },
 
     publishChunk: function() {
@@ -942,7 +942,7 @@
       jQuery('#project-poster-chunk-screen').removeClass('hidden');
     },
 
-    cancelChunk: function() {
+    switchToChunkView: function() {
       app.hideAllContainers();
       jQuery('#project-poster-chunk-screen').removeClass('hidden');
     },
@@ -950,6 +950,39 @@
     render: function() {
       var view = this;
       console.log("Rendering ProjectPosterTextChunkView...");
+    }
+  });
+
+
+  /**
+    ProjectPosterMediaChunkView
+  **/
+  app.View.ProjectPosterMediaChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterMediaChunkView...', view.el);
+    },
+
+    events: {
+      'click .publish-chunk-btn'            : 'publishChunk',
+      'click .nav-chunk-btn'                : 'switchToChunkView'
+    },
+
+    publishChunk: function() {
+      jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    switchToChunkView: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterMediaChunkView...");
     }
   });
 

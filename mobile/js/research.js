@@ -42,7 +42,7 @@
   app.projectNewPosterView = null;
   app.projectPosterChunkView = null;
   app.projectPosterTextChunkView = null;
-  //app.projectPosterMediaChunkView = null;
+  app.projectPosterMediaChunkView = null;
   app.reviewsView = null;
   app.reviewDetailsView = null;
 
@@ -342,6 +342,12 @@
      if (app.projectPosterTextChunkView === null) {
        app.projectPosterTextChunkView = new app.View.ProjectPosterTextChunkView({
          el: '#project-poster-text-chunk-screen'
+       });
+     }
+
+     if (app.projectPosterMediaChunkView === null) {
+       app.projectPosterMediaChunkView = new app.View.ProjectPosterMediaChunkView({
+         el: '#project-poster-media-chunk-screen'
        });
      }
 
