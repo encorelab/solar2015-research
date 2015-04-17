@@ -95,17 +95,11 @@ textarea {
     color: #fff;
     padding: 0;
 }
-/*#proposal-screen .inner-wrapper {
-    position: absolute;
-}*/
 #proposal-screen .inner-wrapper .btn-circular,
 #review-details-screen .inner-wrapper .btn-circular {
     margin-top: 25px;
 }
 
-/*#project-picker h2 {
-    text-align: center;
-}*/
 #project-picker .modal-header {
     border-bottom: none;
 }
@@ -145,22 +139,22 @@ textarea {
 
 /********** P R O P O S A L **********/
 
-#proposal-screen h2 {
+.proposal h2 {
     color: #9282f3;
 }
-#proposal-screen h3 {
+.proposal h3 {
     padding-left: 25px;
 }
-#proposal-screen textarea,
-#proposal-screen button {
+.proposal textarea,
+.proposal button {
     border: 2px solid #9282f3;
 }
-#proposal-screen .btn-circular,
+.proposal .btn-circular,
 #todo-screen .goto-proposal-btn {
     background: #9282f3;
     border: 2px solid #9282f3;
 }
-#proposal-screen .btn-circular:hover,
+.proposal .btn-circular:hover,
 #todo-screen .goto-proposal-btn:hover {
     background: #beb6f7;
 }
@@ -194,64 +188,46 @@ textarea {
     height: calc(100% - 50px);
 }*/
 
-#project-read-screen h2,
-#project-write-screen h2,
-#project-media-screen h2 {
+.project h2 {
     color: #41b050;
 }
-#project-read-screen textarea,
-#project-write-screen textarea,
-#project-media-screen textarea,
-#project-read-screen button,
-#project-write-screen button,
-#project-media-screen button {
+.project textarea,
+.project button {
     border: 2px solid #41b050;
 }
-#project-read-screen .btn-circular,
-#project-write-screen .btn-circular,
-#project-media-screen .btn-circular,
+.project .btn-circular,
 #todo-screen .goto-project-btn {
     background: #41b050;
     border: 2px solid #41b050;
 }
-#project-read-screen .btn-circular:hover,
-#project-write-screen .btn-circular:hover,
-#project-media-screen .btn-circular:hover,
+.project .btn-circular:hover,
 #todo-screen .goto-project-btn:hover {
     background: #8dd098;
 }
 
 /********** R E V I E W **********/
 
-#review-overview-screen h2,
-#review-details-screen h2 {
+.review h2 {
     color: #faa82d;
 }
-#review-overview-screen button,
-#review-details-screen button,
+.review button,
 #submit-partners-btn {
     border: 2px solid #faa82d;
     background: #fecc81;
 }
-#review-overview-screen button:hover,
-#review-details-screen button:hover,
+.review button:hover,
 #submit-partners-btn:hover {
     background: #fff;
 }
-
-#review-overview-screen textarea,
-#review-details-screen textarea {
+.review textarea {
     border: 2px solid #faa82d;
 }
-
-#review-overview-screen .btn-circular,
-#review-details-screen .btn-circular,
+.review .btn-circular,
 #todo-screen .goto-review-btn {
     background: #faa82d;
     border: 2px solid #faa82d;
 }
-#review-overview-screen .btn-circular:hover,
-#review-details-screen .btn-circular:hover,
+.review .btn-circular:hover,
 #todo-screen .goto-review-btn:hover {
     background: #fecc81;
 }
@@ -300,6 +276,9 @@ textarea {
     border: 2px solid #2DF2FA;
     background: #81D3FE;
 }
+#review-overview-screen .own-review:hover {
+    background: #fff;
+}
 
 .box1,
 .box2,
@@ -310,7 +289,7 @@ textarea {
 }
 
 .project-to-review-btn {
-    min-width: 500px;
+    width: 500px;
     display: block;
     margin: 0 auto;
     overflow: hidden;
@@ -426,19 +405,6 @@ textarea {
     z-index: 1;
 
 }
-/*#project-read-screen .fa-star-o::after,
-#project-read-screen .fa-star::after {
-    content: "\f04d";
-}*/
-
-/*@media handheld and (orientation: landscape) {
-    .tile-body {
-        height: 58%;
-    }
-    .tile-author {
-        padding-top: 10px;
-    }
-}*/
 
 
 /********** P R O J E C T  W R I T E  S C R E E N **********/
@@ -593,6 +559,12 @@ textarea {
 }
 .new-poster-theme-button:nth-child(even) {
     float: right;
+}
+#project-new-poster-screen .selected {
+    background: #8dd098 !important;
+}
+#project-new-poster-screen .selected:hover {
+    border: solid 2px #41b050;
 }
 
 /********** G L O B A L **********/
