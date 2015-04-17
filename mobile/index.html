@@ -40,10 +40,10 @@
     <script type="text/javascript" src="js/research.view.js"></script>
 
     <!-- Templates -->
+    <!-- NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
+         WARNING: DO not change this or the code will break -->
     <script id="text-tile-template" type="text/template">
-            /** NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
-             ** WARNING: DO not change this or the code will break
-             */
+
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <i class="fa fa-circle fa-3x"></i>
@@ -53,10 +53,9 @@
 
     </script>
 
+    <!-- NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
+         WARNING: DO not change this or the code will break -->
     <script id="photo-tile-template" type="text/template">
-            /** NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
-             ** WARNING: DO not change this or the code will break
-             */
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <i class="fa fa-circle fa-3x"></i>
@@ -64,10 +63,10 @@
                     <img src=<%= url %> data-id=<%= id %> />
                 </div>
             </div>
-
     </script>
-    <!-- <img src=<%= url %> data-id=<%= id %> /> -->
 
+    <!-- NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
+         WARNING: DO not change this or the code will break -->
     <script id="video-tile-template" type="text/template">
             /** NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
              ** WARNING: DO not change this or the code will break
@@ -79,7 +78,6 @@
                     <i class="fa fa-5x fa-file-video-o" data-id=<%= id %>></i>
                 </div>
             </div>
-
     </script>
     <!-- <video src=<%= url %> data-id=<%= id %>></video> -->
 
