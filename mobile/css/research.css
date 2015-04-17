@@ -598,6 +598,12 @@ textarea {
 .new-poster-theme-button:nth-child(even) {
     float: right;
 }
+#project-new-poster-screen .selected {
+    background: #8dd098 !important;
+}
+#project-new-poster-screen .selected:hover {
+    border: solid 2px #41b050;
+}
 
 /********** G L O B A L **********/
 
