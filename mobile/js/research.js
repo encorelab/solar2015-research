@@ -335,7 +335,8 @@
 
      if (app.projectPosterChunkView === null) {
        app.projectPosterChunkView = new app.View.ProjectPosterChunkView({
-         el: '#project-poster-chunk-screen'
+         el: '#project-poster-chunk-screen',
+         collection: Skeletor.Model.awake.chunks
        });
      }
 

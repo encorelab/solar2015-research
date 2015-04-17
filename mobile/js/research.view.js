@@ -893,19 +893,46 @@
     },
 
     events: {
-      'click #create-text-chunk-btn'            : 'switchToCreateTextChunk',
-      'click #create-media-chunk-btn'           : 'switchToCreateMediaChunk',
+      'click #create-text-chunk-btn'            : 'createTextChunk',
+      'click #create-media-chunk-btn'           : 'createMediaChunk',
       'click .nav-read-btn'                     : 'switchToReadView'
     },
 
-    switchToCreateTextChunk: function() {
+    createTextChunk: function() {
+
       app.hideAllContainers();
       jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
     },
 
-    switchToCreateMediaChunk: function() {
+    createMediaChunk: function() {
+      var view = this;
+      var m;
+
+      // check if we need to resume
+      var tileToResume = null     //view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
+
+      if (tileToResume) {
+        console.log('Resuming...');
+        m = tileToResume;
+      } else {
+        console.log('Starting a new media chunk...');
+        m = new Model.Chunk();
+        m.set('project_id',app.project.id);
+        m.set('project_name',app.project.get('name'));
+        m.set('associated_users',app.project.get('associated_users'));
+        m.set('author', app.username);
+        m.set('type', "media");
+        m.wake(app.config.wakeful.url);
+        m.save();
+        view.collection.add(m);
+      }
+
+      app.projectPosterMediaChunkView.model = m;
+      app.projectPosterMediaChunkView.model.wake(app.config.wakeful.url);
+
       app.hideAllContainers();
       jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
+      app.projectPosterMediaChunkView.render();
     },
 
     switchToReadView: function() {
