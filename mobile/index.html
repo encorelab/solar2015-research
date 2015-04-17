@@ -77,7 +77,7 @@
     </script>
     <!-- <video src=<%= url %> data-id=<%= id %>></video> -->
 
-    <script id="review-details-template" type="text/template">
+    <script id="review-details-template" type="text/template" class="review">
         <div class="row">
                 <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
                     <button id="return-to-overview-btn" class="fa fa-arrow-left fa-3x btn-circular"></button>
@@ -169,7 +169,7 @@
     </div>
 
     <!-- Proposal Screen -->
-    <div id="proposal-screen" class="container-fluid user-screen">
+    <div id="proposal-screen" class="container-fluid user-screen proposal">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
                 <button class="nav-splash-btn fa fa-arrow-left fa-3x btn-circular"></button>
@@ -188,7 +188,7 @@
 
 
     <!-- Project Read Screen -->
-    <div id="project-read-screen" class="container-fluid user-screen">
+    <div id="project-read-screen" class="container-fluid user-screen project">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
                 <button id="nav-write-btn" class="fa fa-pencil fa-3x btn-circular"></button>
@@ -206,7 +206,7 @@
 
 
     <!-- Project Write Screen -->
-    <div id="project-write-screen" class="container-fluid user-screen">
+    <div id="project-write-screen" class="container-fluid user-screen project">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
                 <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
@@ -250,7 +250,7 @@
 
 
     <!-- Project Media Screen -->
-    <div id="project-media-screen" class="container-fluid user-screen">
+    <div id="project-media-screen" class="container-fluid user-screen project">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
@@ -281,7 +281,7 @@
 
 
     <!-- Project New Poster Screen -->
-    <div id="project-new-poster-screen" class="container-fluid user-screen">
+    <div id="project-new-poster-screen" class="container-fluid user-screen project">
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <div>
@@ -301,9 +301,11 @@
 
 
     <!-- Project Poster Chunk Screen -->
-    <div id="project-poster-chunk-screen" class="container-fluid user-screen">
-        <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
-            <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
+    <div id="project-poster-chunk-screen" class="container-fluid user-screen project">
+        <div class="row">
+            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
+                <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
+            </div>
         </div>
 
     </div>
@@ -313,7 +315,7 @@
 
 
     <!-- ReviewOverview Screen -->
-    <div id="review-overview-screen" class="container-fluid user-screen">
+    <div id="review-overview-screen" class="container-fluid user-screen review">
         <div class="row">
             <div class="inner-wrapper col-xs-8 col-xs-offset-2">
                 <!-- Filled by ReviewsView and ReviewView -->
