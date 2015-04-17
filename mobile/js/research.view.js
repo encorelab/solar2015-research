@@ -869,7 +869,7 @@
       jQuery('.new-poster-theme-holder').html('');
       if (Skeletor.Model.awake.tags.length > 0) {
         Skeletor.Model.awake.tags.each(function(tag) {
-          var button = jQuery('<button class="btn new-poster-theme-button btn-default btn-base" name=' + tag.get('name') + '>');
+          var button = jQuery('<button class="btn new-poster-theme-button btn-default btn-base" data-name="' + tag.get('name') + '">');
           button.val(tag.get('name'));
           button.text(tag.get('name'));
           jQuery('.new-poster-theme-holder').append(button);
@@ -878,7 +878,7 @@
         console.warn('Tags collection is empty!');
       }
 
-      jQuery('.new-poster-theme-holder [name=' + app.project.get('theme') + ']').addClass('selected');
+      jQuery('.new-poster-theme-holder [data-name="' + app.project.get('theme') + '"]').addClass('selected');
     }
   });
 
