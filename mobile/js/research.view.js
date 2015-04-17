@@ -233,6 +233,10 @@
     photoTemplate: "#photo-tile-template",
     videoTemplate: "#video-tile-template",
 
+    events: {
+      'click'   : 'editTile'
+    },
+
     initialize: function () {
       var view = this;
 
@@ -247,15 +251,9 @@
       var view = this,
         tile = view.model,
         listItemTemplate,
-        listItem,
-        starStatus;
+        listItem;
 
-      if (tile.get('favourite') === true) {
-        starStatus = "fa-star";
-      } else {
-        starStatus = "fa-star-o";
-      }
-
+      // different types - different tiles
       if (tile.get('type') === "text") {
         // if class is not set do it
         if (!view.$el.hasClass('text-tile-container')) {
@@ -263,7 +261,7 @@
         }
 
         listItemTemplate = _.template(jQuery(view.textTemplate).text());
-        listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': (tile.get('favourite') ? 'fa-star' : 'fa-star-o') });
       } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
         // if class is not set do it
         if (!view.$el.hasClass('photo-tile-container')) {
@@ -271,7 +269,7 @@
         }
 
         listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': (tile.get('favourite') ? 'fa-star' : 'fa-star-o') });
       } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
         // if class is not set do it
         if (!view.$el.hasClass('video-tile-container')) {
@@ -279,15 +277,45 @@
         }
 
         listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': (tile.get('favourite') ? 'fa-star' : 'fa-star-o') });
       } else {
         throw "Unknown tile type!";
       }
 
-      // view.setElement(listItem);
+      // Add the newly generated DOM elements to the vies's part of the DOM
       view.$el.html(listItem);
 
       return view;
+    },
+
+    editTile: function(ev) {
+      var view = this;
+
+      app.hideAllContainers();
+
+      if (view.model.get('type') === "text") {
+        app.projectWriteView.model = view.model;
+        // app.projectWriteView.model.wake(app.config.wakeful.url);
+        jQuery('#project-write-screen').removeClass('hidden');
+        app.projectWriteView.render();
+      } else {
+        app.projectMediaView.model = view.model;
+        // app.projectMediaView.model.wake(app.config.wakeful.url);
+
+        jQuery('#project-media-screen').removeClass('hidden');
+        app.projectMediaView.render();
+      }
+    },
+
+    newOrResumeOrEditMediaTile: function(ev) {
+      var view = this;
+
+      app.projectMediaView.model = view.model;
+      // app.projectMediaView.model.wake(app.config.wakeful.url);
+
+      app.hideAllContainers();
+      jQuery('#project-media-screen').removeClass('hidden');
+      app.projectMediaView.render();
     }
   });
 
@@ -299,35 +327,30 @@
     ProjectReadView
   **/
   app.View.ProjectReadView = Backbone.View.extend({
-    textTemplate: "#text-tile-template",
-    photoTemplate: "#photo-tile-template",
-    videoTemplate: "#video-tile-template",
-
     initialize: function () {
       var view = this;
       console.log('Initializing ProjectReadView...', view.el);
 
-      // trying this out for now, could be render overload... but allows us to do modified_at for sorting. NOTE: very experimental!! TESTME!  If this is too much rendering on the fly, then we will want to revert back to view.render for change and add
-      // these binds should only fire when the collection changes are for your project
-      // view.collection.on('change', function(n) {
-      //   // If the change fires while project not chosen yet we get an error
-      //   if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
-      //     //view.render();
-      //     view.fullRerender();
-      //   }
-      // });
-
-      view.collection.on('add', function(n) {
-        // If the add fires while project not chosen yet we get an error
-        if (app.project && n.get('project_id') === app.project.id) {
+      /* We should not have to listen to change on collection but on add. However, due to wakefulness
+      ** and published false first we would see the element with add and see it getting created. Also not sure
+      ** how delete would do and so on.
+      ** IMPORTANT: in addOne we check if the id of the model to be added exists in the DOM and only add it to the DOM if it is new
+      */
+      view.collection.on('change', function(n) {
+        if (app.project && n.get('project_id') === app.project.id && n.get('published') === true) {
           view.addOne(n);
         }
       });
 
-      // removed cause this doesn't do anything given this structure :(
-      // view.collection.on('destroy', function(n) {
+      /*
+      ** See above, but mostly we would want add and change in the tile view. But due to wakeness and published flag
+      ** we are better of with using change and filtering to react only if published true.
+      ** IMPORTANT: in addOne we check that id isn't already in the DOM
+      */
+      // view.collection.on('add', function(n) {
+      //   // If the add fires while project not chosen yet we get an error
       //   if (app.project && n.get('project_id') === app.project.id) {
-      //     view.fullRerender();
+      //     view.addOne(n);
       //   }
       // });
 
@@ -335,15 +358,12 @@
     },
 
     events: {
-      'click #nav-write-btn'         : 'newOrResumeOrEditTextTile',
-      'click #nav-media-btn'         : 'newOrResumeOrEditMediaTile',
-      'click #nav-poster-btn'        : 'switchToPosterView',
-      'click .text-tile-container'   : 'newOrResumeOrEditTextTile',
-      'click .photo-tile-container'  : 'newOrResumeOrEditMediaTile',
-      'click .video-tile-container'  : 'newOrResumeOrEditMediaTile',
+      'click #nav-write-btn'         : 'createTextTile',
+      'click #nav-media-btn'         : 'createMediaTile',
+      'click #nav-poster-btn'        : 'switchToPosterView'
     },
 
-    newOrResumeOrEditTextTile: function(ev) {
+    createTextTile: function(ev) {
       var view = this;
       var m;
 
@@ -351,12 +371,7 @@
       // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
       var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: "text", published: false});
 
-      // if the clicked element has a data-id (ie is a tile)
-      if (jQuery(ev.target).data('id')) {
-        // EDIT TILE
-        console.log("Editing...");
-        m = view.collection.get(jQuery(ev.target).data('id'));
-      } else if (tileToResume) {
+      if (tileToResume) {
         // RESUME TILE
         console.log("Resuming...");
         m = tileToResume;
@@ -381,7 +396,7 @@
       app.projectWriteView.render();
     },
 
-    newOrResumeOrEditMediaTile: function(ev) {
+    createMediaTile: function(ev) {
       var view = this;
       var m;
 
@@ -389,12 +404,7 @@
       // BIG NB! We use author here! This is the only place where we care about app.username in addition to app.project (we want you only to be able to resume your own notes)
       var tileToResume = view.collection.findWhere({project_id: app.project.id, author: app.username, type: "media", published: false});
 
-      // if the clicked element has a data-id (ie is a tile)
-      if (jQuery(ev.target).data('id')) {
-        // EDIT TILE
-        console.log('Editing...');
-        m = view.collection.get(jQuery(ev.target).data('id'));
-      } else if (tileToResume) {
+      if (tileToResume) {
         // RESUME TILE
         console.log('Resuming...');
         m = tileToResume;
@@ -406,6 +416,7 @@
         m.set('author', app.username);
         m.set('type', "media");
         m.set('from_proposal', false);
+        m.set('url', '');
         m.wake(app.config.wakeful.url);
         m.save();
         view.collection.add(m);
@@ -434,14 +445,23 @@
 
     addOne: function(tileModel) {
       var view = this;
-      // wake up the project model
-      tileModel.wake(app.config.wakeful.url);
 
-      var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" date-id="'+tileModel.id+'"></li>');
+      // check if the tile already exists
+      if (jQuery("#tiles-list").find("[data-id='" + tileModel.id + "']").length === 0 ) {
+        // wake up the project model
+        tileModel.wake(app.config.wakeful.url);
 
-      var tileView = new app.View.Tile({el: tileContainer, model: tileModel});
-      var listToAddTo = view.$el.find('#tiles-list');
-      listToAddTo.append(tileView.render().el);
+        // This is necessary to avoid Backbone putting all HTML into an empty div tag
+        var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
+
+        var tileView = new app.View.Tile({el: tileContainer, model: tileModel});
+        var listToAddTo = view.$el.find('#tiles-list');
+        listToAddTo.prepend(tileView.render().el);
+      } else {
+        console.log("The tile with id <"+tileModel.id+"> wasn't added since it already exists in the DOM");
+      }
+
+
     },
 
     render: function() {
@@ -461,100 +481,7 @@
       myPublishedTiles.forEach(function (tile) {
         view.addOne(tile);
       });
-
-      // _.each(myPublishedTiles, function(tile){
-      //   var starStatus = null,
-      //       listItemTemplate = null,
-      //       listItem = null;
-
-      //   if (tile.get('favourite') === true) {
-      //     starStatus = "fa-star";
-      //   } else {
-      //     starStatus = "fa-star-o";
-      //   }
-
-      //   if (tile.get('type') === "text") {
-      //     listItemTemplate = _.template(jQuery(view.textTemplate).text());
-      //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-      //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
-      //     listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-      //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-      //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
-      //     listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-      //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-      //   } else {
-      //     console.error("Unknown tile type!");
-      //   }
-
-      //   var existingNote = list.find("[data-id='" + tile.get('_id') + "']");
-      //   if (existingNote.length === 0) {
-      //     list.prepend(listItem);
-      //   } else {
-      //     existingNote.replaceWith(listItem);
-      //   }
-      // });
     }
-
-    // testing out a way to deal with destroy events (since render wouldn't normally clear out the list and start from scratch, with good reason). This seems to be working.
-    //TODO: recombine this and use a flag to set up the full rerender, or something else...
-    // fullRerender: function() {
-    //   var view = this;
-    //   console.log("Doing a full rerender for ProjectReadView...");
-
-    //   // sort newest to oldest (prepend!)
-    //   view.collection.comparator = function(model) {
-    //     return model.get('modified_at');
-    //   };
-
-    //   var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
-
-    //   myPublishedTiles.forEach(function (tile) {
-    //     view.addOne(tile);
-    //   });
-
-    //   // var list = jQuery('#tiles-list');
-    //   // list.html("");
-
-    //   // _.each(myPublishedTiles, function(tile) {
-    //   //   var starStatus = null,
-    //   //       listItemTemplate = null,
-    //   //       listItem = null;
-
-    //   //   if (tile.get('favourite') === true) {
-    //   //     starStatus = "fa-star";
-    //   //   } else {
-    //   //     starStatus = "fa-star-o";
-    //   //   }
-
-    //   //   // if (tile.get('type') === "text") {
-    //   //   //   listItemTemplate = _.template(jQuery(view.textTemplate).text());
-    //   //   //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-    //   //   // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
-    //   //   //   listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-    //   //   //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-    //   //   // } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
-    //   //   //   listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-    //   //   //   listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': starStatus });
-    //   //   // } else {
-    //   //   //   console.error("Unknown tile type!");
-    //   //   // }
-    //   //   if (tile.get('type') === "text") {
-    //   //     listItemTemplate = _.template(jQuery(view.textTemplate).text());
-    //   //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': starStatus });
-    //   //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
-    //   //     listItemTemplate = _.template(jQuery(view.photoTemplate).text());
-    //   //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
-    //   //   } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
-    //   //     listItemTemplate = _.template(jQuery(view.videoTemplate).text());
-    //   //     listItem = listItemTemplate({ 'id': tile.get('_id'), 'star': starStatus });
-    //   //   } else {
-    //   //     console.error("Unknown tile type!");
-    //   //   }
-
-    //   //   list.prepend(listItem);
-    //   // });
-    // }
-
   });
 
 

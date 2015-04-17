@@ -237,6 +237,9 @@
     app.groupname = p.get('name');
     jQuery('.username-display a').text(app.groupname);
 
+    // Render here?
+    app.projectReadView.render();
+
     app.reflectRunState(projectId);
   };
 
@@ -267,7 +270,7 @@
         } else if (jQuery(this).hasClass('goto-project-btn')) {
           jQuery('#project-nav-btn').addClass('active');
           jQuery('#project-read-screen').removeClass('hidden');
-          app.projectReadView.render();
+          // app.projectReadView.render();
         } else if (jQuery(this).hasClass('goto-review-btn')) {
           jQuery('#review-nav-btn').addClass('active');
           jQuery('#review-overview-screen').removeClass('hidden');

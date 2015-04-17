@@ -41,7 +41,9 @@
 
     <!-- Templates -->
     <script id="text-tile-template" type="text/template">
-
+            /** NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
+             ** WARNING: DO not change this or the code will break
+             */
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <i class="fa fa-circle fa-3x"></i>
@@ -52,12 +54,14 @@
     </script>
 
     <script id="photo-tile-template" type="text/template">
-
+            /** NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
+             ** WARNING: DO not change this or the code will break
+             */
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <i class="fa fa-circle fa-3x"></i>
                 <div class="tile-url" data-id=<%= id %>>
-                    <i class="fa fa-5x fa-file-image-o" data-id=<%= id %>></i>
+                    <img src=<%= url %> data-id=<%= id %> />
                 </div>
             </div>
 
@@ -65,7 +69,9 @@
     <!-- <img src=<%= url %> data-id=<%= id %> /> -->
 
     <script id="video-tile-template" type="text/template">
-
+            /** NOTE: I took out the li from the templates and it is now generated in addOne() in research.view.js
+             ** WARNING: DO not change this or the code will break
+             */
             <div class="tile" data-id=<%= id %>>
                 <i class="fa fa-2x star-icon <%= star %>" data-id=<%= id %>></i>
                 <i class="fa fa-circle fa-3x"></i>
