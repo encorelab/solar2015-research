@@ -879,12 +879,68 @@
 
 
   /**
+   ** Chunk View
+   **/
+  app.View.Chunk = Backbone.View.extend({
+    template: "#chunk-list-template",
+
+    events: {
+      'click'   : 'editChunk'
+    },
+
+    initialize: function () {
+      var view = this;
+
+      view.model.on('change', function () {
+        view.render();
+      });
+
+      return view;
+    },
+
+    render: function () {
+      var view = this,
+        tile = view.model,
+        listItemTemplate,
+        listItem;
+
+
+      listItemTemplate = _.template(jQuery(view.template).text());
+      listItem = listItemTemplate(view.model.toJSON());
+
+      // Add the newly generated DOM elements to the vies's part of the DOM
+      view.$el.html(listItem);
+
+      return view;
+    },
+
+    editChunk: function(ev) {
+      var view = this;
+
+      console.warn("editing not implemented yet");
+
+    }
+  });
+
+  /**
     ProjectPosterChunkView
   **/
   app.View.ProjectPosterChunkView = Backbone.View.extend({
     initialize: function() {
       var view = this;
       console.log('Initializing ProjectPosterChunkView...', view.el);
+
+      view.collection.on('change', function (m) {
+        if (app.project && m.get('project_id') === app.project.id && m.get('published') === true) {
+          view.addOne(m);
+        }
+      });
+
+      view.collection.on('add', function (m) {
+        if (app.project && m.get('project_id') === app.project.id && m.get('published') === true) {
+          view.addOne(m);
+        }
+      });
     },
 
     events: {
@@ -938,10 +994,47 @@
       jQuery('#project-read-screen').removeClass('hidden');
     },
 
+    addOne: function (chunkModel) {
+      var view = this;
+
+      // check if the chunk already exists
+      // http://stackoverflow.com/questions/4191386/jquery-how-to-find-an-element-based-on-a-data-attribute-value
+      if (jQuery("#poster-chunk-holder").find("[data-id='" + chunkModel.id + "']").length === 0 ) {
+        // wake up the project model
+        chunkModel.wake(app.config.wakeful.url);
+
+        // This is necessary to avoid Backbone putting all HTML into an empty div tag
+        // var chunkContainer = jQuery("#poster-chunk-holder");
+
+        var chunkView = new app.View.Chunk({model: chunkModel});
+        var listToAddTo = view.$el.find('#poster-chunk-holder');
+        listToAddTo.prepend(chunkView.render().el);
+      } else {
+        console.log("The tile with id <"+chunkModel.id+"> wasn't added since it already exists in the DOM");
+      }
+    },
+
+    addAll: function (view) {
+      // sort newest to oldest (prepend!)
+      view.collection.comparator = function(model) {
+        return model.get('created_at');
+      };
+
+      var myPublishedChunks = view.collection.sort().where({published: true, project_id: app.project.id});
+
+      // clear the house
+      view.$el.find('#poster-chunk-holder').html("");
+
+      myPublishedChunks.forEach(function (chunk) {
+        view.addOne(chunk);
+      });
+    },
+
     render: function() {
       var view = this;
       console.log("Rendering ProjectPosterChunkView...");
 
+      view.addAll(view);
     }
   });
 
