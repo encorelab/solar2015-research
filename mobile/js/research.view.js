@@ -1056,7 +1056,75 @@
 
     publishChunk: function() {
       var view = this;
+      //var titleText = jQuery('#text-chunk-title-input').val();
       var bodyText = jQuery('#text-chunk-body-input').val();
+
+      if (bodyText.length > 0) {
+        app.clearAutoSaveTimer();
+        //view.model.set('title', titleText);
+        view.model.set('body', bodyText);
+        view.model.set('published', true);
+        view.model.set('modified_at', new Date());
+        view.model.save();
+        jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+        view.model = null;
+        jQuery('.input-field').val('');
+        view.switchToChunkView();
+      } else {
+        jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
+      }
+    },
+
+    checkForAutoSave: function(ev) {
+      var view = this,
+          field = ev.target.name,
+          input = ev.target.value;
+      // clear timer on keyup so that a save doesn't happen while typing
+      app.clearAutoSaveTimer();
+
+      // save after 10 keystrokes
+      app.autoSave(view.model, field, input, false);
+
+      // setting up a timer so that if we stop typing we save stuff after 5 seconds
+      app.autoSaveTimer = setTimeout(function(){
+        app.autoSave(view.model, field, input, true);
+      }, 5000);
+    },
+
+    switchToChunkView: function() {
+      app.hideAllContainers();
+      jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    },
+
+    render: function() {
+      var view = this;
+      console.log("Rendering ProjectPosterTextChunkView...");
+
+      //jQuery('#text-chunk-title-input').val(view.model.get('title'));
+      jQuery('#text-chunk-body-input').val(view.model.get('body'));
+    }
+  });
+
+
+  /**
+    ProjectPosterMediaChunkView
+  **/
+  app.View.ProjectPosterMediaChunkView = Backbone.View.extend({
+    initialize: function() {
+      var view = this;
+      console.log('Initializing ProjectPosterMediaChunkView...', view.el);
+    },
+
+    events: {
+      'click .publish-chunk-btn'            : 'publishChunk',
+      'click .nav-chunk-btn'                : 'switchToChunkView',
+      'keyup :input'                        : 'checkForAutoSave'
+    },
+
+    publishChunk: function() {
+      var view = this;
+      var bodyText = jQuery('#media-chunk-body-input').val();
 
       if (bodyText.length > 0) {
         app.clearAutoSaveTimer();
@@ -1097,42 +1165,9 @@
 
     render: function() {
       var view = this;
-      console.log("Rendering ProjectPosterTextChunkView...");
-
-      jQuery('#text-chunk-body-input').val(view.model.get('body'));
-    }
-  });
-
-
-  /**
-    ProjectPosterMediaChunkView
-  **/
-  app.View.ProjectPosterMediaChunkView = Backbone.View.extend({
-    initialize: function() {
-      var view = this;
-      console.log('Initializing ProjectPosterMediaChunkView...', view.el);
-    },
-
-    events: {
-      'click .publish-chunk-btn'            : 'publishChunk',
-      'click .nav-chunk-btn'                : 'switchToChunkView'
-    },
-
-    publishChunk: function() {
-      jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
-
-      app.hideAllContainers();
-      jQuery('#project-poster-chunk-screen').removeClass('hidden');
-    },
-
-    switchToChunkView: function() {
-      app.hideAllContainers();
-      jQuery('#project-poster-chunk-screen').removeClass('hidden');
-    },
-
-    render: function() {
-      var view = this;
       console.log("Rendering ProjectPosterMediaChunkView...");
+
+      jQuery('#media-chunk-body-input').val(view.model.get('body'));
     }
   });
 

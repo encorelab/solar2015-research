@@ -247,7 +247,7 @@
       });
 
       this.Chunks = this.db.Collection('chunks').extend({
-        model: Skeletor.Model.Tile
+        model: Skeletor.Model.Chunk
       });
 
     };
