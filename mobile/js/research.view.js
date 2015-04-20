@@ -455,7 +455,7 @@
 
       // check if the tile already exists
       // http://stackoverflow.com/questions/4191386/jquery-how-to-find-an-element-based-on-a-data-attribute-value
-      if (jQuery("#tiles-list").find("[data-id='" + tileModel.id + "']").length === 0 ) {
+      if (view.$el.find("[data-id='" + tileModel.id + "']").length === 0 ) {
         // wake up the project model
         tileModel.wake(app.config.wakeful.url);
 
@@ -463,7 +463,7 @@
         var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
 
         var tileView = new app.View.Tile({el: tileContainer, model: tileModel});
-        var listToAddTo = view.$el.find('#tiles-list');
+        var listToAddTo = view.$el.find('.tiles-list');
         listToAddTo.prepend(tileView.render().el);
       } else {
         console.log("The tile with id <"+tileModel.id+"> wasn't added since it already exists in the DOM");
@@ -484,7 +484,7 @@
       var myPublishedTiles = view.collection.sort().where({published: true, project_id: app.project.id});
 
       // clear the house
-      view.$el.find('#tiles-list').html("");
+      view.$el.find('.tiles-list').html("");
 
       myPublishedTiles.forEach(function (tile) {
         view.addOne(tile);
@@ -1053,6 +1053,76 @@
 
 
   /**
+   ** PosterTile View
+   **/
+  app.View.PosterTile = Backbone.View.extend({
+    textTemplate: "#text-tile-template",
+    photoTemplate: "#photo-tile-template",
+    videoTemplate: "#video-tile-template",
+
+    events: {
+      'click'   : 'copyTile'
+    },
+
+    initialize: function () {
+      var view = this;
+
+      view.model.on('change', function () {
+        view.render();
+      });
+
+      return view;
+    },
+
+    render: function () {
+      var view = this,
+        tile = view.model,
+        listItemTemplate,
+        listItem;
+
+      // different types - different tiles
+      if (tile.get('type') === "text") {
+        // if class is not set do it
+        if (!view.$el.hasClass('text-tile-container')) {
+          view.$el.addClass('text-tile-container');
+        }
+
+        listItemTemplate = _.template(jQuery(view.textTemplate).text());
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'title': tile.get('title'), 'body': tile.get('body'), 'star': (tile.get('favourite') ? 'fa-star' : 'fa-star-o') });
+      } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "photo") {
+        // if class is not set do it
+        if (!view.$el.hasClass('photo-tile-container')) {
+          view.$el.addClass('photo-tile-container');
+        }
+
+        listItemTemplate = _.template(jQuery(view.photoTemplate).text());
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': (tile.get('favourite') ? 'fa-star' : 'fa-star-o') });
+      } else if (tile.get('type') === "media" && app.photoOrVideo(tile.get('url')) === "video") {
+        // if class is not set do it
+        if (!view.$el.hasClass('video-tile-container')) {
+          view.$el.addClass('video-tile-container');
+        }
+
+        listItemTemplate = _.template(jQuery(view.videoTemplate).text());
+        listItem = listItemTemplate({ 'id': tile.get('_id'), 'url': app.config.pikachu.url + tile.get('url'), 'star': (tile.get('favourite') ? 'fa-star' : 'fa-star-o') });
+      } else {
+        throw "Unknown tile type!";
+      }
+
+      // Add the newly generated DOM elements to the vies's part of the DOM
+      view.$el.html(listItem);
+
+      return view;
+    },
+
+    copyTile: function(ev) {
+      var view = this;
+
+      console.warn("Function copyTile isn't implemented yet");
+    }
+  });
+
+  /**
     ProjectPosterTextChunkView
   **/
   app.View.ProjectPosterTextChunkView = Backbone.View.extend({
@@ -1110,12 +1180,51 @@
       jQuery('#project-poster-chunk-screen').removeClass('hidden');
     },
 
+    addOne: function (tileModel) {
+      var view = this;
+
+      // check if the chunk already exists
+      // http://stackoverflow.com/questions/4191386/jquery-how-to-find-an-element-based-on-a-data-attribute-value
+      if (view.$el.find("[data-id='" + tileModel.id + "']").length === 0 ) {
+        // wake up the project model
+        tileModel.wake(app.config.wakeful.url);
+
+        // This is necessary to avoid Backbone putting all HTML into an empty div tag
+        var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
+
+        var posterTileView = new app.View.PosterTile({el: tileContainer, model: tileModel});
+        var listToAddTo = view.$el.find('.tiles-list');
+        listToAddTo.prepend(posterTileView.render().el);
+      } else {
+        console.log("The tile with id <"+tileModel.id+"> wasn't added since it already exists in the DOM");
+      }
+    },
+
+    addAll: function (view) {
+      // sort newest to oldest (prepend!)
+      Skeletor.Model.awake.tiles.comparator = function(model) {
+        return model.get('created_at');
+      };
+
+      // var myPublishedTextTiles = view.collection.sort().where({published: true, project_id: app.project.id});
+      var myPublishedTextTiles = Skeletor.Model.awake.tiles.sort().where({published: true, project_id: app.project.id, type: 'text'});
+
+      // clear the house
+      view.$el.find('.tiles-list').html("");
+
+      myPublishedTextTiles.forEach(function (textTile) {
+        view.addOne(textTile);
+      });
+    },
+
     render: function() {
       var view = this;
       console.log("Rendering ProjectPosterTextChunkView...");
 
       //jQuery('#text-chunk-title-input').val(view.model.get('title'));
       jQuery('#text-chunk-body-input').val(view.model.get('body'));
+
+      view.addAll(view);
     }
   });
 
@@ -1176,11 +1285,49 @@
       jQuery('#project-poster-chunk-screen').removeClass('hidden');
     },
 
+    addOne: function (tileModel) {
+      var view = this;
+
+      // check if the chunk already exists
+      // http://stackoverflow.com/questions/4191386/jquery-how-to-find-an-element-based-on-a-data-attribute-value
+      if (view.$el.find("[data-id='" + tileModel.id + "']").length === 0 ) {
+        // wake up the project model
+        tileModel.wake(app.config.wakeful.url);
+
+        // This is necessary to avoid Backbone putting all HTML into an empty div tag
+        var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
+
+        var posterTileView = new app.View.PosterTile({el: tileContainer, model: tileModel});
+        var listToAddTo = view.$el.find('.tiles-list');
+        listToAddTo.prepend(posterTileView.render().el);
+      } else {
+        console.log("The tile with id <"+tileModel.id+"> wasn't added since it already exists in the DOM");
+      }
+    },
+
+    addAll: function (view) {
+      // sort newest to oldest (prepend!)
+      Skeletor.Model.awake.tiles.comparator = function(model) {
+        return model.get('created_at');
+      };
+
+      var myPublishedMediaTiles = Skeletor.Model.awake.tiles.sort().where({published: true, project_id: app.project.id, type: 'media'});
+
+      // clear the house
+      view.$el.find('.tiles-list').html("");
+
+      myPublishedMediaTiles.forEach(function (mediaTile) {
+        view.addOne(mediaTile);
+      });
+    },
+
     render: function() {
       var view = this;
       console.log("Rendering ProjectPosterMediaChunkView...");
 
       jQuery('#media-chunk-body-input').val(view.model.get('body'));
+
+      view.addAll(view);
     }
   });
 

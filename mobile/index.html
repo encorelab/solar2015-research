@@ -201,7 +201,7 @@
         </div>
         <div class="row">
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <ul id="tiles-list" class="row"></ul>
+                <ul class="row tiles-list"></ul>
                 <!-- gets filled by the readScreenView -->
             </div>
         </div>
@@ -334,6 +334,13 @@
                 <textarea id="text-chunk-body-input" class="input-field" name="body" placeholder="Poster content"></textarea>
                 <button class="publish-chunk-btn btn-circular fa fa-cloud-upload fa-3x pull-right"></button>
             </div>
+            <div id="poster-text-tiles-holder" class="row">
+                <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                    <ul class="row tiles-list">
+                        <!-- populated by the view -->
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -350,6 +357,13 @@
                 <h3>What do you want your peers to know about this media?</h3>
                 <textarea id="media-chunk-body-input" class="input-field" name="body" placeholder="Poster content"></textarea>
                 <button class="publish-chunk-btn btn-circular fa fa-cloud-upload fa-3x pull-right"></button>
+            </div>
+            <div id="poster-media-tiles-holder" class="row">
+                <div class="inner-wrapper col-xs-9 col-xs-offset-2">
+                    <ul class="row tiles-list">
+                        <!-- populated by the view -->
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
