@@ -431,16 +431,16 @@
     },
 
     switchToPosterView: function() {
-      jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
-      // app.hideAllContainers();
-      // // if there's a poster for this project already, go to chunk screen, else go to new poster screen
-      // if (app.project.get('poster_title') && app.project.get('poster_title').length > 0) {
-      //   app.projectPosterChunkView.render();
-      //   jQuery('#project-poster-chunk-screen').removeClass('hidden');
-      // } else {
-      //   app.projectNewPosterView.render();
-      //   jQuery('#project-new-poster-screen').removeClass('hidden');
-      // }
+      // jQuery().toastmessage('showErrorToast', "It is not time for this yet, kids");
+      app.hideAllContainers();
+      // if there's a poster for this project already, go to chunk screen, else go to new poster screen
+      if (app.project.get('poster_title') && app.project.get('poster_title').length > 0) {
+        app.projectPosterChunkView.render();
+        jQuery('#project-poster-chunk-screen').removeClass('hidden');
+      } else {
+        app.projectNewPosterView.render();
+        jQuery('#project-new-poster-screen').removeClass('hidden');
+      }
     },
 
     addOne: function(tileModel) {
