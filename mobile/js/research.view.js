@@ -155,9 +155,9 @@
         jQuery('.username-display a').text(app.groupname);
 
         // delete all previous proposal tiles for this project
-        Skeletor.Model.awake.tiles.where({ 'project_id': app.project.id, 'from_proposal': true }).forEach(function(tile) {
-          tile.destroy();
-        });
+        // Skeletor.Model.awake.tiles.where({ 'project_id': app.project.id, 'from_proposal': true }).forEach(function(tile) {
+        //   tile.destroy();
+        // });
 
         // create the new proposal tiles
         view.createProposalTile("Foundational knowledge", needToKnowsVal);
@@ -174,18 +174,25 @@
     createProposalTile: function(titleText, bodyText) {
       var view = this;
 
-      var m = new Model.Tile();
-      m.set('project_id', app.project.id);
-      m.set('author', app.username);
-      m.set('type', "text");
-      m.set('title', titleText);
-      m.set('body', bodyText);
-      m.set('favourite', true);
-      m.set('from_proposal', true);
-      m.set('published', true);
-      m.wake(app.config.wakeful.url);
-      m.save();
-      Skeletor.Model.awake.tiles.add(m);
+      var preexistingTile = Skeletor.Model.awake.tiles.where({ 'project_id': app.project.id, 'from_proposal': true, 'title': titleText })[0];
+
+      if (preexistingTile) {
+        preexistingTile.set('body',bodyText);
+        preexistingTile.save();
+      } else {
+        var m = new Model.Tile();
+        m.set('project_id', app.project.id);
+        m.set('author', app.username);
+        m.set('type', "text");
+        m.set('title', titleText);
+        m.set('body', bodyText);
+        m.set('favourite', true);
+        m.set('from_proposal', true);
+        m.set('published', true);
+        m.wake(app.config.wakeful.url);
+        m.save();
+        Skeletor.Model.awake.tiles.add(m);
+      }
     },
 
     // this version of autosave works with nested content. The nested structure must be spelled out *in the html*
@@ -628,14 +635,7 @@
       'click .favourite-icon'             : 'toggleFavouriteStatus',
       'click .originator-btn'             : 'toggleOriginator',
       'change #photo-file'                : 'uploadPhoto'
-      // 'click #play-video-btn'             : 'playVideo',
-      // 'click #photo-file'                 : 'playVideo',
-      // 'click #project-media-screen video' : 'playVideo'
     },
-
-    // playVideo: function() {
-
-    // },
 
     toggleFavouriteStatus: function(ev) {
       var view = this;
@@ -957,7 +957,8 @@
 
     events: {
       'click .publish-chunk-btn'            : 'publishChunk',
-      'click .nav-chunk-btn'                : 'switchToChunkView'
+      'click .nav-chunk-btn'                : 'switchToChunkView',
+      'keyup :input'                        : 'checkForAutoSave'
     },
 
     publishChunk: function() {
@@ -1004,6 +1005,8 @@
     render: function() {
       var view = this;
       console.log("Rendering ProjectPosterTextChunkView...");
+
+      jQuery('#text-chunk-body-input').val(view.model.get('body'));
     }
   });
 
