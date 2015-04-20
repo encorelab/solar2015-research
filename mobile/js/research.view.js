@@ -917,7 +917,20 @@
     editChunk: function(ev) {
       var view = this;
 
-      console.warn("editing not implemented yet");
+      app.hideAllContainers();
+
+      if (view.model.get('type') === "text") {
+        app.projectPosterTextChunkView.model = view.model;
+        // app.projectWriteView.model.wake(app.config.wakeful.url);
+        jQuery('#project-poster-text-chunk-screen').removeClass('hidden');
+        app.projectPosterTextChunkView.render();
+      } else {
+        app.projectPosterMediaChunkView.model = view.model;
+        // app.projectMediaView.model.wake(app.config.wakeful.url);
+
+        jQuery('#project-poster-media-chunk-screen').removeClass('hidden');
+        app.projectPosterMediaChunkView.render();
+      }
 
     }
   });
