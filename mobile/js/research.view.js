@@ -1118,7 +1118,10 @@
     copyTile: function(ev) {
       var view = this;
 
-      console.warn("Function copyTile isn't implemented yet");
+      // if the clicked tile is a photo
+      if (view.model.get('type') === "media" && app.photoOrVideo(view.model.get('url')) === "photo") {
+        jQuery('#media-chunk-media-holder').html('<img src="' + app.config.pikachu.url + view.model.get('url') + '"/>');
+      }
     }
   });
 
@@ -1247,10 +1250,12 @@
     publishChunk: function() {
       var view = this;
       var bodyText = jQuery('#media-chunk-body-input').val();
+      var url = jQuery('#media-chunk-media-holder img').attr('src');
 
       if (bodyText.length > 0) {
         app.clearAutoSaveTimer();
         view.model.set('body', bodyText);
+        view.model.set('url', url);
         view.model.set('published', true);
         view.model.set('modified_at', new Date());
         view.model.save();
@@ -1326,6 +1331,10 @@
       console.log("Rendering ProjectPosterMediaChunkView...");
 
       jQuery('#media-chunk-body-input').val(view.model.get('body'));
+      if (view.model.get('type') === "media" && view.model.get('url') && app.photoOrVideo(view.model.get('url')) === "photo") {
+        jQuery('#media-chunk-media-holder').html('<img src="' + view.model.get('url') + '"/>');
+        // WARNING: chunks are currently saved *with the pikachu part in the url*. This is inconsistent with the rest of what we do - TODO!
+      }
 
       view.addAll(view);
     }

@@ -333,10 +333,10 @@
                 <!-- <textarea id="text-chunk-title-input" class="input-field" name="title" placeholder="Untitled poster content"></textarea> -->
                 <textarea id="text-chunk-body-input" class="input-field" name="body" placeholder="Poster content"></textarea>
                 <button class="publish-chunk-btn btn-circular fa fa-cloud-upload fa-3x pull-right"></button>
-            </div>
-            <div id="poster-text-tiles-holder" class="row">
-                <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                    <ul class="row tiles-list">
+                <!-- lololol, html/css is the best. Feel free to do this better :) -->
+                <div style="clear:both"></div>
+                <div id="poster-text-tiles-holder">
+                    <ul class="tiles-list">
                         <!-- populated by the view -->
                     </ul>
                 </div>
@@ -353,14 +353,15 @@
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
                 <h3>Send media to your poster. You can select a tile to get you started.</h3>
-                <div id="media-chunk-media-holder" name="url"></div>
+                <div id="media-chunk-media-holder" name="url">
+                    <!-- filled from a click event in the view -->
+                </div>
                 <h3>What do you want your peers to know about this media?</h3>
                 <textarea id="media-chunk-body-input" class="input-field" name="body" placeholder="Poster content"></textarea>
                 <button class="publish-chunk-btn btn-circular fa fa-cloud-upload fa-3x pull-right"></button>
-            </div>
-            <div id="poster-media-tiles-holder" class="row">
-                <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                    <ul class="row tiles-list">
+                <div style="clear:both"></div>
+                <div id="poster-media-tiles-holder">
+                    <ul class="tiles-list">
                         <!-- populated by the view -->
                     </ul>
                 </div>

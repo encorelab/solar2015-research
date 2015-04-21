@@ -567,6 +567,18 @@ textarea {
     border: solid 2px #41b050;
 }
 
+
+/********** P R O J E C T  P O S T E R  C H U N K  S C R E E N **********/
+
+#poster-text-tiles-holder, #poster-media-tiles-holder {
+    height: 400px;
+    overflow-y: scroll;
+}
+
+#media-chunk-media-holder img {
+    width: 300px;
+}
+
 /********** G L O B A L **********/
 
 body, html {
