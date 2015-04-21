@@ -460,7 +460,12 @@
         tileModel.wake(app.config.wakeful.url);
 
         // This is necessary to avoid Backbone putting all HTML into an empty div tag
-        var tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
+        var tileContainer = null;
+        if (tileModel.get('originator') === "self") {
+          tileContainer = jQuery('<li class="tile-container self col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
+        } else {
+          tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
+        }
 
         var tileView = new app.View.Tile({el: tileContainer, model: tileModel});
         var listToAddTo = view.$el.find('.tiles-list');
@@ -1118,8 +1123,16 @@
     copyTile: function(ev) {
       var view = this;
 
+      // if the clicked tile is text
+      if (view.model.get('type') === "text") {
+        if (confirm("Would you like to paste this text into your poster content section?")) {
+          var text = jQuery('#text-chunk-body-input').val();
+          text += ' ' + view.model.get('body');
+          jQuery('#text-chunk-body-input').val(text);
+        }
+      }
       // if the clicked tile is a photo
-      if (view.model.get('type') === "media" && app.photoOrVideo(view.model.get('url')) === "photo") {
+      else if (view.model.get('type') === "media" && app.photoOrVideo(view.model.get('url')) === "photo") {
         jQuery('#media-chunk-media-holder').html('<img src="' + app.config.pikachu.url + view.model.get('url') + '"/>');
       }
     }
@@ -1263,6 +1276,7 @@
 
         view.model = null;
         jQuery('.input-field').val('');
+        jQuery('#media-chunk-media-holder').html('');
         view.switchToChunkView();
       } else {
         jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");

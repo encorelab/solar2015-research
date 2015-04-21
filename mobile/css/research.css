@@ -579,6 +579,10 @@ textarea {
     width: 300px;
 }
 
+#text-chunk-body-input {
+    height: 260px;
+}
+
 /********** G L O B A L **********/
 
 body, html {
