@@ -809,12 +809,13 @@
 
     createPoster: function() {
       var view = this;
+      var posterTitle = jQuery('#project-new-poster-screen [name=poster_title]').val();
 
       if (jQuery('#project-new-poster-screen [name=poster_title]').val().length > 0) {
         // create all the relevant stuff in the UIC DB (poster and group)
         // (note poster id is project id)
         var posterObj = {
-                          "name": app.project.get('poster_title'),
+                          "name": posterTitle,
                           "uuid": app.project.id + '-poster'
                         };
 
@@ -834,7 +835,7 @@
           var posterThemes = [];
 
           // add to the project object in the OISE DB
-          app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
+          app.project.set('poster_title', posterTitle);
           jQuery('.selected').each(function() {
             posterThemes.push(jQuery(this).val());
           });
@@ -1171,65 +1172,48 @@
       if (bodyText.length > 0) {
         app.clearAutoSaveTimer();
 
-        // dealing with OISE end
-        //view.model.set('title', titleText);
-        view.model.set('body', bodyText);
-        view.model.set('published', true);
-        view.model.set('modified_at', new Date());
-        view.model.save();
-
         // dealing with UIC end
+        var posterObj = {
+                      "uuid": app.project.id + '-poster',
+                      "posterItms": view.model.id + '-item'
+        };
 
+        var posterItemObj = {
+                          "content" : bodyText,
+                          //"lastEdited" : NumberLong(1429554091351),
+                          //"name" : "posteritem-txt-3",
+                          "type" : "txt",
+                          "uuid" : view.model.id + '-item'
+                        };
 
-        jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+        //HUGE NB: this will currently only work with one item, and will always overwrite the previous one
+        // Actually, worse - it creates a new poster item, need to look at PATCH
+        var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
+        var postPosterItem = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster_item", posterItemObj);
 
-        view.model = null;
-        jQuery('.input-field').val('');
-        view.switchToChunkView();
+        jQuery.when( postPoster, postPosterItem )
+        .done(function (v1, v2) {
+          // dealing with OISE end
+          //view.model.set('title', titleText);
+          view.model.set('body', bodyText);
+          view.model.set('published', true);
+          view.model.set('modified_at', new Date());
+          view.model.save();
+
+          jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+          view.model = null;
+          jQuery('.input-field').val('');
+          view.switchToChunkView();
+        })
+        .fail(function (v1) {
+          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+
+          //handle the error here - deleting from Tony's DB
+        });
       } else {
         jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
       }
     },
-
-
-    // // create all the relevant stuff in the UIC DB (poster and group)
-    // var posterItemObj = {
-    //                   "content" : view.model.get('body'),
-    //                   //"lastEdited" : NumberLong(1429554091351),
-    //                   //"name" : "posteritem-txt-3",
-    //                   "type" : "txt",
-    //                   "uuid" : view.model.id + '-item'
-    //                 };
-
-    // var posterObj = {
-    //                  "classname": app.runId,
-    //                  "name": app.project.get('name'),
-    //                  "nameTags": app.project.get('associated_users'),
-    //                  "posters" : [ app.project.id + '-poster' ],         // always one element in here
-    //                  "uuid" : app.project.id + '-gruser'
-    //                };
-
-    // var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
-    // var postUser = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj);
-
-    // jQuery.when( postPoster, postUser )
-    // .done(function (v1, v2) {
-    //   var posterThemes = [];
-
-    //   // add to the project object in the OISE DB
-    //   app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
-    //   jQuery('.selected').each(function() {
-    //     posterThemes.push(jQuery(this).val());
-    //   });
-    //   app.project.set('poster_themes', posterThemes);
-    //   app.project.save();
-
-    //   jQuery().toastmessage('showSuccessToast', "You have started your poster!");
-    //   app.hideAllContainers();
-    //   jQuery('#project-poster-chunk-screen').removeClass('hidden');
-    // })
-    // .fail(function (v1) {
-    //   jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
 
       // handle the error here - deleting from Tony's DB
 
