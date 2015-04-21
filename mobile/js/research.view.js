@@ -811,16 +811,6 @@
       var view = this;
 
       if (jQuery('#project-new-poster-screen [name=poster_title]').val().length > 0) {
-        var posterThemes = [];
-
-        // add to the project object in the OISE DB
-        app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
-        jQuery('.selected').each(function() {
-          posterThemes.push(jQuery(this).val());
-        });
-        app.project.set('poster_themes', posterThemes);
-        app.project.save();
-
         // create all the relevant stuff in the UIC DB (poster and group)
         // (note poster id is project id)
         var posterObj = {
@@ -836,21 +826,30 @@
                          "uuid" : app.project.id + '-gruser'
                        };
 
-        // TODO: use deferreds here instead, or nest correctly so that we can't proceed without completion
-        jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj)
-        .fail(function( data ) {
+        var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
+        var postUser = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj);
+
+        jQuery.when( postPoster, postUser )
+        .done(function (v1, v2) {
+          var posterThemes = [];
+
+          // add to the project object in the OISE DB
+          app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
+          jQuery('.selected').each(function() {
+            posterThemes.push(jQuery(this).val());
+          });
+          app.project.set('poster_themes', posterThemes);
+          app.project.save();
+
+          jQuery().toastmessage('showSuccessToast', "You have started your poster!");
+          app.hideAllContainers();
+          jQuery('#project-poster-chunk-screen').removeClass('hidden');
+        })
+        .fail(function (v1) {
           jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+
+          // handle the error here - deleting from Tony's DB whichever (or both) that failed
         });
-
-        jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj)
-        .fail(function( data ) {
-          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
-        });
-
-        jQuery().toastmessage('showSuccessToast', "You have started your poster!");
-
-        app.hideAllContainers();
-        jQuery('#project-poster-chunk-screen').removeClass('hidden');
       } else {
         jQuery().toastmessage('showErrorToast', "Please add a title to your poster...");
       }
@@ -1171,11 +1170,17 @@
 
       if (bodyText.length > 0) {
         app.clearAutoSaveTimer();
+
+        // dealing with OISE end
         //view.model.set('title', titleText);
         view.model.set('body', bodyText);
         view.model.set('published', true);
         view.model.set('modified_at', new Date());
         view.model.save();
+
+        // dealing with UIC end
+
+
         jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
 
         view.model = null;
@@ -1185,6 +1190,68 @@
         jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
       }
     },
+
+
+    // // create all the relevant stuff in the UIC DB (poster and group)
+    // var posterItemObj = {
+    //                   "content" : view.model.get('body'),
+    //                   //"lastEdited" : NumberLong(1429554091351),
+    //                   //"name" : "posteritem-txt-3",
+    //                   "type" : "txt",
+    //                   "uuid" : view.model.id + '-item'
+    //                 };
+
+    // var posterObj = {
+    //                  "classname": app.runId,
+    //                  "name": app.project.get('name'),
+    //                  "nameTags": app.project.get('associated_users'),
+    //                  "posters" : [ app.project.id + '-poster' ],         // always one element in here
+    //                  "uuid" : app.project.id + '-gruser'
+    //                };
+
+    // var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
+    // var postUser = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj);
+
+    // jQuery.when( postPoster, postUser )
+    // .done(function (v1, v2) {
+    //   var posterThemes = [];
+
+    //   // add to the project object in the OISE DB
+    //   app.project.set('poster_title', jQuery('#project-new-poster-screen [name=poster_title]').val());
+    //   jQuery('.selected').each(function() {
+    //     posterThemes.push(jQuery(this).val());
+    //   });
+    //   app.project.set('poster_themes', posterThemes);
+    //   app.project.save();
+
+    //   jQuery().toastmessage('showSuccessToast', "You have started your poster!");
+    //   app.hideAllContainers();
+    //   jQuery('#project-poster-chunk-screen').removeClass('hidden');
+    // })
+    // .fail(function (v1) {
+    //   jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+
+      // handle the error here - deleting from Tony's DB
+
+    // PLUS YOU NEED TO UPDATE THE POSTER OBJECT
+    // ALSO, REMEMBER TO APPEND THE UUID with -item
+    // ALSO, DEAL WITH HARDWARE TOMORROW (AKA TODAY)
+
+    // {
+    //    "content" : "A gray desk advanced towards a lawyer.",
+    //    //"lastEdited" : NumberLong(1429554091351),
+    //    //"name" : "posteritem-txt-3",
+    //    "type" : "txt",
+    //    "uuid" : "ef011505-71b7-437c-b342-a10751e62174"
+    // }
+
+    // {
+    //    "content" : "http://pikachu.encorelab.org/78h2g2a1.jpg",
+    //    //"lastEdited" : NumberLong(1429554091351),
+    //    //"name" : "posteritem-txt-3",
+    //    "type" : "img",
+    //    "uuid" : "ef011505-71b7-437c-b342-a10751e62174"
+    // }
 
     checkForAutoSave: function(ev) {
       var view = this,
