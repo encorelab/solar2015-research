@@ -580,7 +580,7 @@ textarea {
     height: 400px;
     overflow-y: scroll;
 }
-#media-chunk-media-holder img {
+#media-chunk-media-holder img, video {
     width: 300px;
 }
 #text-chunk-body-input {
