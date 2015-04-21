@@ -192,7 +192,8 @@ textarea {
     color: #41b050;
 }
 .project textarea,
-.project button {
+.project button,
+.project div.btn {
     border: 2px solid #41b050;
 }
 .project .btn-circular,
@@ -203,6 +204,11 @@ textarea {
 .project .btn-circular:hover,
 #todo-screen .goto-project-btn:hover {
     background: #8dd098;
+}
+
+.project div.btn {
+    text-overflow: ellipsis;
+    background: yellow;
 }
 
 /********** R E V I E W **********/
