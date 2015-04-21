@@ -1114,6 +1114,11 @@
         throw "Unknown tile type!";
       }
 
+      // handling originator
+      if (tile.get('originator') === "self") {
+        view.$el.addClass('self');
+      }
+
       // Add the newly generated DOM elements to the vies's part of the DOM
       view.$el.html(listItem);
 
