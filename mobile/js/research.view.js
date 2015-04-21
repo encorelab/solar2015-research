@@ -890,7 +890,7 @@
     template: "#chunk-list-template",
 
     events: {
-      'click'   : 'editChunk'
+      'click' : 'editChunk'
     },
 
     initialize: function () {
@@ -913,7 +913,7 @@
       listItemTemplate = _.template(jQuery(view.template).text());
       listItem = listItemTemplate(view.model.toJSON());
 
-      // Add the newly generated DOM elements to the vies's part of the DOM
+      // Add the newly generated DOM elements to the view's part of the DOM
       view.$el.html(listItem);
 
       return view;

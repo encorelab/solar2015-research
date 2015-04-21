@@ -574,13 +574,17 @@ textarea {
     height: 400px;
     overflow-y: scroll;
 }
-
 #media-chunk-media-holder img {
     width: 300px;
 }
-
 #text-chunk-body-input {
     height: 260px;
+}
+.chunk-edit-btn {
+    width: 500px;
+    display: block;
+    margin: 0 auto;
+    overflow: hidden;
 }
 
 /********** G L O B A L **********/
