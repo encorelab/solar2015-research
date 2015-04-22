@@ -65,7 +65,6 @@ textarea {
 
 .side-nav {
     padding: 0 100px 0 0;
-    /*position: absolute;*/
 }
 
 .side-nav button + button {
@@ -792,7 +791,7 @@ input:disabled {
 @media all and (max-width: 767px) {
 
     .side-nav .btn-circular {
-        margin-left: 25px;
+        margin-left: 15px !important;
     }
 
 }
@@ -887,6 +886,10 @@ input:disabled {
 
     .project-partner-holder button {
         min-width: 170px;
+    }
+
+    .side-nav {
+        padding: 0 200px 0 0;
     }
 
     .tile-container {
