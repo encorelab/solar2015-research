@@ -1168,6 +1168,9 @@
       'keyup :input'                        : 'checkForAutoSave'
     },
 
+
+    // NOTE: edit does not need to resend the posterObj
+
     publishChunk: function() {
       var view = this;
       //var titleText = jQuery('#text-chunk-title-input').val();
@@ -1210,9 +1213,9 @@
 
         // decide if we're editing (PATCH) or sending a new one (POST)
         var postPosterItem = null;
-        if (view.model.get('item_mongo_id')) {
+        if (view.model.get('item_mongo_txt_id')) {
           postPosterItem = jQuery.ajax({
-            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_id'),
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_txt_id'),
             type: 'PATCH',
             data: posterItemObj
           });
@@ -1229,7 +1232,7 @@
           // dealing with OISE end
           //view.model.set('title', titleText);
           // when we get back the mongo id, we add it to the object so that we can patch later
-          view.model.set('item_mongo_id', v2[0]._id.$oid);
+          view.model.set('item_mongo_txt_id', v2[0]._id.$oid);
           view.model.set('body', bodyText);
           view.model.set('published', true);
           view.model.set('modified_at', new Date());
