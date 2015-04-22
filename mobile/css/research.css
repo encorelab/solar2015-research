@@ -51,8 +51,7 @@ textarea {
 
 /********** R E S E A R C H **********/
 
-.nav-read-btn,
-.nav-write-btn {
+.side-nav .btn-circular {
     margin-left: -25px;
 }
 
@@ -66,6 +65,7 @@ textarea {
 
 .side-nav {
     padding: 0;
+    padding-right: 100px;
     /*position: absolute;*/
 }
 
@@ -585,7 +585,7 @@ textarea {
     color: #fff;
 }
 #project-poster-chunk-screen button + button {
-    margin-left: 50px;
+    margin-left: 45px;
 }
 #project-poster-chunk-screen .btn-container button,
 .chunk-edit-btn {
