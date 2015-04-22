@@ -64,8 +64,7 @@ textarea {
 }
 
 .side-nav {
-    padding: 0;
-    padding-right: 100px;
+    padding: 0 100px 0 0;
     /*position: absolute;*/
 }
 
@@ -352,12 +351,13 @@ textarea {
 }
 .tiles-list > li {
     outline: 2px solid #41b050;
+    background: #fff;
 }
 .tiles-list .self {
     outline: 3px dashed #99ff00;
 }
 .tiles-list > li:last-child {
-    margin-bottom: 25px;
+    margin-bottom: 45px;
 }
 .tile {
     position: absolute;
@@ -652,8 +652,8 @@ textarea {
 #poster-chunk-holder div + div {
     margin-top: 20px;
 }
-#poster-chunk-holder div + div:last-child {
-    margin-bottom: 25px;
+#poster-chunk-holder {
+    padding-bottom: 45px;
 }
 
 /********** G L O B A L **********/
@@ -789,10 +789,9 @@ input:disabled {
 /********** M E D I A  Q U E R I E S **********/
 
 /* Extra small devices (phones, less than 768px) */
-@media all and (max-width: 768px) {
+@media all and (max-width: 767px) {
 
-    .nav-read-btn,
-    .nav-write-btn {
+    .side-nav .btn-circular {
         margin-left: 25px;
     }
 
@@ -814,13 +813,10 @@ input:disabled {
 
     .username-display a {
         max-width: 300px;
+        text-overflow: ellipsis;
     }
 
-    .nav-splash-btn,
-    .nav-read-btn,
-    #nav-write-btn,
-    #nav-media-btn,
-    #nav-poster-btn {
+    .side-nav .btn-circular {
         margin-left: -25px;
     }
 
@@ -828,6 +824,15 @@ input:disabled {
     #proposal-screen textarea[name="need_to_knows"],
     #review-details-screen textarea {
         height: 100px;
+    }
+
+    h2.box1 {
+        width: 495px;
+        margin-left: -10px;
+    }
+    h2.box3 {
+        width: 515px;
+        margin-left: -20px;
     }
 
     #review-details-screen h3[name="research_question"],
@@ -864,7 +869,16 @@ input:disabled {
         margin-left: 8%;
     }
     .project-to-review-btn {
-        min-width: 475px;
+        max-width: 475px;
+        text-overflow: ellipsis;
+    }
+    .poster-chunk .fa-star-o,
+    .poster-chunk .fa-star {
+        bottom: -1%;
+        right: -2%;
+    }
+    #media-chunk-media-holder + div {
+        text-align: left;
     }
 }
 
