@@ -1145,7 +1145,8 @@
       }
       // if the clicked tile is a video
       else if (view.model.get('type') === "media" && app.photoOrVideo(view.model.get('url')) === "video") {
-        jQuery('#media-chunk-media-holder').html('<video src="' + app.config.pikachu.url + view.model.get('url') + '" controls />');
+        jQuery().toastmessage('showErrorToast', "Video to poster uploading is currently under development...");
+        //jQuery('#media-chunk-media-holder').html('<video src="' + app.config.pikachu.url + view.model.get('url') + '" controls />');
       } else {
         console.error("Unknown chunk type!");
       }
@@ -1338,6 +1339,14 @@
       var view = this;
       var bodyText = jQuery('#media-chunk-body-input').val();
       var url = jQuery('#media-chunk-media-holder').children().first().attr('src');
+      var mediaType = null;
+      if (app.photoOrVideo(url) === "photo") {
+        mediaType = "img";
+      } else if (app.photoOrVideo(url) === "video") {
+        mediaType = "vid";
+      } else {
+        console.error("Unknown media type for this chunk!");
+      }
 
       if (bodyText.length > 0 && jQuery('#media-chunk-media-holder').children().length > 0) {
         app.clearAutoSaveTimer();
@@ -1350,11 +1359,12 @@
         // WARNING: this doesn't handle videos yet
         var myPublishedMediaChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "media"});
         _.each(myPublishedTextChunks, function(c) { posterItems.push(c.id + '-txtitem') });
-        _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-imgitem') });
+        _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-mediaitem') });
         // add the new chunk to the array
         posterItems.push(view.model.id + '-txtitem');
-        posterItems.push(view.model.id + '-imgitem');
+        posterItems.push(view.model.id + '-mediaitem');
 
+        // we are getting very close to the deadline, things are getting ugly. Probably better for everyone's sanity if you don't look at the following ~80 lines of code
         var posterObj = {
                       "uuid": app.project.id + '-poster',
                       "posterItems": posterItems
@@ -1369,12 +1379,13 @@
                           "uuid" : view.model.id + '-txtitem'
                         };
 
-        var posterItemImgObj = {
+
+        var posterItemMediaObj = {
                           "content" : url,
-                          "type" : "img",
+                          "type" : mediaType,
                           "width" : 0,
                           "height" : 0,
-                          "uuid" : view.model.id + '-imgitem'
+                          "uuid" : view.model.id + '-mediaitem'
                         };
 
         // we're patching here
@@ -1401,17 +1412,17 @@
         }
 
         var postPosterImgItem = null;
-        if (view.model.get('item_mongo_img_id')) {
+        if (view.model.get('item_mongo_media_id')) {
           postPosterImgItem = jQuery.ajax({
-            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_img_id'),
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_media_id'),
             type: 'PATCH',
-            data: posterItemImgObj
+            data: posterItemMediaObj
           });
         } else {
           postPosterImgItem = jQuery.ajax({
             url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
             type: 'POST',
-            data: posterItemImgObj
+            data: posterItemMediaObj
           });
         }
 
@@ -1420,7 +1431,7 @@
           // dealing with OISE end
           // when we get back the mongo id, we add it to the object so that we can patch later
           view.model.set('item_mongo_txt_id', v2[0]._id.$oid);
-          view.model.set('item_mongo_img_id', v3[0]._id.$oid);
+          view.model.set('item_mongo_media_id', v3[0]._id.$oid);
           view.model.set('body', bodyText);
           view.model.set('url', url);
           view.model.set('published', true);
