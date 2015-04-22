@@ -193,7 +193,7 @@ textarea {
 }
 .project textarea,
 .project button,
-.project div.btn {
+.project .btn {
     border: 2px solid #41b050;
 }
 .project .btn-circular,
@@ -204,11 +204,6 @@ textarea {
 .project .btn-circular:hover,
 #todo-screen .goto-project-btn:hover {
     background: #8dd098;
-}
-
-.project div.btn {
-    text-overflow: ellipsis;
-    background: yellow;
 }
 
 /********** R E V I E W **********/
@@ -401,7 +396,6 @@ textarea {
 #project-read-screen .fa-star-o,
 #project-read-screen .fa-star {
     bottom: 0;
-    z-index: 999;
 }
 .fa-circle {
     position: absolute;
@@ -451,6 +445,7 @@ textarea {
     bottom: 25%;
     right: 1%;
     padding: 10px 20px;
+    z-index: 999;
 }
 .fa-star-o:hover,
 .fa-star:hover {
@@ -576,12 +571,68 @@ textarea {
 
 /********** P R O J E C T  P O S T E R  C H U N K  S C R E E N **********/
 
-#poster-text-tiles-holder, #poster-media-tiles-holder {
+#project-poster-chunk-screen .btn-container {
+    width: 450px;
+    display: block;
+    margin: 50px auto 20px;
+}
+.poster-chunk .fa-pencil,
+.poster-chunk .fa-picture-o {
+    font-size: 2em;
+    color: #41b050;
+}
+.btn-container button:hover .fa {
+    color: #fff;
+}
+#project-poster-chunk-screen button + button {
+    margin-left: 50px;
+}
+#project-poster-chunk-screen .btn-container button,
+.chunk-edit-btn {
+    background: #fff;
+}
+#project-poster-chunk-screen .btn-container button:hover,
+.chunk-edit-btn:hover {
+    background: #8dd098;
+}
+.poster-chunk h3 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.poster-chunk .inner-wrapper {
+  height: 100%;
+  margin-top: 75px;
+}
+.poster-chunk textarea {
+    margin-bottom: 25px;
+}
+.fa-cloud-upload {
+    position: absolute;
+    right: 5%;
+}
+#project-poster-text-chunk-screen .fa-cloud-upload {
+    top: 215px;
+}
+#project-poster-media-chunk-screen .fa-cloud-upload {
+    top: 325px;
+}
+#poster-text-tiles-holder,
+#poster-media-tiles-holder {
     height: 400px;
     overflow-y: scroll;
 }
-#media-chunk-media-holder img, video {
-    width: 300px;
+.poster-chunk .fa-star-o,
+.poster-chunk .fa-star {
+    bottom: 0;
+    right: 0;
+}
+
+#media-chunk-media-holder img,
+#media-chunk-media-holder video {
+    height: 300px;
+    display: block;
+    margin: 0 auto;
 }
 #text-chunk-body-input {
     height: 260px;
@@ -591,6 +642,18 @@ textarea {
     display: block;
     margin: 0 auto;
     overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 28px;
+    background: #8dd098;
+}
+.chunk-edit-btn:hover {
+    background: #fff;
+}
+#poster-chunk-holder div + div {
+    margin-top: 20px;
+}
+#poster-chunk-holder div + div:last-child {
+    margin-bottom: 25px;
 }
 
 /********** G L O B A L **********/
@@ -604,6 +667,8 @@ a,
 a:hover,
 button,
 button:hover,
+.btn,
+.btn:hover,
 i,
 i:hover {
     -webkit-transition: all 0.5s ease;

@@ -304,15 +304,17 @@
 
 
     <!-- Project Poster Chunk Screen -->
-    <div id="project-poster-chunk-screen" class="container-fluid user-screen project">
+    <div id="project-poster-chunk-screen" class="container-fluid user-screen project poster-chunk">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3>Send new content to your poster</h3>
-                <button id="create-text-chunk-btn" class="btn" data-type="text">Create text content</button>
-                <button id="create-media-chunk-btn" class="btn" data-type="media">Create media content</button>
+                <h2>Send new content to your poster</h2>
+                <div class="btn-container">
+                    <button id="create-text-chunk-btn" class="btn" data-type="text"><i class="fa fa-pencil fa-lg"></i>&nbsp;&nbsp;Create text content</button>
+                    <button id="create-media-chunk-btn" class="btn" data-type="media"><i class="fa fa-picture-o fa-lg"></i>&nbsp;&nbsp;Create media content</button>
+                </div>
                 <h3>You can edit content that has already been sent to your poster</h3>
                 <div id="poster-chunk-holder">
                     <!-- populated by the view -->
@@ -323,7 +325,7 @@
 
 
     <!-- Project Poster Text Chunk Screen -->
-    <div id="project-poster-text-chunk-screen" class="container-fluid user-screen project">
+    <div id="project-poster-text-chunk-screen" class="container-fluid user-screen project poster-chunk">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
                 <button class="nav-chunk-btn fa fa-arrow-left fa-3x btn-circular"></button>
@@ -346,7 +348,7 @@
 
 
     <!-- Project Poster Media Chunk Screen -->
-    <div id="project-poster-media-chunk-screen" class="container-fluid user-screen project">
+    <div id="project-poster-media-chunk-screen" class="container-fluid user-screen project poster-chunk">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
                 <button class="nav-chunk-btn fa fa-arrow-left fa-3x btn-circular"></button>
