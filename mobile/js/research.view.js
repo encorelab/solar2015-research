@@ -1223,8 +1223,6 @@
           });
         }
 
-        // var postPosterItem = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster_item", posterItemObj);
-
         jQuery.when( postPoster, postPosterItem )
         .done(function (v1, v2) {
           // dealing with OISE end
@@ -1363,7 +1361,7 @@
       var bodyText = jQuery('#media-chunk-body-input').val();
       var url = jQuery('#media-chunk-media-holder').children().first().attr('src');
 
-      if (bodyText.length > 0) {
+      if (bodyText.length > 0 && jQuery('#media-chunk-media-holder').children().length > 0) {
         app.clearAutoSaveTimer();
         view.model.set('body', bodyText);
         view.model.set('url', url);
@@ -1377,7 +1375,7 @@
         jQuery('#media-chunk-media-holder').html('');
         view.switchToChunkView();
       } else {
-        jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
+        jQuery().toastmessage('showErrorToast', "Please select media and add a caption...");
       }
     },
 
