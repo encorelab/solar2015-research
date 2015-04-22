@@ -78,7 +78,7 @@
 
     <script id="review-details-template" type="text/template" class="review">
         <div class="row">
-                <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
+                <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                     <button id="return-to-overview-btn" class="fa fa-arrow-left fa-3x btn-circular"></button>
                 </div>
             </div>
@@ -174,7 +174,7 @@
     <!-- Proposal Screen -->
     <div id="proposal-screen" class="container-fluid user-screen proposal">
         <div class="row">
-            <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
+            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button class="nav-splash-btn fa fa-arrow-left fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
@@ -193,7 +193,7 @@
     <!-- Project Read Screen -->
     <div id="project-read-screen" class="container-fluid user-screen project">
         <div class="row">
-            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-offset-1">
+            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button id="nav-write-btn" class="fa fa-pencil fa-3x btn-circular"></button>
                 <button id="nav-media-btn" class="fa fa-picture-o fa-3x btn-circular"></button>
                 <button id="nav-poster-btn" class="fa fa-clipboard fa-3x btn-circular"></button>
@@ -304,15 +304,17 @@
 
 
     <!-- Project Poster Chunk Screen -->
-    <div id="project-poster-chunk-screen" class="container-fluid user-screen project">
+    <div id="project-poster-chunk-screen" class="container-fluid user-screen project poster-chunk">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button class="nav-read-btn fa fa-arrow-left fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
-                <h3>Send new content to your poster</h3>
-                <button id="create-text-chunk-btn" class="btn" data-type="text">Create text content</button>
-                <button id="create-media-chunk-btn" class="btn" data-type="media">Create media content</button>
+                <h2>Send new content to your poster</h2>
+                <div class="btn-container">
+                    <button id="create-text-chunk-btn" class="btn" data-type="text"><i class="fa fa-pencil fa-lg"></i>&nbsp;&nbsp;Create text content</button>
+                    <button id="create-media-chunk-btn" class="btn" data-type="media"><i class="fa fa-picture-o fa-lg"></i>&nbsp;&nbsp;Create media content</button>
+                </div>
                 <h3>You can edit content that has already been sent to your poster</h3>
                 <div id="poster-chunk-holder">
                     <!-- populated by the view -->
@@ -323,7 +325,7 @@
 
 
     <!-- Project Poster Text Chunk Screen -->
-    <div id="project-poster-text-chunk-screen" class="container-fluid user-screen project">
+    <div id="project-poster-text-chunk-screen" class="container-fluid user-screen project poster-chunk">
         <div class="row">
             <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
                 <button class="nav-chunk-btn fa fa-arrow-left fa-3x btn-circular"></button>
@@ -346,9 +348,9 @@
 
 
     <!-- Project Poster Media Chunk Screen -->
-    <div id="project-poster-media-chunk-screen" class="container-fluid user-screen project">
+    <div id="project-poster-media-chunk-screen" class="container-fluid user-screen project poster-chunk">
         <div class="row">
-            <div class="side-nav col-xs-1 col-xs-offset-0  col-sm-2 col-sm-offset-1">
+            <div class="side-nav col-xs-1 col-xs-offset-0 col-sm-2 col-sm-offset-1">
                 <button class="nav-chunk-btn fa fa-arrow-left fa-3x btn-circular"></button>
             </div>
             <div class="inner-wrapper col-xs-9 col-xs-offset-2">
