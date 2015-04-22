@@ -1179,10 +1179,10 @@
         // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
         var posterItems = [];
         // get all published chunks
-        var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: 'text'});
-        _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-item') });
+        var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id});
+        _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem') });
         // add the new chunk to the array
-        posterItems.push(view.model.id + '-item')
+        posterItems.push(view.model.id + '-txtitem')
 
         var posterObj = {
                       "uuid": app.project.id + '-poster',
@@ -1197,7 +1197,7 @@
                           "type" : "txt",
                           "width" : 0,
                           "height" : 0,
-                          "uuid" : view.model.id + '-item'
+                          "uuid" : view.model.id + '-txtitem'
                         };
 
         // we're patching here
@@ -1248,28 +1248,6 @@
         jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
       }
     },
-
-      // handle the error here - deleting from Tony's DB
-
-    // PLUS YOU NEED TO UPDATE THE POSTER OBJECT
-    // ALSO, REMEMBER TO APPEND THE UUID with -item
-    // ALSO, DEAL WITH HARDWARE TOMORROW (AKA TODAY)
-
-    // {
-    //    "content" : "A gray desk advanced towards a lawyer.",
-    //    //"lastEdited" : NumberLong(1429554091351),
-    //    //"name" : "posteritem-txt-3",
-    //    "type" : "txt",
-    //    "uuid" : "ef011505-71b7-437c-b342-a10751e62174"
-    // }
-
-    // {
-    //    "content" : "http://pikachu.encorelab.org/78h2g2a1.jpg",
-    //    //"lastEdited" : NumberLong(1429554091351),
-    //    //"name" : "posteritem-txt-3",
-    //    "type" : "img",
-    //    "uuid" : "ef011505-71b7-437c-b342-a10751e62174"
-    // }
 
     checkForAutoSave: function(ev) {
       var view = this,
@@ -1363,17 +1341,103 @@
 
       if (bodyText.length > 0 && jQuery('#media-chunk-media-holder').children().length > 0) {
         app.clearAutoSaveTimer();
-        view.model.set('body', bodyText);
-        view.model.set('url', url);
-        view.model.set('published', true);
-        view.model.set('modified_at', new Date());
-        view.model.save();
-        jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
 
-        view.model = null;
-        jQuery('.input-field').val('');
-        jQuery('#media-chunk-media-holder').html('');
-        view.switchToChunkView();
+        // Ok, this insanity:
+        // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
+        var posterItems = [];
+        // get all published chunks
+        var myPublishedTextChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "text"});
+        // WARNING: this doesn't handle videos yet
+        var myPublishedMediaChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "media"});
+        _.each(myPublishedTextChunks, function(c) { posterItems.push(c.id + '-txtitem') });
+        _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-imgitem') });
+        // add the new chunk to the array
+        posterItems.push(view.model.id + '-txtitem');
+        posterItems.push(view.model.id + '-imgitem');
+
+        var posterObj = {
+                      "uuid": app.project.id + '-poster',
+                      "posterItems": posterItems
+        };
+
+        // sometimes this will need to be a patch, sometimes a post
+        var posterItemTxtObj = {
+                          "content" : bodyText,
+                          "type" : "txt",
+                          "width" : 0,
+                          "height" : 0,
+                          "uuid" : view.model.id + '-txtitem'
+                        };
+
+        var posterItemImgObj = {
+                          "content" : url,
+                          "type" : "img",
+                          "width" : 0,
+                          "height" : 0,
+                          "uuid" : view.model.id + '-imgitem'
+                        };
+
+        // we're patching here
+        var postPoster = jQuery.ajax({
+          url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
+          type: 'PATCH',
+          data: posterObj
+        });
+
+        // decide if we're editing (PATCH) or sending a new one (POST)
+        var postPosterTxtItem = null;
+        if (view.model.get('item_mongo_txt_id')) {
+          postPosterTxtItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_txt_id'),
+            type: 'PATCH',
+            data: posterItemTxtObj
+          });
+        } else {
+          postPosterTxtItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
+            type: 'POST',
+            data: posterItemTxtObj
+          });
+        }
+
+        var postPosterImgItem = null;
+        if (view.model.get('item_mongo_img_id')) {
+          postPosterImgItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_img_id'),
+            type: 'PATCH',
+            data: posterItemImgObj
+          });
+        } else {
+          postPosterImgItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
+            type: 'POST',
+            data: posterItemImgObj
+          });
+        }
+
+        jQuery.when( postPoster, postPosterTxtItem, postPosterImgItem )
+        .done(function (v1, v2, v3) {
+          // dealing with OISE end
+          // when we get back the mongo id, we add it to the object so that we can patch later
+          view.model.set('item_mongo_txt_id', v2[0]._id.$oid);
+          view.model.set('item_mongo_img_id', v3[0]._id.$oid);
+          view.model.set('body', bodyText);
+          view.model.set('url', url);
+          view.model.set('published', true);
+          view.model.set('modified_at', new Date());
+          view.model.save();
+          jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+
+          view.model = null;
+          jQuery('.input-field').val('');
+          jQuery('#media-chunk-media-holder').html('');
+          view.switchToChunkView();
+        })
+        .fail(function (v1) {
+          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+
+          //handle the error here - deleting from Tony's DB
+        });
       } else {
         jQuery().toastmessage('showErrorToast', "Please select media and add a caption...");
       }
