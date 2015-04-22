@@ -836,7 +836,10 @@
 
           // add to the project object in the OISE DB
           app.project.set('poster_title', posterTitle);
-          jQuery('.selected').each(function() {
+          // from the object returned by drowsy, we need to get the mongo id for later
+          app.project.set('poster_mongo_id',v1[0]._id.$oid);        // lol, classic mongo syntax. Probably a nicer way of doing this?
+
+          jQuery('#project-new-poster-screen .selected').each(function() {
             posterThemes.push(jQuery(this).val());
           });
           app.project.set('poster_themes', posterThemes);
@@ -1172,29 +1175,62 @@
       if (bodyText.length > 0) {
         app.clearAutoSaveTimer();
 
-        // dealing with UIC end
+        // Ok, this insanity:
+        // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
+        var posterItems = [];
+        // get all published chunks
+        var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: 'text'});
+        _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-item') });
+        // add the new chunk to the array
+        posterItems.push(view.model.id + '-item')
+
         var posterObj = {
                       "uuid": app.project.id + '-poster',
-                      "posterItms": view.model.id + '-item'
+                      "posterItems": posterItems
         };
 
+        // sometimes this will need to be a patch, sometimes a post
         var posterItemObj = {
                           "content" : bodyText,
                           //"lastEdited" : NumberLong(1429554091351),
                           //"name" : "posteritem-txt-3",
                           "type" : "txt",
+                          "width" : 0,
+                          "height" : 0,
                           "uuid" : view.model.id + '-item'
                         };
 
-        //HUGE NB: this will currently only work with one item, and will always overwrite the previous one
-        // Actually, worse - it creates a new poster item, need to look at PATCH
-        var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
-        var postPosterItem = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster_item", posterItemObj);
+        // we're patching here
+        var postPoster = jQuery.ajax({
+          url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
+          type: 'PATCH',
+          data: posterObj
+        });
+
+        // decide if we're editing (PATCH) or sending a new one (POST)
+        var postPosterItem = null;
+        if (view.model.get('item_mongo_id')) {
+          postPosterItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_id'),
+            type: 'PATCH',
+            data: posterItemObj
+          });
+        } else {
+          postPosterItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
+            type: 'POST',
+            data: posterItemObj
+          });
+        }
+
+        // var postPosterItem = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster_item", posterItemObj);
 
         jQuery.when( postPoster, postPosterItem )
         .done(function (v1, v2) {
           // dealing with OISE end
           //view.model.set('title', titleText);
+          // when we get back the mongo id, we add it to the object so that we can patch later
+          view.model.set('item_mongo_id', v2[0]._id.$oid);
           view.model.set('body', bodyText);
           view.model.set('published', true);
           view.model.set('modified_at', new Date());
