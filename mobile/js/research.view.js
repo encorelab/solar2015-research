@@ -962,6 +962,12 @@
           view.addOne(m);
         }
       });
+
+      view.collection.on('destroy', function (m) {
+        if (app.project && m.get('project_id') === app.project.id && m.get('published') === true) {
+          view.render();
+        }
+      });
     },
 
     events: {
@@ -1184,9 +1190,9 @@
         var posterItems = [];
         // get all published chunks
         var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id});
-        _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem') });
+        _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
         // add the new chunk to the array
-        posterItems.push(view.model.id + '-txtitem')
+        posterItems.push(view.model.id + '-txtitem');
 
         var posterObj = {
                       "uuid": app.project.id + '-poster',
@@ -1359,10 +1365,9 @@
         var posterItems = [];
         // get all published chunks
         var myPublishedTextChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "text"});
-        // WARNING: this doesn't handle videos yet
         var myPublishedMediaChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "media"});
-        _.each(myPublishedTextChunks, function(c) { posterItems.push(c.id + '-txtitem') });
-        _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-mediaitem') });
+        _.each(myPublishedTextChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
+        _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-mediaitem'); });
         // add the new chunk to the array
         posterItems.push(view.model.id + '-txtitem');
         posterItems.push(view.model.id + '-mediaitem');

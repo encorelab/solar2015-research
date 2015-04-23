@@ -1,5 +1,5 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true, strict:true */
-/*global  Backbone, Skeletor, _, jQuery, Rollcall, google */
+/*global  Backbone, Skeletor, _, jQuery, Rollcall, google, Paho */
 
 (function() {
   "use strict";
@@ -8,6 +8,7 @@
   var Model = this.Skeletor.Model;
   Skeletor.Model = Model;
   var app = this.Skeletor.Mobile;
+
 
   app.config = null;
   app.requiredConfig = {
@@ -26,6 +27,7 @@
 
   var DATABASE = null;
 
+  app.mqtt = null;
   app.rollcall = null;
   app.runId = null;
   app.runState = null;
@@ -159,6 +161,10 @@
 
       // console.log('Waking up the projects collection');
       // Skeletor.Model.awake.projects.wake(app.config.wakeful.url);
+    })
+    .then(function() {
+      // TODO - add me to config.json
+      app.mqtt = connect("ltg.evl.uic.edu", generateRandomClientId());
     })
     .done(function () {
       ready();
@@ -400,6 +406,72 @@
     return seconds;
     // date = new Date( parseInt(timestamp, 16) * 1000 );
     // return date;
+  };
+
+  //TODO - parameterize all of this!
+  var connect = function(host, clientId) {
+    // Create client
+    var client = new Paho.MQTT.Client(host, Number(1884), clientId);
+    // Register callback for connection lost
+    client.onConnectionLost = function(responseObject) {
+      console.log("Connection lost: " + responseObject.errorMessage);
+      //console.log("Trying to reconnect and likely failing...");
+      app.mqtt = connect("ltg.evl.uic.edu", generateRandomClientId());
+      // TODO try to reconnect
+    };
+    // Register callback for received message
+    client.onMessageArrived = function(message) {
+      // check if this is a delete msg, otherwise ignore it (for now)
+      var jsonMsg = JSON.parse(message.payloadString);
+      console.log("Heard a message...");
+
+      if (jsonMsg.action === "DELETE") {
+        console.log("Received delete message for " + message.payloadString);
+        // and the ugliness continues. What I'm doing here is getting the original oid for the object that we want to delete (by removing the tail end that tony's stuff needed)
+        // this should always return a singular object on the where... I think
+        var chunkId = jsonMsg.posterItemUuid.split(/-/)[0];
+        Skeletor.Model.awake.chunks.where({ '_id' : chunkId }).forEach(function(chunk) {
+          console.log("Deleting chunk with id: " + chunkId);
+          chunk.destroy();
+        });
+      } else {
+        console.log("Received other message: " + message.payloadString + " and ignoring...");
+      }
+
+      // {
+      //   "action":"DELETE",
+      //   "posterUuid":"85dc1d7b-9729-4c95-ac4b-60706dffd2ec",
+      //   "posterItemUuid":"552d55dee1b8325b250003cb",
+      // }
+      // console.log(message.payloadString);
+      // console.log(message.destinationName);
+    };
+     // Connect
+    client.connect({
+      timeout: 90,
+      keepAliveInterval: 90,
+      onSuccess: function() {
+        var receiveChannel = "IAMPOSTEROUT";
+        console.log("Connected to channel: " + receiveChannel);
+        client.subscribe(receiveChannel, {qos: 0});
+      }
+    });
+    client.publish = function(channel, message) {
+      var m = new Paho.MQTT.Message(message);
+      m.destinationName = channel;
+      client.send(m);
+    };
+    return client;
+  };
+
+  var generateRandomClientId = function() {
+    var length = 22;
+    var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var result = '';
+    for (var i = length; i > 0; --i) {
+      result += chars[Math.round(Math.random() * (chars.length - 1))];
+    }
+    return result;
   };
 
   //*************** LOGIN FUNCTIONS ***************//
