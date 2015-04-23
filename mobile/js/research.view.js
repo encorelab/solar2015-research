@@ -1235,10 +1235,21 @@
 
         jQuery.when( postPoster, postPosterItem )
         .done(function (v1, v2) {
+          var returnedOId = v2[0]._id.$oid;
+          // sending out the msg for UIC
+          var itemUpdateObj = {
+            "action":"ADD",
+            "posterUuid": app.project.id + '-poster',
+            "userUuid": app.project.id + '-gruser',
+            "posterItemId": returnedOId,
+            "type":"POSTER_ITEM"
+          }
+          Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
+
           // dealing with OISE end
           //view.model.set('title', titleText);
           // when we get back the mongo id, we add it to the object so that we can patch later
-          view.model.set('item_mongo_txt_id', v2[0]._id.$oid);
+          view.model.set('item_mongo_txt_id', returnedOId);
           view.model.set('body', bodyText);
           view.model.set('published', true);
           view.model.set('modified_at', new Date());
@@ -1419,27 +1430,47 @@
           });
         }
 
-        var postPosterImgItem = null;
+        var postPosterMediaItem = null;
         if (view.model.get('item_mongo_media_id')) {
-          postPosterImgItem = jQuery.ajax({
+          postPosterMediaItem = jQuery.ajax({
             url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_media_id'),
             type: 'PATCH',
             data: posterItemMediaObj
           });
         } else {
-          postPosterImgItem = jQuery.ajax({
+          postPosterMediaItem = jQuery.ajax({
             url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
             type: 'POST',
             data: posterItemMediaObj
           });
         }
 
-        jQuery.when( postPoster, postPosterTxtItem, postPosterImgItem )
+        jQuery.when( postPoster, postPosterTxtItem, postPosterMediaItem )
         .done(function (v1, v2, v3) {
+          var returnedTextOId = v2[0]._id.$oid;
+          var returnedMediaOId = v3[0]._id.$oid;
+          // sending out the msg for UIC
+          var textItemUpdateObj = {
+            "action":"ADD",
+            "posterUuid": app.project.id + '-poster',
+            "userUuid": app.project.id + '-gruser',
+            "posterItemId": returnedTextOId,
+            "type":"POSTER_ITEM"
+          }
+          Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(textItemUpdateObj));
+          var mediaItemUpdateObj = {
+            "action":"ADD",
+            "posterUuid": app.project.id + '-poster',
+            "userUuid": app.project.id + '-gruser',
+            "posterItemId": returnedMediaOId,
+            "type":"POSTER_ITEM"
+          }
+          Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(mediaItemUpdateObj));
+
           // dealing with OISE end
           // when we get back the mongo id, we add it to the object so that we can patch later
-          view.model.set('item_mongo_txt_id', v2[0]._id.$oid);
-          view.model.set('item_mongo_media_id', v3[0]._id.$oid);
+          view.model.set('item_mongo_txt_id', returnedTextOId);
+          view.model.set('item_mongo_media_id', returnedMediaOId);
           view.model.set('body', bodyText);
           view.model.set('url', url);
           view.model.set('published', true);
