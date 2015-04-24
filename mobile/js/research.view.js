@@ -1202,11 +1202,7 @@
         // sometimes this will need to be a patch, sometimes a post
         var posterItemObj = {
                           "content" : bodyText,
-                          //"lastEdited" : NumberLong(1429554091351),
-                          //"name" : "posteritem-txt-3",
                           "type" : "txt",
-                          "width" : 0,
-                          "height" : 0,
                           "uuid" : view.model.id + '-txtitem'
                         };
 
@@ -1393,8 +1389,6 @@
         var posterItemTxtObj = {
                           "content" : bodyText,
                           "type" : "txt",
-                          "width" : 0,
-                          "height" : 0,
                           "uuid" : view.model.id + '-txtitem'
                         };
 
@@ -1402,8 +1396,6 @@
         var posterItemMediaObj = {
                           "content" : url,
                           "type" : mediaType,
-                          "width" : 0,
-                          "height" : 0,
                           "uuid" : view.model.id + '-mediaitem'
                         };
 
