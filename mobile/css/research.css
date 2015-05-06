@@ -655,6 +655,20 @@ textarea {
     padding-bottom: 45px;
 }
 
+#text-chunk-upload-spinner, #media-chunk-upload-spinner {
+    position: absolute;
+    right: 3.8%;
+    top: 200px;
+    height: 100px;
+}
+
+#text-chunk-upload-spinner {
+    top: 200px;
+}
+#media-chunk-upload-spinner {
+    top: 310px;
+}
+
 /********** G L O B A L **********/
 
 body, html {

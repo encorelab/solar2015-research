@@ -1184,6 +1184,8 @@
 
       if (bodyText.length > 0) {
         app.clearAutoSaveTimer();
+        // add the loader to prevent them from spamming the submit button (which is a possible source of duplicate poster_items for Tony's side... could also be a network issue)
+        jQuery('#text-chunk-upload-spinner').removeClass('hidden');
 
         // Ok, this insanity:
         // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
@@ -1251,12 +1253,14 @@
           view.model.set('modified_at', new Date());
           view.model.save();
 
+          jQuery('#text-chunk-upload-spinner').addClass('hidden');
           jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
           view.model = null;
           jQuery('.input-field').val('');
           view.switchToChunkView();
         })
         .fail(function (v1) {
+          jQuery('#text-chunk-upload-spinner').addClass('hidden');
           jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
 
           //handle the error here - deleting from Tony's DB
@@ -1367,6 +1371,7 @@
       // add locking mechanism here (also remember that this needs to be added to text)
       if (bodyText.length > 0 && jQuery('#media-chunk-media-holder').children().length > 0) {
         app.clearAutoSaveTimer();
+        jQuery('#media-chunk-upload-spinner').removeClass('hidden');
 
         // Ok, this insanity:
         // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
@@ -1470,6 +1475,7 @@
           view.model.set('published', true);
           view.model.set('modified_at', new Date());
           view.model.save();
+          jQuery('#media-chunk-upload-spinner').addClass('hidden');
           jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
 
           view.model = null;
@@ -1478,6 +1484,7 @@
           view.switchToChunkView();
         })
         .fail(function (v1) {
+          jQuery('#media-chunk-upload-spinner').addClass('hidden');
           jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
 
           //handle the error here - deleting from Tony's DB
