@@ -1196,7 +1196,7 @@
 
         var posterObj = {
                       "uuid": app.project.id + '-poster',
-                      "posterItems": posterItems
+                      "posterItems": _.uniq(posterItems)
         };
 
         // sometimes this will need to be a patch, sometimes a post
@@ -1364,6 +1364,7 @@
         console.error("Unknown media type for this chunk!");
       }
 
+      // add locking mechanism here (also remember that this needs to be added to text)
       if (bodyText.length > 0 && jQuery('#media-chunk-media-holder').children().length > 0) {
         app.clearAutoSaveTimer();
 
@@ -1380,9 +1381,10 @@
         posterItems.push(view.model.id + '-mediaitem');
 
         // we are getting very close to the deadline, things are getting ugly. Probably better for everyone's sanity if you don't look at the following ~80 lines of code
+        // ADDING UNIQ HERE TO REMOVE ANY RANDOM DUPLICATES (from semi-unknown bug on May 6)
         var posterObj = {
                       "uuid": app.project.id + '-poster',
-                      "posterItems": posterItems
+                      "posterItems": _.uniq(posterItems)
         };
 
         // sometimes this will need to be a patch, sometimes a post
