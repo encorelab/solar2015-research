@@ -1189,10 +1189,11 @@
 
         // Ok, this insanity:
         // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
-        var posterItems = [];
+        // var posterItems = [];
         // get all published chunks
-        var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id});
-        _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
+        var posterItems = app.rebuildPosterItemsArray(app.project.id);
+        // var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id});
+        // _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
         // add the new chunk to the array
         posterItems.push(view.model.id + '-txtitem');
 
@@ -1241,7 +1242,7 @@
             "userUuid": app.project.id + '-gruser',
             "posterItemId": returnedOId,
             "type":"POSTER_ITEM"
-          }
+          };
           Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
 
           // dealing with OISE end
@@ -1375,12 +1376,13 @@
 
         // Ok, this insanity:
         // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
-        var posterItems = [];
+        // var posterItems = [];
         // get all published chunks
-        var myPublishedTextChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "text"});
-        var myPublishedMediaChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "media"});
-        _.each(myPublishedTextChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
-        _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-mediaitem'); });
+        var posterItems = app.rebuildPosterItemsArray(app.project.id);
+        // var myPublishedTextChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "text"});
+        // var myPublishedMediaChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id, type: "media"});
+        // _.each(myPublishedTextChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
+        // _.each(myPublishedMediaChunks, function(c) { posterItems.push(c.id + '-mediaitem'); posterItems.push(c.id + '-txtitem'); });
         // add the new chunk to the array
         posterItems.push(view.model.id + '-txtitem');
         posterItems.push(view.model.id + '-mediaitem');
@@ -1455,7 +1457,7 @@
             "userUuid": app.project.id + '-gruser',
             "posterItemId": returnedTextOId,
             "type":"POSTER_ITEM"
-          }
+          };
           Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(textItemUpdateObj));
           var mediaItemUpdateObj = {
             "action":"ADD",
@@ -1463,7 +1465,7 @@
             "userUuid": app.project.id + '-gruser',
             "posterItemId": returnedMediaOId,
             "type":"POSTER_ITEM"
-          }
+          };
           Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(mediaItemUpdateObj));
 
           // dealing with OISE end

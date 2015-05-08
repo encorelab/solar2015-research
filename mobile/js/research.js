@@ -640,6 +640,16 @@
     }
   };
 
+  // Function to rebuild the posterItems array for poster collection
+  app.rebuildPosterItemsArray = function (projectId) {
+    var posterItems = [];
+    var myPublishedTextChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: projectId, type: "text"});
+    var myPublishedMediaChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: projectId, type: "media"});
+    myPublishedTextChunks.forEach(function(c) { posterItems.push(c.id + '-txtitem'); });
+    myPublishedMediaChunks.forEach(function(c) { posterItems.push(c.id + '-mediaitem'); posterItems.push(c.id + '-txtitem'); });
+    return posterItems;
+  };
+
   app.resetToSplashScreen = function() {
     app.hideAllContainers();
     jQuery('#proposal-nav-btn').addClass('active');
