@@ -1187,85 +1187,166 @@
         // add the loader to prevent them from spamming the submit button (which is a possible source of duplicate poster_items for Tony's side... could also be a network issue)
         jQuery('#text-chunk-upload-spinner').removeClass('hidden');
 
+        /** New plan. We don't care about deletions on the poster and will always write poster items into new documents with new UUIDs
+         *  Sequence:
+         *  1) write poster item and get OID from DB
+         *  2) Use OID from step 1) and write it into UUID field of poster item
+         *  3) read posterItemsArray from poster collection
+         *  4) add OID from step 1) to posterItems Array and patch poster collection with new array
+         *  5) Send MQTT message to poster software and store changes in own DB
+        **/
+
+        // 1)
+        var posterItemObj = {
+                          "content" : bodyText,
+                          "type" : "txt",
+                          "uuid" : 'not set yet'
+                        };
+        jQuery.ajax({
+          url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
+          type: 'POST',
+          data: posterItemObj
+        })
+        .done(function (posterItemRes) {
+          var returnedOID = posterItemRes._id.$oid;
+          // 2)
+          posterItemRes.uuid = returnedOID;
+          var patchPosterItem = jQuery.ajax({
+            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + returnedOID,
+            type: 'PATCH',
+            data: posterItemRes
+          });
+
+          // 3)
+          var getPoster = jQuery.get(Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'));
+
+          jQuery.when (patchPosterItem, getPoster)
+          .done(function (v1, v2) {
+            // 4)
+            var posterItems = v2[0].posterItems;
+            posterItems.push(returnedOID);
+
+            var posterObj = {
+                          "uuid": app.project.id + '-poster',
+                          "posterItems": _.uniq(posterItems)
+            };
+            // we're patching here
+            jQuery.ajax({
+              url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
+              type: 'PATCH',
+              data: posterObj
+            })
+            .done(function(data){
+              // 5)
+              // sending out the msg for UIC
+              var itemUpdateObj = {
+                "action":"ADD",
+                "posterUuid": app.project.id + '-poster',
+                "userUuid": app.project.id + '-gruser',
+                "posterItemId": returnedOID,
+                "type":"POSTER_ITEM"
+              };
+
+              // FIXME: This is a hugh trouble source. Connection is wonky and if we disconnected this call breaks which means we think the note is still unpublished.
+              Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
+
+              // dealing with OISE end
+              //view.model.set('title', titleText);
+              // when we get back the mongo id, we add it to the object so that we can patch later
+              //view.model.set('item_mongo_txt_id', returnedOId);
+              view.model.set('body', bodyText);
+              view.model.set('published', true);
+              view.model.set('modified_at', new Date());
+              view.model.save();
+
+              jQuery('#text-chunk-upload-spinner').addClass('hidden');
+              jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+              view.model = null;
+              jQuery('.input-field').val('');
+              view.switchToChunkView();
+            });
+          });
+        });
+
         // Ok, this insanity:
         // cause of the hoops we need to jump through to deal with UIC data structures, we need to keep track of all chunks that belong to a poster
         // var posterItems = [];
         // get all published chunks
-        var posterItems = app.rebuildPosterItemsArray(app.project.id);
-        // var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id});
-        // _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
-        // add the new chunk to the array
-        posterItems.push(view.model.id + '-txtitem');
+      //   var posterItems = app.rebuildPosterItemsArray(app.project.id);
+      //   // var myPublishedChunks = Skeletor.Model.awake.chunks.where({published: true, project_id: app.project.id});
+      //   // _.each(myPublishedChunks, function(c) { posterItems.push(c.id + '-txtitem'); });
+      //   // add the new chunk to the array
+      //   posterItems.push(view.model.id + '-txtitem');
 
-        var posterObj = {
-                      "uuid": app.project.id + '-poster',
-                      "posterItems": _.uniq(posterItems)
-        };
+      //   var posterObj = {
+      //                 "uuid": app.project.id + '-poster',
+      //                 "posterItems": _.uniq(posterItems)
+      //   };
 
-        // sometimes this will need to be a patch, sometimes a post
-        var posterItemObj = {
-                          "content" : bodyText,
-                          "type" : "txt",
-                          "uuid" : view.model.id + '-txtitem'
-                        };
+      //   // sometimes this will need to be a patch, sometimes a post
+      //   var posterItemObj = {
+      //                     "content" : bodyText,
+      //                     "type" : "txt",
+      //                     "uuid" : view.model.id + '-txtitem'
+      //                   };
 
-        // we're patching here
-        var postPoster = jQuery.ajax({
-          url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
-          type: 'PATCH',
-          data: posterObj
-        });
+      //   // we're patching here
+      //   var postPoster = jQuery.ajax({
+      //     url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
+      //     type: 'PATCH',
+      //     data: posterObj
+      //   });
 
-        // decide if we're editing (PATCH) or sending a new one (POST)
-        var postPosterItem = null;
-        if (view.model.get('item_mongo_txt_id')) {
-          postPosterItem = jQuery.ajax({
-            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_txt_id'),
-            type: 'PATCH',
-            data: posterItemObj
-          });
-        } else {
-          postPosterItem = jQuery.ajax({
-            url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
-            type: 'POST',
-            data: posterItemObj
-          });
-        }
+      //   // decide if we're editing (PATCH) or sending a new one (POST)
+      //   var postPosterItem = null;
+      //   if (view.model.get('item_mongo_txt_id')) {
+      //     postPosterItem = jQuery.ajax({
+      //       url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/" + view.model.get('item_mongo_txt_id'),
+      //       type: 'PATCH',
+      //       data: posterItemObj
+      //     });
+      //   } else {
+      //     postPosterItem = jQuery.ajax({
+      //       url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
+      //       type: 'POST',
+      //       data: posterItemObj
+      //     });
+      //   }
 
-        jQuery.when( postPoster, postPosterItem )
-        .done(function (v1, v2) {
-          var returnedOId = v2[0]._id.$oid;
-          // sending out the msg for UIC
-          var itemUpdateObj = {
-            "action":"ADD",
-            "posterUuid": app.project.id + '-poster',
-            "userUuid": app.project.id + '-gruser',
-            "posterItemId": returnedOId,
-            "type":"POSTER_ITEM"
-          };
-          Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
+      //   jQuery.when( postPoster, postPosterItem )
+      //   .done(function (v1, v2) {
+      //     var returnedOId = v2[0]._id.$oid;
+      //     // sending out the msg for UIC
+      //     var itemUpdateObj = {
+      //       "action":"ADD",
+      //       "posterUuid": app.project.id + '-poster',
+      //       "userUuid": app.project.id + '-gruser',
+      //       "posterItemId": returnedOId,
+      //       "type":"POSTER_ITEM"
+      //     };
+      //     Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
 
-          // dealing with OISE end
-          //view.model.set('title', titleText);
-          // when we get back the mongo id, we add it to the object so that we can patch later
-          view.model.set('item_mongo_txt_id', returnedOId);
-          view.model.set('body', bodyText);
-          view.model.set('published', true);
-          view.model.set('modified_at', new Date());
-          view.model.save();
+      //     // dealing with OISE end
+      //     //view.model.set('title', titleText);
+      //     // when we get back the mongo id, we add it to the object so that we can patch later
+      //     view.model.set('item_mongo_txt_id', returnedOId);
+      //     view.model.set('body', bodyText);
+      //     view.model.set('published', true);
+      //     view.model.set('modified_at', new Date());
+      //     view.model.save();
 
-          jQuery('#text-chunk-upload-spinner').addClass('hidden');
-          jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
-          view.model = null;
-          jQuery('.input-field').val('');
-          view.switchToChunkView();
-        })
-        .fail(function (v1) {
-          jQuery('#text-chunk-upload-spinner').addClass('hidden');
-          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+      //     jQuery('#text-chunk-upload-spinner').addClass('hidden');
+      //     jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+      //     view.model = null;
+      //     jQuery('.input-field').val('');
+      //     view.switchToChunkView();
+      //   })
+      //   .fail(function (v1) {
+      //     jQuery('#text-chunk-upload-spinner').addClass('hidden');
+      //     jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
 
-          //handle the error here - deleting from Tony's DB
-        });
+      //     //handle the error here - deleting from Tony's DB
+      //   });
       } else {
         jQuery().toastmessage('showErrorToast', "Please add some content before submitting to the poster...");
       }
