@@ -422,29 +422,21 @@
     // Register callback for received message
     client.onMessageArrived = function(message) {
       // check if this is a delete msg, otherwise ignore it (for now)
-      var jsonMsg = JSON.parse(message.payloadString);
+      //var jsonMsg = JSON.parse(message.payloadString);
       console.log("Heard a message...");
 
-      if (jsonMsg.action === "DELETE") {
-        console.log("Received delete message for " + message.payloadString);
-        // and the ugliness continues. What I'm doing here is getting the original oid for the object that we want to delete (by removing the tail end that tony's stuff needed)
-        // this should always return a singular object on the where... I think
-        var chunkId = jsonMsg.posterItemUuid.split(/-/)[0];
-        Skeletor.Model.awake.chunks.where({ '_id' : chunkId }).forEach(function(chunk) {
-          console.log("Deleting chunk with id: " + chunkId);
-          chunk.destroy();
-        });
-      } else {
-        console.log("Received other message: " + message.payloadString + " and ignoring...");
-      }
-
-      // {
-      //   "action":"DELETE",
-      //   "posterUuid":"85dc1d7b-9729-4c95-ac4b-60706dffd2ec",
-      //   "posterItemUuid":"552d55dee1b8325b250003cb",
+      // if (jsonMsg.action === "DELETE") {
+      //   console.log("Received delete message for " + message.payloadString);
+      //   // and the ugliness continues. What I'm doing here is getting the original oid for the object that we want to delete (by removing the tail end that tony's stuff needed)
+      //   // this should always return a singular object on the where... I think
+      //   var chunkId = jsonMsg.posterItemUuid.split(/-/)[0];
+      //   Skeletor.Model.awake.chunks.where({ '_id' : chunkId }).forEach(function(chunk) {
+      //     console.log("Deleting chunk with id: " + chunkId);
+      //     chunk.destroy();
+      //   });
+      // } else {
+      //   console.log("Received other message: " + message.payloadString + " and ignoring...");
       // }
-      // console.log(message.payloadString);
-      // console.log(message.destinationName);
     };
      // Connect
     client.connect({

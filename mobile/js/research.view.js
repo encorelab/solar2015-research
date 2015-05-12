@@ -1224,7 +1224,7 @@
           .done(function (v1, v2) {
             // 4)
             var posterItems = v2[0].posterItems;
-            if (Array.isArray(posterItem)) {
+            if (Array.isArray(posterItems)) {
               posterItems.push(returnedOID);
             } else {
               // new poster so we create the array since posterItems for UIC poster collection is not existant
@@ -1254,7 +1254,7 @@
                 "type":"POSTER_ITEM"
               };
 
-              // FIXME: This is a hugh trouble source. Connection is wonky and if we disconnected this call breaks which means we think the note is still unpublished.
+              // FIXME: This is a huge trouble source. Connection is wonky and if we disconnected this call breaks which means we think the note is still unpublished.
               Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
 
               // dealing with OISE end
