@@ -1224,7 +1224,14 @@
           .done(function (v1, v2) {
             // 4)
             var posterItems = v2[0].posterItems;
-            posterItems.push(returnedOID);
+            if (Array.isArray(posterItem)) {
+              posterItems.push(returnedOID);
+            } else {
+              // new poster so we create the array since posterItems for UIC poster collection is not existant
+              posterItems = [];
+              posterItems.push(returnedOID);
+            }
+
 
             var posterObj = {
                           "uuid": app.project.id + '-poster',
