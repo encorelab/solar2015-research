@@ -816,7 +816,8 @@
         // (note poster id is project id)
         var posterObj = {
                           "name": posterTitle,
-                          "uuid": app.project.id + '-poster'
+                          "uuid": app.project.id + '-poster',
+                          "created_at" : new Date()
                         };
 
         var groupObj = {
@@ -824,7 +825,8 @@
                          "name": app.project.get('name'),
                          "nameTags": app.project.get('associated_users'),
                          "posters" : [ app.project.id + '-poster' ],         // always one element in here
-                         "uuid" : app.project.id + '-gruser'
+                         "uuid" : app.project.id + '-gruser',
+                         "created_at": new Date()
                        };
 
         var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
@@ -1200,7 +1202,8 @@
         var posterItemObj = {
                           "content" : bodyText,
                           "type" : "txt",
-                          "uuid" : 'not set yet'
+                          "uuid" : 'not set yet',
+                          "created_at" : new Date()
                         };
         jQuery.ajax({
           url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
@@ -1235,7 +1238,8 @@
 
             var posterObj = {
                           "uuid": app.project.id + '-poster',
-                          "posterItems": _.uniq(posterItems)
+                          "posterItems": _.uniq(posterItems),
+                          "modified_at": new Date()
             };
             // we're patching here
             jQuery.ajax({
@@ -1397,14 +1401,16 @@
         var posterItemTxtObj = {
                           "content" : bodyText,
                           "type" : "txt",
-                          "uuid" : 'not set yet'
+                          "uuid" : 'not set yet',
+                          "created_at" : new Date()
                         };
 
 
         var posterItemMediaObj = {
                           "content" : url,
                           "type" : mediaType,
-                          "uuid" : 'not set yet'
+                          "uuid" : 'not set yet',
+                          "created_at" : new Date()
                         };
 
         var postPosterTxtItem = jQuery.ajax({
@@ -1459,7 +1465,8 @@
 
             var posterObj = {
                           "uuid": app.project.id + '-poster',
-                          "posterItems": _.uniq(posterItems)
+                          "posterItems": _.uniq(posterItems),
+                          "modified_at": new Date()
             };
             // we're patching here
             jQuery.ajax({
