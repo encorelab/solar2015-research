@@ -829,33 +829,55 @@
                          "created_at": new Date()
                        };
 
-        var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
-        var postUser = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj);
+        // We encounter rar cases of user and poster entries with the same UUID. We check via a selector if the UUIDs already exist
+        // The UIC drowsy need the URL to be formatted in a certain way to have selectors work (see below)
+        // https://ltg.evl.uic.edu/drowsy/poster/user?selector=%7B%22uuid%22:%22552be88b7ea25d29c4000000-gruser%22%7D
+        var checkForUUIDinUser = jQuery.get(Skeletor.Mobile.config.drowsy.uic_url + '/user?selector=%7B%22uuid%22:%22' + app.project.id + '-gruser%22%7D');
+        var checkForUUIDinPoster = jQuery.get(Skeletor.Mobile.config.drowsy.uic_url + '/poster?selector=%7B%22uuid%22:%22' + app.project.id + '-poster%22%7D');
 
-        jQuery.when( postPoster, postUser )
+        jQuery.when( checkForUUIDinUser, checkForUUIDinPoster )
         .done(function (v1, v2) {
-          var posterThemes = [];
+          // wonderful syntax. Just easy to read (hello C)
+          // We take the result array [0] of both gets (v1 and v2) and ensure they came back empty, aka there is no entry with that UUID
+          if (v1[0].length === 0 && v2[0].length === 0) {
+            var postPoster = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/poster", posterObj);
+            var postUser = jQuery.post(Skeletor.Mobile.config.drowsy.uic_url + "/user", groupObj);
 
-          // add to the project object in the OISE DB
-          app.project.set('poster_title', posterTitle);
-          // from the object returned by drowsy, we need to get the mongo id for later
-          app.project.set('poster_mongo_id',v1[0]._id.$oid);        // lol, classic mongo syntax. Probably a nicer way of doing this?
+            jQuery.when( postPoster, postUser )
+            .done(function (v1, v2) {
+              var posterThemes = [];
 
-          jQuery('#project-new-poster-screen .selected').each(function() {
-            posterThemes.push(jQuery(this).val());
-          });
-          app.project.set('poster_themes', posterThemes);
-          app.project.save();
+              // add to the project object in the OISE DB
+              app.project.set('poster_title', posterTitle);
+              // from the object returned by drowsy, we need to get the mongo id for later
+              app.project.set('poster_mongo_id',v1[0]._id.$oid);        // lol, classic mongo syntax. Probably a nicer way of doing this?
 
-          jQuery().toastmessage('showSuccessToast', "You have started your poster!");
-          app.hideAllContainers();
-          jQuery('#project-poster-chunk-screen').removeClass('hidden');
+              jQuery('#project-new-poster-screen .selected').each(function() {
+                posterThemes.push(jQuery(this).val());
+              });
+              app.project.set('poster_themes', posterThemes);
+              app.project.save();
+
+              jQuery().toastmessage('showSuccessToast', "You have started your poster!");
+              app.hideAllContainers();
+              jQuery('#project-poster-chunk-screen').removeClass('hidden');
+            })
+            .fail(function (v1) {
+              jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
+              console.error("There has been an error with poster creation! Please request technical support");
+              // handle the error here - deleting from Tony's DB whichever (or both) that failed
+            });
+          } else {
+            console.warn("The poster and/or user with the following UUID exits: " + app.project.id +"-poster/gruser! Cannot create poster since it is already there!");
+            jQuery().toastmessage('showErrorToast', "The poster and/or user with the following UUID exits: " + app.project.id +"-poster/gruser! Cannot create poster since it is already there!");
+          }
         })
         .fail(function (v1) {
-          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
-
-          // handle the error here - deleting from Tony's DB whichever (or both) that failed
+          jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support (2)");
+          console.error("There has been an error with poster creation! Please request technical support (2)");
         });
+
+
       } else {
         jQuery().toastmessage('showErrorToast', "Please add a title to your poster...");
       }
