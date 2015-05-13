@@ -416,8 +416,18 @@
     client.onConnectionLost = function(responseObject) {
       console.log("Connection lost: " + responseObject.errorMessage);
       //console.log("Trying to reconnect and likely failing...");
-      app.mqtt = connect("ltg.evl.uic.edu", generateRandomClientId());
+      // app.mqtt = connect("ltg.evl.uic.edu", generateRandomClientId());
       // TODO try to reconnect
+      // Connect
+      client.connect({
+        timeout: 90,
+        keepAliveInterval: 30,
+        onSuccess: function() {
+          var receiveChannel = "IAMPOSTEROUT";
+          console.log("Connected to channel: " + receiveChannel);
+          client.subscribe(receiveChannel, {qos: 0});
+        }
+      });
     };
     // Register callback for received message
     client.onMessageArrived = function(message) {
@@ -438,10 +448,10 @@
       //   console.log("Received other message: " + message.payloadString + " and ignoring...");
       // }
     };
-     // Connect
+    // Connect
     client.connect({
       timeout: 90,
-      keepAliveInterval: 90,
+      keepAliveInterval: 30,
       onSuccess: function() {
         var receiveChannel = "IAMPOSTEROUT";
         console.log("Connected to channel: " + receiveChannel);
@@ -451,7 +461,13 @@
     client.publish = function(channel, message) {
       var m = new Paho.MQTT.Message(message);
       m.destinationName = channel;
-      client.send(m);
+      try {
+        // throws an error if mqtt client is disconnected
+        // https://www.eclipse.org/paho/files/jsdoc/symbols/Paho.MQTT.Client.html#send
+        client.send(m);
+      } catch (e) {
+        console.error('Problem sending MQTT message: ' + e.message + '+++++++' + e.name);
+      }
     };
     return client;
   };
