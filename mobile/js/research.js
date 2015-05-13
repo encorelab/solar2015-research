@@ -415,9 +415,7 @@
     // Register callback for connection lost
     client.onConnectionLost = function(responseObject) {
       console.log("Connection lost: " + responseObject.errorMessage);
-      //console.log("Trying to reconnect and likely failing...");
-      // app.mqtt = connect("ltg.evl.uic.edu", generateRandomClientId());
-      // TODO try to reconnect
+      console.log("Trying to reconnect ...");
       // Connect
       client.connect({
         timeout: 90,
@@ -426,6 +424,11 @@
           var receiveChannel = "IAMPOSTEROUT";
           console.log("Connected to channel: " + receiveChannel);
           client.subscribe(receiveChannel, {qos: 0});
+        },
+        onFailure: function (e) {
+          // We tried to connect and failed. We should try again but have a pause inbetween
+          console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
+          jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
         }
       });
     };
@@ -456,6 +459,11 @@
         var receiveChannel = "IAMPOSTEROUT";
         console.log("Connected to channel: " + receiveChannel);
         client.subscribe(receiveChannel, {qos: 0});
+      },
+      onFailure: function (e) {
+        // We tried to connect and failed. We should try again but have a pause inbetween
+        console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
+        jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
       }
     });
     client.publish = function(channel, message) {
@@ -467,6 +475,7 @@
         client.send(m);
       } catch (e) {
         console.error('Problem sending MQTT message: ' + e.message + '+++++++' + e.name);
+        jQuery().toastmessage('showErrorToast', "MQTT failure: Logout of your poster app and reload browser!");
       }
     };
     return client;
