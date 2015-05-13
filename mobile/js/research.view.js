@@ -1258,9 +1258,6 @@
                 "type":"POSTER_ITEM"
               };
 
-              // FIXME: This is a huge trouble source. Connection is wonky and if we disconnected this call breaks which means we think the note is still unpublished.
-              Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
-
               // dealing with OISE end
               //view.model.set('title', titleText);
               // when we get back the mongo id, we add it to the object so that we can patch later
@@ -1268,13 +1265,15 @@
               view.model.set('body', bodyText);
               view.model.set('published', true);
               view.model.set('modified_at', new Date());
-              view.model.save();
-
-              jQuery('#text-chunk-upload-spinner').addClass('hidden');
-              jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
-              view.model = null;
-              jQuery('.input-field').val('');
-              view.switchToChunkView();
+              view.model.save().done(function () {
+                jQuery('#text-chunk-upload-spinner').addClass('hidden');
+                jQuery().toastmessage('showSuccessToast', "Saved to your poster!");
+                view.model = null;
+                jQuery('.input-field').val('');
+                view.switchToChunkView();
+                // FIXME: This is a huge trouble source. Connection is wonky and if we disconnected this call breaks which means we think the note is still unpublished.
+                Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(itemUpdateObj));
+              });
             });
           });
         });
@@ -1476,24 +1475,6 @@
             })
             .done(function(data){
               // 5)
-              // sending out the msg for UIC
-              var textItemUpdateObj = {
-                "action":"ADD",
-                "posterUuid": app.project.id + '-poster',
-                "userUuid": app.project.id + '-gruser',
-                "posterItemId": returnedTxtItemOID,
-                "type":"POSTER_ITEM"
-              };
-              Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(textItemUpdateObj));
-              var mediaItemUpdateObj = {
-                "action":"ADD",
-                "posterUuid": app.project.id + '-poster',
-                "userUuid": app.project.id + '-gruser',
-                "posterItemId": returnedMediaItemOID,
-                "type":"POSTER_ITEM"
-              };
-              Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(mediaItemUpdateObj));
-
               // dealing with OISE end
               // when we get back the mongo id, we add it to the object so that we can patch later
               // view.model.set('item_mongo_txt_id', returnedTxtItemOID);
@@ -1502,14 +1483,34 @@
               view.model.set('url', url);
               view.model.set('published', true);
               view.model.set('modified_at', new Date());
-              view.model.save();
-              jQuery('#media-chunk-upload-spinner').addClass('hidden');
-              jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
+              view.model.save().done(function () {
+                jQuery('#media-chunk-upload-spinner').addClass('hidden');
+                jQuery().toastmessage('showSuccessToast', "Sent to your poster!");
 
-              view.model = null;
-              jQuery('.input-field').val('');
-              jQuery('#media-chunk-media-holder').html('');
-              view.switchToChunkView();
+                view.model = null;
+                jQuery('.input-field').val('');
+                jQuery('#media-chunk-media-holder').html('');
+                view.switchToChunkView();
+
+                // sending out the msg for UIC
+                var textItemUpdateObj = {
+                  "action":"ADD",
+                  "posterUuid": app.project.id + '-poster',
+                  "userUuid": app.project.id + '-gruser',
+                  "posterItemId": returnedTxtItemOID,
+                  "type":"POSTER_ITEM"
+                };
+                Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(textItemUpdateObj));
+
+                var mediaItemUpdateObj = {
+                  "action":"ADD",
+                  "posterUuid": app.project.id + '-poster',
+                  "userUuid": app.project.id + '-gruser',
+                  "posterItemId": returnedMediaItemOID,
+                  "type":"POSTER_ITEM"
+                };
+                Skeletor.Mobile.mqtt.publish('IAMPOSTERIN',JSON.stringify(mediaItemUpdateObj));
+              });
             });
           });
         });
