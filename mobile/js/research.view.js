@@ -812,6 +812,7 @@
       var posterTitle = jQuery('#project-new-poster-screen [name=poster_title]').val();
 
       if (jQuery('#project-new-poster-screen [name=poster_title]').val().length > 0) {
+        jQuery('.create-poster-btn').addClass('disabled');
         // create all the relevant stuff in the UIC DB (poster and group)
         // (note poster id is project id)
         var posterObj = {
@@ -861,20 +862,24 @@
               jQuery().toastmessage('showSuccessToast', "You have started your poster!");
               app.hideAllContainers();
               jQuery('#project-poster-chunk-screen').removeClass('hidden');
+              jQuery('.create-poster-btn').removeClass('disabled');
             })
             .fail(function (v1) {
               jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support");
               console.error("There has been an error with poster creation! Please request technical support");
               // handle the error here - deleting from Tony's DB whichever (or both) that failed
+              jQuery('.create-poster-btn').removeClass('disabled');
             });
           } else {
             console.warn("The poster and/or user with the following UUID exits: " + app.project.id +"-poster/gruser! Cannot create poster since it is already there!");
             jQuery().toastmessage('showErrorToast', "The poster and/or user with the following UUID exits: " + app.project.id +"-poster/gruser! Cannot create poster since it is already there!");
+            jQuery('.create-poster-btn').removeClass('disabled');
           }
         })
         .fail(function (v1) {
           jQuery().toastmessage('showErrorToast', "There has been an error with poster creation! Please request technical support (2)");
           console.error("There has been an error with poster creation! Please request technical support (2)");
+          jQuery('.create-poster-btn').removeClass('disabled');
         });
 
 
