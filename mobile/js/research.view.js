@@ -815,20 +815,20 @@
         jQuery('.create-poster-btn').addClass('disabled');
         // create all the relevant stuff in the UIC DB (poster and group)
         // (note poster id is project id)
-        var posterObj = {
+        var posterObj = JSON.stringify({
                           "name": posterTitle,
                           "uuid": app.project.id + '-poster',
                           "created_at" : new Date()
-                        };
+                        });
 
-        var groupObj = {
+        var groupObj = JSON.stringify({
                          "classname": app.runId,
                          "name": app.project.get('name'),
                          "nameTags": app.project.get('associated_users'),
                          "posters" : [ app.project.id + '-poster' ],         // always one element in here
                          "uuid" : app.project.id + '-gruser',
                          "created_at": new Date()
-                       };
+                       });
 
         // We encounter rar cases of user and poster entries with the same UUID. We check via a selector if the UUIDs already exist
         // The UIC drowsy need the URL to be formatted in a certain way to have selectors work (see below)
@@ -1226,12 +1226,12 @@
         **/
 
         // 1)
-        var posterItemObj = {
+        var posterItemObj = JSON.stringify({
                           "content" : bodyText,
                           "type" : "txt",
                           "uuid" : 'not set yet',
                           "created_at" : new Date()
-                        };
+                        });
         jQuery.ajax({
           url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
           type: 'POST',
@@ -1263,11 +1263,11 @@
             }
 
 
-            var posterObj = {
+            var posterObj = JSON.stringify({
                           "uuid": app.project.id + '-poster',
                           "posterItems": _.uniq(posterItems),
                           "modified_at": new Date()
-            };
+            });
             // we're patching here
             jQuery.ajax({
               url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
@@ -1424,20 +1424,20 @@
         **/
 
         // 1)
-        var posterItemTxtObj = {
+        var posterItemTxtObj = JSON.stringify({
                           "content" : bodyText,
                           "type" : "txt",
                           "uuid" : 'not set yet',
                           "created_at" : new Date()
-                        };
+                        });
 
 
-        var posterItemMediaObj = {
+        var posterItemMediaObj = JSON.stringify({
                           "content" : url,
                           "type" : mediaType,
                           "uuid" : 'not set yet',
                           "created_at" : new Date()
-                        };
+                        });
 
         var postPosterTxtItem = jQuery.ajax({
           url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
@@ -1489,11 +1489,11 @@
               posterItems.push(returnedMediaItemOID);
             }
 
-            var posterObj = {
+            var posterObj = JSON.stringify({
                           "uuid": app.project.id + '-poster',
                           "posterItems": _.uniq(posterItems),
                           "modified_at": new Date()
-            };
+            });
             // we're patching here
             jQuery.ajax({
               url: Skeletor.Mobile.config.drowsy.uic_url + "/poster/" + app.project.get('poster_mongo_id'),
