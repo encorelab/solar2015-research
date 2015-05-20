@@ -410,27 +410,38 @@
 
   //TODO - parameterize all of this!
   var connect = function(host, clientId) {
+    var intervalTime = 10000;
     // Create client
     var client = new Paho.MQTT.Client(host, Number(1884), clientId);
+    // set connect interval to 10s
+    var connectTimer = setTimeout(tryConnect, intervalTime);
+    // var reconnectTimer = null;
+
     // Register callback for connection lost
     client.onConnectionLost = function(responseObject) {
       console.log("Connection lost: " + responseObject.errorMessage);
       console.log("Trying to reconnect ...");
-      // Connect
-      client.connect({
-        timeout: 90,
-        keepAliveInterval: 30,
-        onSuccess: function() {
-          var receiveChannel = "IAMPOSTEROUT";
-          console.log("Connected to channel: " + receiveChannel);
-          client.subscribe(receiveChannel, {qos: 0});
-        },
-        onFailure: function (e) {
-          // We tried to connect and failed. We should try again but have a pause inbetween
-          console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
-          jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
-        }
-      });
+
+      // set reconnect interval
+      connectTimer = setTimeout(tryConnect, intervalTime);
+      // function tryReconnect() {
+      //   // Connect
+      //   client.connect({
+      //     timeout: 90,
+      //     keepAliveInterval: 30,
+      //     onSuccess: function() {
+      //       abortTimer();
+      //       var receiveChannel = "IAMPOSTEROUT";
+      //       console.log("Connected to channel: " + receiveChannel);
+      //       client.subscribe(receiveChannel, {qos: 0});
+      //     },
+      //     onFailure: function (e) {
+      //       // We tried to connect and failed. We should try again but have a pause inbetween
+      //       console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
+      //       jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
+      //     }
+      //   });
+      // }
     };
     // Register callback for received message
     client.onMessageArrived = function(message) {
@@ -452,20 +463,48 @@
       // }
     };
     // Connect
-    client.connect({
-      timeout: 90,
-      keepAliveInterval: 30,
-      onSuccess: function() {
-        var receiveChannel = "IAMPOSTEROUT";
-        console.log("Connected to channel: " + receiveChannel);
-        client.subscribe(receiveChannel, {qos: 0});
-      },
-      onFailure: function (e) {
-        // We tried to connect and failed. We should try again but have a pause inbetween
-        console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
-        jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
-      }
-    });
+    function tryConnect() {
+      // Connect
+      client.connect({
+        timeout: 90,
+        keepAliveInterval: 30,
+        onSuccess: function() {
+          // abortInterval();
+          var receiveChannel = "IAMPOSTEROUT";
+          console.log("Connected to channel: " + receiveChannel);
+          client.subscribe(receiveChannel, {qos: 0});
+        },
+        onFailure: function (e) {
+          // abortInterval();
+          // We tried to connect and failed. We should try again but have a pause inbetween
+          console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
+          jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
+          // grow interval value to lower frequency
+          intervalTime += 2000;
+          connectTimer = setTimeout(tryConnect, intervalTime);
+        }
+      });
+    }
+
+    function abortInterval() { // to be called when you want to stop the timer
+      clearTimeout(connectTimer);
+      // clearInterval(reconnectTimer);
+    }
+
+    // client.connect({
+    //   timeout: 90,
+    //   keepAliveInterval: 30,
+    //   onSuccess: function() {
+    //     var receiveChannel = "IAMPOSTEROUT";
+    //     console.log("Connected to channel: " + receiveChannel);
+    //     client.subscribe(receiveChannel, {qos: 0});
+    //   },
+    //   onFailure: function (e) {
+    //     // We tried to connect and failed. We should try again but have a pause inbetween
+    //     console.error('Reconnect to MQTT client failed: '+e.errorCode+' - '+e.errorMessage);
+    //     jQuery().toastmessage('showErrorToast', "MQTT failure: Check WiFi and reload browser");
+    //   }
+    // });
     client.publish = function(channel, message) {
       var m = new Paho.MQTT.Message(message);
       m.destinationName = channel;
