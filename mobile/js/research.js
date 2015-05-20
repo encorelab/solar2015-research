@@ -21,6 +21,10 @@
     wakeful: {
       url: 'string'
     },
+    mqtt: {
+      url: 'string',
+      port: 'number'
+    },
     login_picker:'boolean',
     runs:'object'
   };
@@ -164,7 +168,7 @@
     })
     .then(function() {
       // TODO - add me to config.json
-      app.mqtt = connect("ltg.evl.uic.edu", generateRandomClientId());
+      app.mqtt = connect(app.config.mqtt.url, app.config.mqtt.port, generateRandomClientId());
     })
     .done(function () {
       ready();
@@ -409,10 +413,10 @@
   };
 
   //TODO - parameterize all of this!
-  var connect = function(host, clientId) {
+  var connect = function(host, port, clientId) {
     var intervalTime = 10000;
     // Create client
-    var client = new Paho.MQTT.Client(host, Number(1884), clientId);
+    var client = new Paho.MQTT.Client(host, Number(port), clientId);
     // set connect interval to 10s
     var connectTimer = setTimeout(tryConnect, intervalTime);
     // var reconnectTimer = null;

@@ -1,5 +1,11 @@
 /*jshint node: true, strict: false, devel: true, debug: true, undef:true, loopfunc:true */
 
+/*
+ ***********  WARNING *************
+ * Works only on node <0.12
+ * see https://github.com/ranm8/requestify/issues/25
+ */
+
 var argv = require('optimist')
   .usage('Usage:\n\t$0 database')
   .demand(1)
@@ -92,7 +98,7 @@ function setupModel() {
 
     console.log("Model initialized!");
 
-    var client  = mqtt.connect(config.mqtt.url);
+    var client = mqtt.connect('mqtt://'+config.mqtt.url);
 
     client.on('connect', function () {
       // client.subscribe('IAMPOSTEROUT');
