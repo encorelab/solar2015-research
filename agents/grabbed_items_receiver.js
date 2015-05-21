@@ -4,6 +4,9 @@
  ***********  WARNING *************
  * Works only on node <0.12
  * see https://github.com/ranm8/requestify/issues/25
+ *
+ * nvm (think rvm for node.js) will save your life
+ * https://github.com/creationix/nvm
  */
 
 var argv = require('optimist')
@@ -11,7 +14,8 @@ var argv = require('optimist')
   .demand(1)
   .argv;
 
-var DATABASE = argv._[0];
+var runId = argv._[0];
+var DATABASE = 'solar2015-'+runId;
 
 var jQuery = require('jquery');
 var _ = require('underscore');
@@ -83,34 +87,51 @@ console.log("Agent is agenting!");
 function setupModel() {
   console.log("Starting to initialize model ...");
   Skeletor.Model.init(config.drowsy.url, DATABASE).done(function () {
+    // create collection of grabbed poster item models
     var grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
+    // and make it wakeful
     grabbedPosterItems.wake(config.wakeful.url);
 
-    grabbedPosterItems.on('change', function (doc) {
-      // var changed = doc.changedAttributes();
-      // changed._id = doc.attributes._id; // need this or Drowsy.Document.parse will crap out
-      // logEntry('change', doc, changed);
-    });
+    // grabbedPosterItems.on('change', function (doc) {
+    //   // var changed = doc.changedAttributes();
+    //   // changed._id = doc.attributes._id; // need this or Drowsy.Document.parse will crap out
+    //   // logEntry('change', doc, changed);
+    // });
 
-    grabbedPosterItems.on('add', function (doc) {
-      // logEntry('add', doc, doc.toJSON());
-    });
+    // grabbedPosterItems.on('add', function (doc) {
+    //   // logEntry('add', doc, doc.toJSON());
+    // });
 
     console.log("Model initialized!");
 
+    // connect to mqtt server
     var client = mqtt.connect('mqtt://'+config.mqtt.url);
 
+    // once connected
     client.on('connect', function () {
-      // client.subscribe('IAMPOSTEROUT');
-      client.publish('IAMPOSTEROUT', 'Hello mqtt');
-      // subscribe to a topic
+      // say hello
+      client.publish('IAMPOSTEROUT', 'The mqtt bot for solar2015-'+runId+' just came online :)');
+      // start listening for messages from the poster client in channel IAMPOSTEROUT
       client.subscribe('IAMPOSTEROUT', function() {
         // when a message arrives, do something with it
         client.on('message', function (topic, message, packet) {
           console.log("Received '" + message + "' on '" + topic + "'");
-          var messageObj = JSON.parse(message);
-          var gpi = new Skeletor.Model.GrabbedPosterItem(messageObj);
-          gpi.save();
+          try {
+            // parse message to JSON object - might throw error
+            var m = JSON.parse(message);
+            // check if the message has the right action and is intended for our run
+            if (m.action === 'process_grabbed_poster_item' && m.class_name === runId) {
+              // create Backbone object and save it
+              var gpi = new Skeletor.Model.GrabbedPosterItem(m);
+              gpi.save().done(function () {
+                console.log('Messages successfully saved to database with id: '+gpi.id);
+              });
+            } else {
+              console.log("Message has wrong action <"+m.action+"> or was for another run <"+runId+">")
+            }
+          } catch (e) {
+            console.warn("Error parsing message body: "+e);
+          }
         });
       });
     });
