@@ -24,6 +24,7 @@ var Backbone = require('backbone');
 Backbone.$ = jQuery;
 var btoa = require('btoa');
 var mqtt = require('mqtt');
+var url = require('url');
 
 // var mongo = require('mongodb');
 
@@ -100,8 +101,13 @@ function setupModel() {
 
     console.log("Model initialized!");
 
+    var urlObj = url.parse(config.mqtt.protocol+config.mqtt.url+':'+config.mqtt.port);
+    console.log("Trying to connect to mqtt server with URL: "+url.format(urlObj));
     // connect to mqtt server
-    var client = mqtt.connect('mqtt://'+config.mqtt.url);
+    // var client = mqtt.connect(urlObj);
+    // var client = mqtt.connect('mqtt://'+config.mqtt.url);
+    // var url = config.mqtt.protocol + config.mqtt.url + ":" + config.mqtt.port;
+    var client = mqtt.connect(urlObj, {clientId : 'bot_to_solar2015-'+runId});
 
     // once connected
     client.on('connect', function () {
