@@ -7,6 +7,7 @@
  *
  * nvm (think rvm for node.js) will save your life
  * https://github.com/creationix/nvm
+ ***********  WARNING *************
  */
 
 var argv = require('optimist')
@@ -75,12 +76,7 @@ var LOG_TO_COLLECTION = 'events';
 //   });
 // });
 
-var staticData = {};
-var monitoredColls = {};
-
-// loadStaticData();
 setupModel();
-
 console.log("Agent is agenting!");
 
 
@@ -123,11 +119,13 @@ function setupModel() {
             if (m.action === 'process_grabbed_poster_item' && m.class_name === runId) {
               // create Backbone object and save it
               var gpi = new Skeletor.Model.GrabbedPosterItem(m);
+              // set flag to indicate the item was not yet processed into tile
+              gpi.set('processed_to_tile', false);
               gpi.save().done(function () {
                 console.log('Messages successfully saved to database with id: '+gpi.id);
               });
             } else {
-              console.log("Message has wrong action <"+m.action+"> or was for another run <"+runId+">")
+              console.log("Message has wrong action <"+m.action+"> or was for another run <"+runId+">");
             }
           } catch (e) {
             console.warn("Error parsing message body: "+e);
