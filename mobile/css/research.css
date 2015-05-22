@@ -355,6 +355,9 @@ textarea {
 .tiles-list .self {
     outline: 3px dashed #99ff00;
 }
+.tiles-list .cited div:first-child {
+    background: #F4E8FA;
+}
 .tiles-list > li:last-child {
     margin-bottom: 45px;
 }
