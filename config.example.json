@@ -15,6 +15,10 @@
     "pikachu": {
         "url": "///pikachu.coati.encorelab.org/"
     },
+    "mqtt": {
+        "url": "ltg.evl.uic.edu",
+        "port": 1884
+    },
     "login_picker": true,
     "runs":["ben", "michael"],
     "project_name": "Solar 2015"

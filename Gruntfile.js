@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['Gruntfile.js', 'shared/js/*.js', 'teacher/js/*.js', 'mobile/js/*.js', 'smartboard/js/*.js']
+      all: ['Gruntfile.js', 'shared/js/*.js', 'teacher/js/*.js', 'mobile/js/*.js', 'smartboard/js/*.js', 'agents/*.js']
     },
     jsonlint: {
       dev: {

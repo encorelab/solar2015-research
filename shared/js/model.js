@@ -11,7 +11,7 @@
     _ = require("underscore");
     Backbone = require("backbone");
     Backbone.$ = jQuery;
-    Drowsy = require("backbone.drowsy").Drowsy;
+    Drowsy = require("backbone.drowsy.encorelab").Drowsy;
     Skeletor = {};
     exports.Skeletor = Skeletor;
   } else {
@@ -25,7 +25,7 @@
   Skeletor.Model = (function() {
     function Model() {}
 
-    Model.requiredCollections = ['brainstorms', 'tags', 'states', 'projects', 'tiles', 'chunks'];
+    Model.requiredCollections = ['brainstorms', 'tags', 'states', 'projects', 'tiles', 'chunks', 'grabbed_poster_items'];
 
     Model.init = function(url, db) {
       var dfrInit,
@@ -248,6 +248,18 @@
 
       this.Chunks = this.db.Collection('chunks').extend({
         model: Skeletor.Model.Chunk
+      });
+
+
+      this.GrabbedPosterItem = this.db.Document('grabbed_poster_items').extend({
+        defaults: {
+          'created_at': new Date(),
+          'modified_at': new Date()
+        }
+      });
+
+      this.GrabbedPosterItems = this.db.Collection('grabbed_poster_items').extend({
+        model: Skeletor.Model.GrabbedPosterItem
       });
 
     };
