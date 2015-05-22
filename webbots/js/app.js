@@ -67,10 +67,10 @@
     // webbots.tags = Skeletor.Model.awake.tags;
     // webbots.tags.wake(webbots.config.wakeful.url);
 
-    webbots.tiles = Skeletor.Model.awake.tiles;
-    webbots.tiles.wake(webbots.config.wakeful.url);
+    app.tiles = Skeletor.Model.awake.tiles;
+    // app.tiles.wake(webbots.config.wakeful.url);
 
-    webbots.grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
+    app.grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
     // webbots.grabbedPosterItems.wake(webbots.config.wakeful.url);
 
     // // WALL
@@ -94,11 +94,11 @@
 
       console.log(posterItemsToProcess);
 
-      posterItemsToProcess.forEach(function (doc) {
-        var tile = createTileFromGrabbedPosterItem (doc);
+      posterItemsToProcess.forEach(function (grabbedPosterItem) {
+        var tile = createTileFromGrabbedPosterItem (grabbedPosterItem);
         tile.save().done(function (t) {
-          doc.set('processed_to_tile', true);
-          doc.save().done(function () {
+          grabbedPosterItem.set('processed_to_tile', true);
+          grabbedPosterItem.save().done(function () {
             console.log("Adding tile to tiles collecton");
             app.tiles.add(tile);
           });
@@ -118,10 +118,11 @@
     // do some processing of grabbedPosterItem and translate to tile
     tileObj.grabbed_poster_item_id = grabbedPosterItem.id;
     // Take newly create tile object and turn it into a tile model
-    var model = new Skeletor.Model.Tile(tileObj);
-    console.log(model);
+    var tileModel = new Skeletor.Model.Tile(tileObj);
+    tileModel.wake(app.config.wakeful.url);
+    tileModel.set('published', true);
     // return tile so it can be added to tile collection
-    return model;
+    return tileModel;
   };
 
 
