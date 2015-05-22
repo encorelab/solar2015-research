@@ -467,6 +467,11 @@
           tileContainer = jQuery('<li class="tile-container col-xs-12 col-sm-4 col-lg-3" data-id="'+tileModel.id+'"></li>');
         }
 
+        // handling new citation concept
+        if (tileModel.get('cited_from_user_uuid') || tileModel.get('cited_from_poster_uuid') || tileModel.get('cited_from_poster_item_uuid')) {
+          tileContainer.addClass('cited');
+        }
+
         var tileView = new app.View.Tile({el: tileContainer, model: tileModel});
         var listToAddTo = view.$el.find('.tiles-list');
         listToAddTo.prepend(tileView.render().el);
@@ -1157,7 +1162,12 @@
         view.$el.addClass('self');
       }
 
-      // Add the newly generated DOM elements to the vies's part of the DOM
+      // handling new cited concept
+      if (tile.get('cited_from_user_uuid') || tile.get('cited_from_poster_uuid') || tile.get('cited_from_poster_item_uuid')) {
+        view.$el.addClass('cited');
+      }
+
+      // Add the newly generated DOM elements to the view's part of the DOM
       view.$el.html(listItem);
 
       return view;
@@ -1232,6 +1242,12 @@
                           "uuid" : 'not set yet',
                           "created_at" : new Date()
                         };
+                        // cited_from_user_uuid
+                        // cited_from_poster_uuid
+                        // cited_from_poster_item_uuid
+                        // citedFromUserUuid
+                        // citedFromPosterUuid
+                        // citedFromPosterItemUuid
         jQuery.ajax({
           url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
           type: 'POST',
