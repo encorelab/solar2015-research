@@ -89,16 +89,6 @@ function setupModel() {
     // and make it wakeful
     grabbedPosterItems.wake(config.wakeful.url);
 
-    // grabbedPosterItems.on('change', function (doc) {
-    //   // var changed = doc.changedAttributes();
-    //   // changed._id = doc.attributes._id; // need this or Drowsy.Document.parse will crap out
-    //   // logEntry('change', doc, changed);
-    // });
-
-    // grabbedPosterItems.on('add', function (doc) {
-    //   // logEntry('add', doc, doc.toJSON());
-    // });
-
     console.log("Model initialized!");
 
     var urlObj = url.parse(config.mqtt.protocol+config.mqtt.url+':'+config.mqtt.port);
@@ -125,10 +115,13 @@ function setupModel() {
             if (m.action === 'process_grabbed_poster_item' && m.class_name === runId) {
               // create Backbone object and save it
               var gpi = new Skeletor.Model.GrabbedPosterItem(m);
+              gpi.wake(config.wakeful.url);
               // set flag to indicate the item was not yet processed into tile
               gpi.set('processed_to_tile', false);
+              grabbedPosterItems.add(gpi);
               gpi.save().done(function () {
                 console.log('Messages successfully saved to database with id: '+gpi.id);
+
               });
             } else {
               console.log("Message has wrong action <"+m.action+"> or was for another run <"+runId+">");
