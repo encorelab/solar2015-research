@@ -468,7 +468,7 @@
         }
 
         // handling new citation concept
-        if (tileModel.get('cited_from_user_uuid') || tileModel.get('cited_from_poster_uuid') || tileModel.get('cited_from_poster_item_uuid')) {
+        if (tileModel.get('cited_from_user_uuid') && tileModel.get('cited_from_poster_uuid') && tileModel.get('cited_from_poster_item_uuid')) {
           tileContainer.addClass('cited');
         }
 
@@ -1163,7 +1163,7 @@
       }
 
       // handling new cited concept
-      if (tile.get('cited_from_user_uuid') || tile.get('cited_from_poster_uuid') || tile.get('cited_from_poster_item_uuid')) {
+      if (tile.get('cited_from_user_uuid') && tile.get('cited_from_poster_uuid') && tile.get('cited_from_poster_item_uuid')) {
         view.$el.addClass('cited');
       }
 
@@ -1194,6 +1194,28 @@
         //jQuery('#media-chunk-media-holder').html('<video src="' + app.config.pikachu.url + view.model.get('url') + '" controls />');
       } else {
         console.error("Unknown chunk type!");
+      }
+
+      if (view.model.get('cited_from_user_uuid') && view.model.get('cited_from_poster_uuid') && view.model.get('cited_from_poster_item_uuid')) {
+        if (view.model.get('type') === "text") {
+          jQuery('#text-chunk-body-input').data(
+            "citation",
+            {
+              "cited_from_user_uuid" : view.model.get('cited_from_user_uuid'),
+              "cited_from_poster_uuid" : view.model.get('cited_from_poster_uuid'),
+              "cited_from_poster_item_uuid" : view.model.get('cited_from_poster_item_uuid')
+            });
+        } else if (view.model.get('type') === "media") {
+          jQuery('#media-chunk-body-input').data(
+            "citation",
+            {
+              "cited_from_user_uuid" : view.model.get('cited_from_user_uuid'),
+              "cited_from_poster_uuid" : view.model.get('cited_from_poster_uuid'),
+              "cited_from_poster_item_uuid" : view.model.get('cited_from_poster_item_uuid')
+            });
+        } else {
+          console.error("Cannot add citation information, unknown tile type");
+        }
       }
     }
   });
@@ -1236,24 +1258,32 @@
         **/
 
         // 1)
-        var posterItemObj = JSON.stringify({
-                          "content" : bodyText,
-                          "type" : "txt",
-                          "uuid" : 'not set yet',
-                          "created_at" : new Date()
-                        });
-        // cited_from_user_uuid
-        // cited_from_poster_uuid
-        // cited_from_poster_item_uuid
-        // citedFromUserUuid
-        // citedFromPosterUuid
-        // citedFromPosterItemUuid
+        var posterItemTxtObj = null;
+        var citationInfo = jQuery('#text-chunk-body-input').data("citation");
+        if (citationInfo) {
+          posterItemTxtObj = JSON.stringify({
+                             "content" : bodyText,
+                             "type" : "txt",
+                             "uuid" : 'not set yet',
+                             "created_at" : new Date(),
+                             "cited_from_user_uuid" : citationInfo.cited_from_user_uuid,
+                             "cited_from_poster_uuid" : citationInfo.cited_from_poster_uuid,
+                             "cited_from_poster_item_uuid" : citationInfo.cited_from_poster_item_uuid
+          });
+        } else {
+          posterItemTxtObj = JSON.stringify({
+                            "content" : bodyText,
+                            "type" : "txt",
+                            "uuid" : 'not set yet',
+                            "created_at" : new Date()
+          });
+        }
 
 
         jQuery.ajax({
           url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
           type: 'POST',
-          data: posterItemObj
+          data: posterItemTxtObj
         })
         .done(function (posterItemRes) {
           var returnedOID = posterItemRes._id.$oid;
@@ -1442,20 +1472,46 @@
         **/
 
         // 1)
-        var posterItemTxtObj = JSON.stringify({
-                          "content" : bodyText,
-                          "type" : "txt",
-                          "uuid" : 'not set yet',
-                          "created_at" : new Date()
-                        });
+        var posterItemTxtObj = null;
+        var posterItemMediaObj = null;
+        var citationInfo = jQuery('#media-chunk-body-input').data("citation");
+        if (citationInfo) {
+          posterItemTxtObj = JSON.stringify({
+                             "content" : bodyText,
+                             "type" : "txt",
+                             "uuid" : 'not set yet',
+                             "created_at" : new Date(),
+                             "cited_from_user_uuid" : citationInfo.cited_from_user_uuid,
+                             "cited_from_poster_uuid" : citationInfo.cited_from_poster_uuid,
+                             "cited_from_poster_item_uuid" : citationInfo.cited_from_poster_item_uuid
 
+          });
 
-        var posterItemMediaObj = JSON.stringify({
-                          "content" : url,
-                          "type" : mediaType,
-                          "uuid" : 'not set yet',
-                          "created_at" : new Date()
-                        });
+          posterItemMediaObj = JSON.stringify({
+                             "content" : url,
+                             "type" : mediaType,
+                             "uuid" : 'not set yet',
+                             "created_at" : new Date(),
+                             "cited_from_user_uuid" : citationInfo.cited_from_user_uuid,
+                             "cited_from_poster_uuid" : citationInfo.cited_from_poster_uuid,
+                             "cited_from_poster_item_uuid" : citationInfo.cited_from_poster_item_uuid
+          });
+
+        } else {
+          posterItemTxtObj = JSON.stringify({
+                            "content" : bodyText,
+                            "type" : "txt",
+                            "uuid" : 'not set yet',
+                            "created_at" : new Date()
+          });
+
+          posterItemMediaObj = JSON.stringify({
+                             "content" : url,
+                             "type" : mediaType,
+                             "uuid" : 'not set yet',
+                             "created_at" : new Date()
+          });
+        }
 
         var postPosterTxtItem = jQuery.ajax({
           url: Skeletor.Mobile.config.drowsy.uic_url + "/poster_item/",
