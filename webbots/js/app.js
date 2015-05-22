@@ -1,3 +1,5 @@
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true, strict:true */
+/*global  Backbone, Skeletor, _, jQuery, Rollcall */
 (function () {
   "use strict";
 
@@ -96,8 +98,9 @@
 
       posterItemsToProcess.forEach(function (grabbedPosterItem) {
         var tile = createTileFromGrabbedPosterItem (grabbedPosterItem);
-        tile.save().done(function (t) {
+        tile.save().done(function () {
           grabbedPosterItem.set('processed_to_tile', true);
+          grabbedPosterItem.set('tile_id', tile.id);
           grabbedPosterItem.save().done(function () {
             console.log("Adding tile to tiles collecton");
             app.tiles.add(tile);
@@ -110,11 +113,23 @@
   var createTileFromGrabbedPosterItem = function (grabbedPosterItem) {
     console.log("Creating tile ...");
     var tileObj = {};
-    Object.keys(grabbedPosterItem.attributes).forEach(function (attrKey) {
-      if (attrKey !== "_id") {
-        tileObj[attrKey] = grabbedPosterItem.attributes[attrKey];
-      }
-    });
+    // Object.keys(grabbedPosterItem.attributes).forEach(function (attrKey) {
+    //   if (attrKey !== "_id") {
+    //     tileObj[attrKey] = grabbedPosterItem.attributes[attrKey];
+    //   }
+    // });
+    // transfer the needed attributes from grabbedPosterItem into tileObj
+    tileObj.autor = grabbedPosterItem.get('grabbing_user_name');
+    tileObj.type = grabbedPosterItem.get('type');
+    tileObj.title = "This is grabbed from poster: "+grabbedPosterItem.get('poster_from_title');
+    tileObj.body = grabbedPosterItem.get('content');
+    tileObj.cited_from_user_uuid = grabbedPosterItem.get('user_from_uuid');
+    tileObj.cited_from_poster_uuid = grabbedPosterItem.get('poster_from_uuid');
+    tileObj.cited_from_poster_item_uuid = grabbedPosterItem.get('grabbed_poster_item_uuid');
+    tileObj.from_proposal = false;
+
+    tileObj.project_id = "Not forgotten, but magic needs to be implemented";
+
     // do some processing of grabbedPosterItem and translate to tile
     tileObj.grabbed_poster_item_id = grabbedPosterItem.id;
     // Take newly create tile object and turn it into a tile model

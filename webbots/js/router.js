@@ -1,4 +1,5 @@
-
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true, strict:true */
+/*global  Backbone, Skeletor, _, jQuery, Rollcall */
 
 (function () {
   "use strict";
