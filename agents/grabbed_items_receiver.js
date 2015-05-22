@@ -83,13 +83,16 @@ console.log("Agent is agenting!");
 
 function setupModel() {
   console.log("Starting to initialize model ...");
-  Skeletor.Model.init(config.drowsy.url, DATABASE).done(function () {
+  Skeletor.Model.init(config.drowsy.url, DATABASE)
+  // .then(function() {
+  //   console.log('Model initialized - now waking up');
+  //   return Skeletor.Model.wake(config.wakeful.url);
+  // })
+  .done(function () {
     // create collection of grabbed poster item models
     var grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
-    // and make it wakeful
-    grabbedPosterItems.wake(config.wakeful.url);
 
-    console.log("Model initialized!");
+    console.log("... model initialized!");
 
     var urlObj = url.parse(config.mqtt.protocol+config.mqtt.url+':'+config.mqtt.port);
     console.log("Trying to connect to mqtt server with URL: "+url.format(urlObj));
@@ -102,6 +105,7 @@ function setupModel() {
     // once connected
     client.on('connect', function () {
       // say hello
+      console.log("connected to MQTT");
       client.publish('IAMPOSTEROUT', 'The mqtt bot for solar2015-'+runId+' just came online :)');
       // start listening for messages from the poster client in channel IAMPOSTEROUT
       client.subscribe('IAMPOSTEROUT', function() {
@@ -115,13 +119,11 @@ function setupModel() {
             if (m.action === 'process_grabbed_poster_item' && m.class_name === runId) {
               // create Backbone object and save it
               var gpi = new Skeletor.Model.GrabbedPosterItem(m);
-              gpi.wake(config.wakeful.url);
               // set flag to indicate the item was not yet processed into tile
               gpi.set('processed_to_tile', false);
-              grabbedPosterItems.add(gpi);
               gpi.save().done(function () {
                 console.log('Messages successfully saved to database with id: '+gpi.id);
-
+                grabbedPosterItems.add(gpi);
               });
             } else {
               console.log("Message has wrong action <"+m.action+"> or was for another run <"+runId+">");
