@@ -23,7 +23,7 @@
     },
     mqtt: {
       url: 'string',
-      port: 'number'
+      ws_port: 'number'
     },
     login_picker:'boolean',
     runs:'object'
@@ -168,7 +168,7 @@
     })
     .then(function() {
       // TODO - add me to config.json
-      app.mqtt = connect(app.config.mqtt.url, app.config.mqtt.port, generateRandomClientId());
+      app.mqtt = connect(app.config.mqtt.url, app.config.mqtt.ws_port, generateRandomClientId());
     })
     .done(function () {
       ready();

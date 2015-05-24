@@ -16,8 +16,11 @@
         "url": "///pikachu.coati.encorelab.org/"
     },
     "mqtt": {
+        "protocol": "tcp://",
         "url": "ltg.evl.uic.edu",
-        "port": 1884
+        "port": 1883,
+        "ws_protocol": "ws://",
+        "ws_port": 1884
     },
     "login_picker": true,
     "runs":["ben", "michael"],

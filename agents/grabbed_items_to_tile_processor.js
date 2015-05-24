@@ -16,19 +16,22 @@ var argv = require('optimist')
   .argv;
 
 var runId = argv._[0];
-var DATABASE = 'solar2015-'+runId;
+var app = {};
 
 var jQuery = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 Backbone.$ = jQuery;
 var btoa = require('btoa');
+var url = require('url');
+var path = require('path');
 // var mqtt = require('mqtt');
 
 // var mongo = require('mongodb');
 
 var Drowsy = require('backbone.drowsy.encorelab').Drowsy;
 var Wakeful = require('backbone.drowsy.encorelab/wakeful').Wakeful;
+console.log (Wakeful);
 
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync('../config.json'));
@@ -49,6 +52,7 @@ Backbone.$.ajaxSetup({
 var Skeletor = {};
 Skeletor.Model = require('../shared/js/model.js').Skeletor.Model;
 
+var DATABASE = config.drowsy.db+'-'+runId;
 
 // danger! monkeypatch!
 String.prototype.toCamelCase = function(){
@@ -57,76 +61,105 @@ String.prototype.toCamelCase = function(){
 
 /*******************************/
 // setup the model and process data
-setupModel();
-
 console.log("Agent is agenting!");
+initAgent();
 
-
-function setupModel() {
+function initAgent () {
   console.log("Starting to initialize model with server <"+config.drowsy.url+"> and database <"+DATABASE+">");
-  Skeletor.Model.init(config.drowsy.url, DATABASE).done(function () {
-    console.log("Model initialized!");
-    // create collection of grabbed poster item models
-    var grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
-    // and make it wakeful
-    grabbedPosterItems.wake(config.wakeful.url);
-    // create collection of grabbed poster item models
-    var tiles = new Skeletor.Model.Tiles();
-    // and make it wakeful
-    // tiles.wake(config.wakeful.url);
-    grabbedPosterItems.fetch().done(function () {
-      grabbedPosterItems.on('change', function (doc) {
-        // var changed = doc.changedAttributes();
-        // changed._id = doc.attributes._id; // need this or Drowsy.Document.parse will crap out
-        // logEntry('change', doc, changed);
-        console.log('changed: ');
-        console.log(doc);
-      });
 
-      grabbedPosterItems.on('add', function (doc) {
-        // logEntry('add', doc, doc.toJSON());
-        console.log('added: ');
-        console.log(doc);
+  Skeletor.Model.init(config.drowsy.url, DATABASE)
+  .then(function () {
+    console.log("Inited and now wake ..");
+    // Skeletor.Model.wake(config.wakeful.url);
+  }).done(function () {
+    console.log("Model initialized and awake!");
+    ready();
+  });
+}
 
-        var tile = createTileFromGrabbedPosterItem (doc);
-        tile.save().done(function (t) {
-          doc.set('processed_to_tile', true);
-          doc.save().done(function () {
-            console.log("Adding tile to tiles collecton");
-            tiles.add(tile);
-          });
-        });
-      });
 
-      console.log("going over poster items to be processed");
+function ready() {
+  console.log("Entered ready()");
+  // console.log(Skeletor.Model);
+  // app.tiles = Skeletor.Model.awake.tiles;
+  // app.tiles.wake(webbots.config.wakeful.url);
+  app.tiles = new Skeletor.Model.Tiles();
+  app.tiles.wake(config.wakeful.url);
 
-      // At startup go over all grabbed_poster_items and process the once with processed_to_tile = false
-      var posterItemsToProcess = grabbedPosterItems.where({'processed_to_tile': false});
+  app.projects = new Skeletor.Model.Projects();
+
+  app.grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
+
+  var connectTimer = setInterval(processingGrabbedPosterItems, 10000);
+}
+
+function processingGrabbedPosterItems () {
+  app.grabbedPosterItems.fetch()
+  .done(function () {
+    app.projects.fetch()
+    .done(function () {
+      var posterItemsToProcess = app.grabbedPosterItems.where({'processed_to_tile': false});
+
       console.log(posterItemsToProcess);
-      posterItemsToProcess.forEach(function (doc) {
-        var tile = createTileFromGrabbedPosterItem (doc);
-        tile.save().done(function (t) {
-          doc.set('processed_to_tile', true);
-          doc.save().done(function () {
+
+      posterItemsToProcess.forEach(function (grabbedPosterItem) {
+        var tile = createTileFromGrabbedPosterItem (grabbedPosterItem);
+        tile.save().done(function () {
+          grabbedPosterItem.set('processed_to_tile', true);
+          grabbedPosterItem.set('tile_id', tile.id);
+          grabbedPosterItem.save().done(function () {
             console.log("Adding tile to tiles collecton");
-            tiles.add(tile);
+            app.tiles.add(tile);
           });
         });
       });
     });
-
-
-
   });
 }
 
 function createTileFromGrabbedPosterItem (grabbedPosterItem) {
+  // sort the collection by username
+  // var projects = Skeletor.Model.awake.projects.where({"associated_users":{"$in":[grabbedPosterItem.get('grabbing_user_name')]}});
+  var projects = app.projects.filter(function(p){return _.contains(p.get('associated_users'), grabbedPosterItem.get('grabbing_user_name') );});
+  projects.comparator = function(model) {
+    return model.get('created_at');
+  };
+  var latestProject = _.last(projects.sort());
+
+  if (typeof latestProject === 'undefined' || latestProject === null) {
+    throw "User <"+grabbedPosterItem.get('grabbing_user_name')+"> seems to have no current project";
+  }
+
   console.log("Creating tile ...");
+  var tileObj = {};
+  tileObj.project_id = latestProject.id;
+  tileObj.author = grabbedPosterItem.get('grabbing_user_name');
+  tileObj.type = grabbedPosterItem.get('type');
+  tileObj.title = "This is grabbed from poster: "+grabbedPosterItem.get('poster_from_title');
+  if (grabbedPosterItem.get('type') === "media") {
+    // tileObj.url = jQuery.url(grabbedPosterItem.get('content')).attr('file');
+    // var urlObj = url.parse(grabbedPosterItem.get('content'));
+    var parsed = url.parse(grabbedPosterItem.get('content'));
+    tileObj.url = path.basename(parsed.pathname);
+    console.log('tile path name: ' +tileObj.url +grabbedPosterItem.get('content'));
+  } else {
+    tileObj.body = grabbedPosterItem.get('content');
+  }
+  tileObj.cited_from_user_uuid = grabbedPosterItem.get('user_from_uuid');
+  tileObj.cited_from_poster_uuid = grabbedPosterItem.get('poster_from_uuid');
+  tileObj.cited_from_poster_item_uuid = grabbedPosterItem.get('grabbed_poster_item_uuid');
+  tileObj.from_proposal = false;
+
+  // tileObj.project_id = "Not forgotten, but magic needs to be implemented";
+
   // do some processing of grabbedPosterItem and translate to tile
-  var tileObj = {"data":"ignore me this is a test", "grabbed_poster_item_id": grabbedPosterItem.id};
+  tileObj.grabbed_poster_item_id = grabbedPosterItem.id;
   // Take newly create tile object and turn it into a tile model
-  var model = new Skeletor.Model.Tile(tileObj);
-  console.log(model);
+  var tileModel = new Skeletor.Model.Tile(tileObj);
+  tileModel.wake(config.wakeful.url);
+  tileModel.set('published', true);
   // return tile so it can be added to tile collection
-  return model;
+  console.log('kkkkkkkkkkkkkkkkk');
+  console.log(tileModel);
+  return tileModel;
 }
