@@ -6,6 +6,8 @@
   var webbots = new this.Skeletor.App();
   var app = webbots;
   var Model = this.Skeletor.Model;
+  var botRunning = false;
+  var connectTimer = null;
 
 
   webbots.init = function(className) {
@@ -45,6 +47,8 @@
       }
     });
 
+    webbots.registerClickListeners();
+
     Skeletor.Model.init(webbots.config.drowsy.url, DATABASE)
     .then(function () {
       return Skeletor.Model.wake(webbots.config.wakeful.url);
@@ -54,60 +58,53 @@
   };
 
   webbots.ready = function() {
-    // RUNSTATE
-    // webbots.runState = Skeletor.getState('RUN');
-    // if (!webbots.runState) {
-    //   webbots.runState = Skeletor.setState('RUN', {
-    //     phase: 'brainstorm'
-    //   });
-    // }
-    // webbots.runState.wake(webbots.config.wakeful.url);
-
-    // TAGS
-    // Works without these. Why do we keep the instance around here in JS?
-    // Most of the collections (runState is special) seem to sit in views
-    // webbots.tags = Skeletor.Model.awake.tags;
-    // webbots.tags.wake(webbots.config.wakeful.url);
-
     app.tiles = Skeletor.Model.awake.tiles;
-    // app.tiles.wake(webbots.config.wakeful.url);
 
     app.grabbedPosterItems = new Skeletor.Model.GrabbedPosterItems();
-    // webbots.grabbedPosterItems.wake(webbots.config.wakeful.url);
 
-    // // WALL
-    // webbots.wall = new webbots.View.Wall({
-    //   el: '#wall'
-    // });
+    // enable on/off button
+    jQuery('#run-switch').removeAttr('disabled');
+  };
 
-    // webbots.wall.on('ready', function () {
-    //   webbots.trigger('ready');
-    // });
-
-    // webbots.wall.ready();
-    var connectTimer = setInterval(processingGrabbedPosterItems, 10000);
-
+  webbots.registerClickListeners = function () {
+    jQuery('#run-switch').click(function (ev) {
+      if (botRunning) {
+        botRunning = false;
+        // bot is running and we need to switch if off
+        clearInterval(connectTimer);
+        jQuery('#run-switch').html('Turn on');
+      } else {
+        botRunning = true;
+        // bot is NOT running and we need to switch if on
+        connectTimer = setInterval(processingGrabbedPosterItems, 5000);
+        jQuery('#run-switch').html('Turn off');
+      }
+    });
   };
 
   var processingGrabbedPosterItems = function () {
-    app.grabbedPosterItems.fetch()
-    .done(function () {
-      var posterItemsToProcess = app.grabbedPosterItems.where({'processed_to_tile': false});
+    if (botRunning) {
+      app.grabbedPosterItems.fetch()
+      .done(function () {
+        var posterItemsToProcess = app.grabbedPosterItems.where({'processed_to_tile': false});
 
-      console.log(posterItemsToProcess);
+        console.log(posterItemsToProcess);
 
-      posterItemsToProcess.forEach(function (grabbedPosterItem) {
-        var tile = createTileFromGrabbedPosterItem (grabbedPosterItem);
-        tile.save().done(function () {
-          grabbedPosterItem.set('processed_to_tile', true);
-          grabbedPosterItem.set('tile_id', tile.id);
-          grabbedPosterItem.save().done(function () {
-            console.log("Adding tile to tiles collecton");
-            app.tiles.add(tile);
+        posterItemsToProcess.forEach(function (grabbedPosterItem) {
+          var tile = createTileFromGrabbedPosterItem (grabbedPosterItem);
+          tile.save().done(function () {
+            grabbedPosterItem.set('processed_to_tile', true);
+            grabbedPosterItem.set('tile_id', tile.id);
+            grabbedPosterItem.save().done(function () {
+              console.log("Adding tile to tiles collecton");
+              app.tiles.add(tile);
+            });
           });
         });
       });
-    });
+    } else {
+      console.warn('Bot set to not run but we somehow still forgot to cancel the interval. Should not happen');
+    }
   };
 
   var createTileFromGrabbedPosterItem = function (grabbedPosterItem) {
