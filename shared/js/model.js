@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  var Backbone, Skeletor, Drowsy, jQuery, _,
+  var Backbone, Skeletor, Drowsy, Wakeful, jQuery, _,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty;
@@ -12,6 +12,7 @@
     Backbone = require("backbone");
     Backbone.$ = jQuery;
     Drowsy = require("backbone.drowsy.encorelab").Drowsy;
+    Wakeful = require('backbone.drowsy.encorelab/wakeful').Wakeful;
     Skeletor = {};
     exports.Skeletor = Skeletor;
   } else {
@@ -20,6 +21,7 @@
     jQuery = window.$;
     _ = window._;
     Drowsy = window.Drowsy;
+    Wakeful = window.Wakeful;
   }
 
   Skeletor.Model = (function() {
