@@ -20,15 +20,23 @@
     },
     index: function() {
       console.log("routing on");
+      jQuery('.control').hide();
+      jQuery('.orientation').show();
     },
     initClassBen: function () {
       Skeletor.Webbots.init('ben');
+      jQuery('.orientation').hide();
+      jQuery('.control').show();
     },
     initClassMichael: function () {
       Skeletor.Webbots.init('michael');
+      jQuery('.orientation').hide();
+      jQuery('.control').show();
     },
     initClassTest: function () {
       Skeletor.Webbots.init('test');
+      jQuery('.orientation').hide();
+      jQuery('.control').show();
     },
     start: function() {
       // to allow single page app with various routes
