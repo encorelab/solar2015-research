@@ -125,7 +125,7 @@
     tileObj.project_id = latestProject.id;
     tileObj.author = grabbedPosterItem.get('grabbing_user_name');
     tileObj.type = grabbedPosterItem.get('type');
-    tileObj.title = "This is grabbed from poster: "+grabbedPosterItem.get('poster_from_title');
+    tileObj.title = "From poster";
     if (grabbedPosterItem.get('type') === "media") {
       tileObj.url = jQuery.url(grabbedPosterItem.get('content')).attr('file');
     } else {
