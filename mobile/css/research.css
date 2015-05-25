@@ -357,7 +357,7 @@ textarea {
 }
 /* change me - this doesn't look great */
 .tiles-list .cited {
-    outline: 3px dashed #F4E8FA;
+    outline: 2px solid #E64A19;
 }
 .tiles-list > li:last-child {
     margin-bottom: 45px;
