@@ -135,6 +135,7 @@
     tileObj.cited_from_poster_uuid = grabbedPosterItem.get('poster_from_uuid');
     tileObj.cited_from_poster_item_uuid = grabbedPosterItem.get('grabbed_poster_item_uuid');
     tileObj.from_proposal = false;
+    tileObj.originator = "other";
 
     // tileObj.project_id = "Not forgotten, but magic needs to be implemented";
 
