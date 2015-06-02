@@ -106,7 +106,7 @@ function setupModel() {
     client.on('connect', function () {
       // say hello
       console.log("connected to MQTT");
-      client.publish('IAMPOSTEROUT', 'The mqtt bot for solar2015-'+runId+' just came online :)');
+      // client.publish('IAMPOSTEROUT', JSON.stringify({'say hello': 'The mqtt bot for solar2015-'+runId+' just came online :)'}));
       // start listening for messages from the poster client in channel IAMPOSTEROUT
       client.subscribe('IAMPOSTEROUT', function() {
         // when a message arrives, do something with it
