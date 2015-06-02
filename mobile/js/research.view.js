@@ -1190,8 +1190,8 @@
       }
       // if the clicked tile is a video
       else if (view.model.get('type') === "media" && app.photoOrVideo(view.model.get('url')) === "video") {
-        jQuery().toastmessage('showErrorToast', "Video to poster uploading is currently under development...");
-        //jQuery('#media-chunk-media-holder').html('<video src="' + app.config.pikachu.url + view.model.get('url') + '" controls />');
+        //jQuery().toastmessage('showErrorToast', "Video to poster uploading is currently under development...");
+        jQuery('#media-chunk-media-holder').html('<video src="' + app.config.pikachu.url + view.model.get('url') + '" controls />');
       } else {
         console.error("Unknown chunk type!");
       }
