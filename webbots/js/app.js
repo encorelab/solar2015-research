@@ -108,13 +108,16 @@
   };
 
   var createTileFromGrabbedPosterItem = function (grabbedPosterItem) {
-    // sort the collection by username
+    // filter the projects collection by the username of the grabbing user
     // var projects = Skeletor.Model.awake.projects.where({"associated_users":{"$in":[grabbedPosterItem.get('grabbing_user_name')]}});
-    var projects = Skeletor.Model.awake.projects.filter(function(p){return _.contains(p.get('associated_users'), grabbedPosterItem.get('grabbing_user_name') );});
-    projects.comparator = function(model) {
-      return model.get('created_at');
-    };
-    var latestProject = _.last(projects.sort());
+    var projects = Skeletor.Model.awake.projects.filter(function(p) {
+      return _.contains(p.get('associated_users'), grabbedPosterItem.get('grabbing_user_name') );
+    });
+
+    // sort the filtered projects list and take the last element -> latest project
+    var latestProject = _.last(_.sortBy(projects, function (project) {
+      return project.get('created_at');
+    }));
 
     if (typeof latestProject === 'undefined' || latestProject === null) {
       throw "User <"+grabbedPosterItem.get('grabbing_user_name')+"> seems to have no current project";
